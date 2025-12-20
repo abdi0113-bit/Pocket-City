@@ -29,8 +29,24 @@ def LoadImagesFromFolder(path, tileSize):
     # Keys are filenames, values are the images
     return images
 
-def ScaleImage(image, size):
-    return image
+def StampImage(screen, imageAssets, imageToLoad, pos, tileSize):
+    try:
+        currentTileImage = imageAssets[imageToLoad]
+    except:
+        currentTileImage = imageAssets['Failed to Load']
+    screen.blit(currentTileImage, (pos[0] * tileSize, pos[1] * tileSize))
+
+def DrawMouse(screen, imageAssets, selectedTile, tileSize):
+    # Stamp mouse overlay
+    if selectedTile == (-1, -1): # If unselected
+        # Get mouse position
+        mousePos = pygame.mouse.get_pos()
+        mouseTileX, mouseTileY = mousePos[0] // tileSize, mousePos[1] // tileSize
+        StampImage(screen, imageAssets, 'Hover Tile', (mouseTileX, mouseTileY), tileSize)
+
+    else: # If selected
+        StampImage(screen, imageAssets, 'Selected Tile', selectedTile, tileSize)
+
 
 # Draws the grid
 def DrawGrid(screen, imageAssets, screenSettings, tilemap, gridSize):
@@ -43,32 +59,14 @@ def DrawGrid(screen, imageAssets, screenSettings, tilemap, gridSize):
 
     gridWidth = gridSize[0]
     gridHeight = gridSize[1]
-
-    # Create a fallback if an image fails to load
-    imageFail = pygame.Surface((50,50))
-    imageFail.fill((255, 0, 0))
-
-    mousePos = pygame.mouse.get_pos()
-    mouseTileX, mouseTileY = mousePos[0] // tileSize, mousePos[1] // tileSize
-
+    
     for row in range(gridHeight):
         for column in range(gridWidth):
-            # Load the base tile, and if that fails load the error red square
-            try:
-                currentTileImage = imageAssets['TileBase']
-            except pygame.error:
-                currentTileImage = imageFail
-            
-            # Draw the tile to the screen
-            screen.blit(currentTileImage, (column * tileSize, row * tileSize))
-            
-            # If it's at the mouse position, add the mouse overlay
-            if row == mouseTileY and column == mouseTileX:
-                try:
-                    currentTileImage = imageAssets['OutlineTemp']
-                except pygame.error:
-                    currentTileImage = imageFail
-                screen.blit(currentTileImage, (column * tileSize, row * tileSize))
+            # Stamp the stone tile
+            StampImage(screen, imageAssets, 'Stone Tile', (column, row), tileSize)
+
+            if len(tilemap) > row and len(tilemap[row]) > column:
+                StampImage(screen, imageAssets, tilemap[row][column], (column, row), tileSize)
 
 def calculateTileSize(screenSize, gridSize):
     screenWidth = screenSize[0]

@@ -1,5 +1,6 @@
 import pygame
 import os
+import math
 
 # This function is from Gemini, takes a folder and extracts all the images in itself and its subfolders
 def LoadImagesFromFolder(path, tileSize):
@@ -47,20 +48,27 @@ def DrawGrid(screen, imageAssets, screenSettings, tilemap, gridSize):
     imageFail = pygame.Surface((50,50))
     imageFail.fill((255, 0, 0))
 
-    currentX = 0
-    currentY = 0
-    
+    mousePos = pygame.mouse.get_pos()
+    mouseTileX, mouseTileY = mousePos[0] // tileSize, mousePos[1] // tileSize
+
     for row in range(gridHeight):
         for column in range(gridWidth):
+            # Load the base tile, and if that fails load the error red square
             try:
                 currentTileImage = imageAssets['TileBase']
             except pygame.error:
                 currentTileImage = imageFail
-            screen.blit(currentTileImage, (currentX, currentY))
-            currentX += tileSize
             
-        currentY += tileSize
-        currentX = 0
+            # Draw the tile to the screen
+            screen.blit(currentTileImage, (column * tileSize, row * tileSize))
+            
+            # If it's at the mouse position, add the mouse overlay
+            if row == mouseTileY and column == mouseTileX:
+                try:
+                    currentTileImage = imageAssets['OutlineTemp']
+                except pygame.error:
+                    currentTileImage = imageFail
+                screen.blit(currentTileImage, (column * tileSize, row * tileSize))
 
 def calculateTileSize(screenSize, gridSize):
     screenWidth = screenSize[0]
@@ -68,7 +76,7 @@ def calculateTileSize(screenSize, gridSize):
     gridWidth = gridSize[0]
     gridHeight = gridSize[1]
 
-    tryTileHeight = screenHeight/gridHeight
-    tryTileWidth = screenWidth/gridWidth
+    tryTileHeight = math.ceil(screenHeight/gridHeight)
+    tryTileWidth = math.ceil(screenWidth/gridWidth)
 
     return(min(tryTileHeight, tryTileWidth))

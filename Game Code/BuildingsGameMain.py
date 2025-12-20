@@ -1,28 +1,39 @@
 import pygame
 
-#from [file name] import [func1], [func2], etc
+import DrawGrid
+
+#from [file2] import [func1], [func2], etc
+
+#etc
 
 # This initialises pygame
 pygame.init()
 
-def main():
-    # Declare screen, width, and height to be global
-    global screen, screenWidth, screenHeight, clock
+# This function reloads the images to the correct size
+def reloadImages(screenSize, gridSize):
+    tileSize = DrawGrid.calculateTileSize(screenSize, gridSize)
+    imageAssets = DrawGrid.LoadImagesFromFolder('Image Assets', tileSize)
+    return tileSize, imageAssets
 
-    
-    #Clock is set to pygame's clock object
+# Main funtion
+def main():
+    # Clock is set to pygame's clock object
     FPS = 60
     clock = pygame.time.Clock()
 
-    # Set up the window parameters
+    # Screen width and height in pixels
     screenWidth, screenHeight = 640, 480
+    # Grid width and height in tiles
+    gridWidth, gridHeight = 10, 10
+    # Tile size in pixels
+    tileSize = 50
     # screen variable will store the screen
     screen = pygame.display.set_mode((screenWidth, screenHeight), pygame.RESIZABLE)
     pygame.display.set_caption("Buildings Game")
 
-    backgroundColour = (0,0,0) # Pure black background that everything is drawn on
+    tileSize, imageAssets = reloadImages((screenWidth, screenHeight), (gridWidth, gridHeight))
 
-    x,y = 0, screenHeight/2
+    backgroundColour = (0,0,0) # Pure black background that everything is drawn on
 
     # Game loop
     gameIsRunning = True
@@ -42,15 +53,17 @@ def main():
                 gameIsRunning = False
             
             if event.type == pygame.VIDEORESIZE: # Screen resize
-                # event.h and event.w are methods of the VIDEORESIZE event
+                # event.h and event.w are methods of the VIDEORESIZE event, which are the new height and width of the window
+
+                # Resize the screen
                 screenWidth, screenHeight = event.w, event.h
                 screen = pygame.display.set_mode((screenWidth, screenHeight), pygame.RESIZABLE)
+                
+                # Reload image assets
+                tileSize, imageAssets = reloadImages((screenWidth, screenHeight), (gridWidth, gridHeight))
         
-        y = screenHeight/2
-        x += 10 * dt
-        pygame.draw.circle(screen, (255,255,255), (x, y), 10)
-        pygame.draw.circle(screen, (255,255,255), (x+50, y), 10)
-        pygame.draw.rect(screen, (255,255,255), (x, y+50, 50,5))
+        screenSettings = (screenWidth, screenHeight, tileSize)
+        DrawGrid.DrawGrid(screen, imageAssets, screenSettings, [], (gridWidth, gridHeight))
 
         pygame.display.flip() # This updates the entire screen
     

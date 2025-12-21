@@ -1,6 +1,8 @@
 import pygame
+import random
 
 import DrawGrid
+import UserInterface
 
 # This initialises pygame
 pygame.init()
@@ -28,7 +30,7 @@ def Main():
     # Screen width and height in pixels
     screenWidth, screenHeight = 640, 480
     # Grid width and height in tiles
-    gridWidth, gridHeight = 10, 10
+    gridWidth, gridHeight = 8, 8
     # Tile size in pixels
     tileSize = 50
     # screen variable will store the screen
@@ -36,10 +38,17 @@ def Main():
     pygame.display.set_caption("Buildings Game")
 
     tileSize, imageAssets = ReloadImages((screenWidth, screenHeight), (gridWidth, gridHeight))
+    #print(imageAssets)
 
-    backgroundColour = (0,0,0) # Pure black background that everything is drawn on
+    backgroundColour = (24,24,48) # Pure black background that everything is drawn on
 
     selectedTile = (-1,-1) # -1, -1 means unselected
+
+    mapData = [[random.choice(['Brick House Top', '']) for j in range(gridWidth)] for i in range(gridHeight)]
+
+    gameState = 'Active'
+    buttons = []
+    buttons.append(UserInterface.Button((128,128,128), screenWidth/2, screenHeight/2, 200, 50, 'Start!'))
 
     # Game loop
     gameIsRunning = True
@@ -76,12 +85,16 @@ def Main():
                 4: scroll up
                 5: scroll down
                 """
-                if event.button == 1:
+                if event.button == 1 and gameState == 'Active':
                     selectedTile = SelectTile((gridWidth, gridHeight), selectedTile, (event.pos[0] // tileSize, event.pos[1] // tileSize))
     
         screenSettings = (screenWidth, screenHeight, tileSize)
-        DrawGrid.DrawGrid(screen, imageAssets, screenSettings, [], (gridWidth, gridHeight))
-        DrawGrid.DrawMouse(screen, imageAssets, selectedTile, tileSize)
+        if gameState == 'Active':
+            DrawGrid.DrawGrid(screen, imageAssets, screenSettings, mapData, (gridWidth, gridHeight))
+            DrawGrid.DrawMouse(screen, imageAssets, selectedTile, tileSize, (gridWidth, gridHeight))
+        elif gameState == 'Start':
+            UserInterface.drawButtons(screen, buttons)
+        
         pygame.display.flip() # This updates the entire screen
 
     # This makes pygame quit nicely

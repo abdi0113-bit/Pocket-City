@@ -98,6 +98,6 @@ def calculateTileSize(screenSize, gridSize):
     gridHeight = gridSize[1]
 
     tryTileHeight = math.ceil(screenHeight/gridHeight)
-    tryTileWidth = math.ceil(screenWidth/gridWidth)
+    tryTileWidth = math.ceil(screenWidth * 0.75 /gridWidth) # The 0.75 gives some space for the inventory on the right
 
     return(min(tryTileHeight, tryTileWidth))

@@ -2,7 +2,8 @@ import pygame
 
 # Button class
 class Button():
-    def __init__(self, colour, x,y,width,height, text=''):
+    def __init__(self, name, colour, x, y, width, height, text=''):
+        self.name = name
         self.colour = colour
         self.x = x
         self.y = y
@@ -10,7 +11,7 @@ class Button():
         self.height = height
         self.text = text
 
-    def draw(self,surface,outline=None):
+    def draw(self, surface, outline = False):
         # This method draws the button on the screen
         if outline:
             pygame.draw.rect(surface, outline, (self.x-4 - self.width/2, self.y-4 - self.height/2, self.width+8,self.height+8),0)
@@ -24,7 +25,7 @@ class Button():
             pygame.draw.rect(surface, self.colour, (self.x - self.width/2, self.y - self.height/2, self.width, self.height),0)
         
         if self.text != '':
-            font = pygame.font.SysFont('arial', 60)
+            font = pygame.font.SysFont('amertype', 60)
             text = font.render(self.text, 1, (0,0,0))
             surface.blit(text, (self.x - text.get_width()/2, self.y - text.get_height()/2))
 
@@ -35,6 +36,10 @@ class Button():
                 return True
             
         return False
+    
+    def click(self): # Returns a value to be used by the main script depending on what the button is
+        if self.name == 'Start':
+            return 'Active'
     
 def drawButtons(surface, buttons):
     for button in buttons:

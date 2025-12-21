@@ -44,11 +44,12 @@ def Main():
 
     selectedTile = (-1,-1) # -1, -1 means unselected
 
-    mapData = [[random.choice(['Brick House Top', '']) for j in range(gridWidth)] for i in range(gridHeight)]
+    mapData = [[random.choice(['Brick House Top', 'Log House Top', 'Modern House Top', '']) for j in range(gridWidth)] for i in range(gridHeight)]
 
-    gameState = 'Active'
+    gameState = 'Start'
     buttons = []
-    buttons.append(UserInterface.Button((128,128,128), screenWidth/2, screenHeight/2, 200, 50, 'Start!'))
+    pressedButtons = []
+    buttons.append(UserInterface.Button('Start', (128,128,128), screenWidth/2, screenHeight/2, 200, 50, 'Start'))
 
     # Game loop
     gameIsRunning = True
@@ -60,6 +61,10 @@ def Main():
 
         # Clear the screen
         screen.fill(backgroundColour)
+
+        # Get mouse position
+        mousePos = pygame.mouse.get_pos()
+        mouseTileX, mouseTileY = mousePos[0] // tileSize, mousePos[1] // tileSize
 
         # Run through every event detected by pygame
         for event in pygame.event.get():
@@ -85,8 +90,32 @@ def Main():
                 4: scroll up
                 5: scroll down
                 """
-                if event.button == 1 and gameState == 'Active':
-                    selectedTile = SelectTile((gridWidth, gridHeight), selectedTile, (event.pos[0] // tileSize, event.pos[1] // tileSize))
+                if event.button == 1:
+                    if gameState == 'Active':
+                        selectedTile = SelectTile((gridWidth, gridHeight), selectedTile, (event.pos[0] // tileSize, event.pos[1] // tileSize))
+                    
+                    for button in buttons:
+                        if button.isOver(mousePos):
+                            pressedButtons.append(button)
+
+            if event.type == pygame.MOUSEBUTTONUP: # On release  
+                """
+                event.button codes:
+                1: left click
+                2: middle click
+                3: right click
+                4: scroll up
+                5: scroll down
+                """
+                if event.button == 1:
+                    for button in pressedButtons:
+                        if button.isOver(mousePos):
+                            result = button.click()
+
+                            if button.name == 'Start':
+                                gameState = result
+
+                    pressedButtons = []
     
         screenSettings = (screenWidth, screenHeight, tileSize)
         if gameState == 'Active':

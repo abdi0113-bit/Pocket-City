@@ -16,3 +16,11 @@ class Building():
             pass
         elif self.name == 'Log House':
             pass
+
+    def whenBought(self, currentMoney):
+        if self.name == 'Brick House':
+            pass
+        elif self.name == 'Log House':
+            pass
+
+        return currentMoney - self.cost

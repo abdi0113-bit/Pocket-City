@@ -79,12 +79,22 @@ def Main():
             
             if event.type == pygame.VIDEORESIZE: # Screen resize
                 # event.h and event.w are methods of the VIDEORESIZE event, which are the new height and width of the window
+
+                #Scale the buttons by the amount that the screen changed by
+                for button in buttons:
+                    if button.name == 'Start':
+                        button.x = event.w/2
+                        button.y = event.h/2
+                    button.width *= event.w/screenWidth
+                    button.height *= event.h/screenHeight
+                    
                 # Resize the screen
                 screenWidth, screenHeight = event.w, event.h
                 screen = pygame.display.set_mode((screenWidth, screenHeight), pygame.RESIZABLE)
             
                 # Reload image assets
                 tileSize, imageAssets = ReloadImages((screenWidth, screenHeight), (gridWidth, gridHeight))
+                
         
             if event.type == pygame.MOUSEBUTTONDOWN: # On click
                 """

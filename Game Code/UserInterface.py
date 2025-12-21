@@ -25,7 +25,7 @@ class Button():
             pygame.draw.rect(surface, self.colour, (self.x - self.width/2, self.y - self.height/2, self.width, self.height),0)
         
         if self.text != '':
-            font = pygame.font.SysFont('amertype', 60)
+            font = pygame.font.SysFont('amertype', int(self.height))
             text = font.render(self.text, 1, (0,0,0))
             surface.blit(text, (self.x - text.get_width()/2, self.y - text.get_height()/2))
 

@@ -3,6 +3,7 @@ import random
 
 import DrawGrid
 import UserInterface
+import Buildings
 
 # This initialises pygame
 pygame.init()
@@ -10,7 +11,7 @@ pygame.init()
 # This function reloads the images to the correct size
 def ReloadImages(screenSize, gridSize):
     tileSize = DrawGrid.calculateTileSize(screenSize, gridSize)
-    imageAssets = DrawGrid.LoadImagesFromFolder('Image Assets', tileSize)
+    imageAssets = DrawGrid.LoadImagesFromFolder('Image Assets', tileSize/50)
 
     return tileSize, imageAssets
 
@@ -52,9 +53,18 @@ def Main():
 
     buttons = []
     pressedButtons = []
-    buttons.append(UserInterface.Button('Start', (128,128,128), screenWidth/2, screenHeight/2, 200, 50, 'Start'))
+    buttons.append(UserInterface.Button('Start', (128,128,128), screenWidth/2, screenHeight/2, 200, 50, 'Start')) # Start button
+    numberOfPlayers = 2
+    buttons.append(UserInterface.Button('PlayerSelector', (128,128,128), screenWidth/2, screenHeight/2 + 100, 200, 50, f'Players: {numberOfPlayers}'))
 
     buildingsList = []
+    # Construct a dictionary of rarity background files
+    shop = []
+    rarities = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary']
+    rarityFiles = dict([(rarity, rarity + ' Rarity Background') for rarity in rarities])
+    
+    # Test the shop
+    #[shop.append(Buildings.Building('name', 0, random.choice(['Brick House', 'Log House', 'Modern House']), random.choice(rarities))) for i in range(5)]
 
     # Game loop
     gameIsRunning = True
@@ -85,6 +95,9 @@ def Main():
                     if button.name == 'Start':
                         button.x = event.w/2
                         button.y = event.h/2
+                    elif button.name == 'PlayerSelector':
+                        button.x = event.w/2
+                        button.y = (event.h + 100)/2
                     button.width *= event.w/screenWidth
                     button.height *= event.h/screenHeight
                     
@@ -129,6 +142,8 @@ def Main():
 
                             if button.name == 'Start':
                                 gameState = result
+                            elif button.name == 'PlayerSelector':
+                                numberOfPlayers = result
 
                     pressedButtons = []
     
@@ -136,6 +151,8 @@ def Main():
         if gameState == 'Active':
             DrawGrid.DrawGrid(screen, imageAssets, screenSettings, mapData, (gridWidth, gridHeight))
             DrawGrid.DrawMouse(screen, imageAssets, selectedTile, tileSize, (gridWidth, gridHeight))
+            UserInterface.drawShop(screen, imageAssets, rarityFiles, shop, (gridWidth, gridHeight), tileSize)
+
         elif gameState == 'Start':
             UserInterface.drawButtons(screen, buttons)
         

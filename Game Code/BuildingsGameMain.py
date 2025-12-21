@@ -11,7 +11,9 @@ pygame.init()
 def ReloadImages(screenSize, gridSize):
     tileSize = DrawGrid.calculateTileSize(screenSize, gridSize)
     imageAssets = DrawGrid.LoadImagesFromFolder('Image Assets', tileSize)
+
     return tileSize, imageAssets
+
 
 def SelectTile(gridSize, selectedTile, pos):
     if selectedTile == pos: # If the position is the selected tile, unselect it
@@ -47,9 +49,12 @@ def Main():
     mapData = [[random.choice(['Brick House Top', 'Log House Top', 'Modern House Top', '']) for j in range(gridWidth)] for i in range(gridHeight)]
 
     gameState = 'Start'
+
     buttons = []
     pressedButtons = []
     buttons.append(UserInterface.Button('Start', (128,128,128), screenWidth/2, screenHeight/2, 200, 50, 'Start'))
+
+    buildingsList = []
 
     # Game loop
     gameIsRunning = True

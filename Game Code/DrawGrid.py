@@ -91,6 +91,7 @@ def DrawGrid(screen, imageAssets, screenSettings, tileMap, gridSize):
                 if not tileMap[row][column] in [0, '']:
                     StampImage(screen, imageAssets, tileMap[row][column], (column, row), tileSize)        
 
+
 def calculateTileSize(screenSize, gridSize):
     screenWidth = screenSize[0]
     screenHeight = screenSize[1]
@@ -98,6 +99,6 @@ def calculateTileSize(screenSize, gridSize):
     gridHeight = gridSize[1]
 
     tryTileHeight = math.ceil(screenHeight/gridHeight)
-    tryTileWidth = math.ceil(screenWidth * 0.75 /gridWidth) # The 0.75 gives some space for the inventory on the right
+    tryTileWidth = math.ceil(screenWidth/(gridWidth + 2.5)) # The +2.5 gives some space for the inventory on the right
 
     return(min(tryTileHeight, tryTileWidth))

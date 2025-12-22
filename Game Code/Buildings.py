@@ -24,5 +24,4 @@ class Building():
             pass
         elif self.name == 'Log House':
             pass
-
         return currentMoney - self.cost

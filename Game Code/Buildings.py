@@ -1,9 +1,10 @@
 import pygame
 
 class Building():
-    def __init__(self, name, cost, rarity):
+    def __init__(self, name, cost, image, rarity):
         self.name = name
         self.cost = cost
+        self.image = image
         self.rarity = rarity
 
     def whenActivated(self):

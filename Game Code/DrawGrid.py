@@ -3,7 +3,7 @@ import os
 import math
 
 # This function is from Gemini, takes a folder and extracts all the images in itself and its subfolders
-def LoadImagesFromFolder(path, tileSize):
+def LoadImagesFromFolder(path, scale):
     # Empty images dictionary
     images = {}
     """
@@ -22,18 +22,19 @@ def LoadImagesFromFolder(path, tileSize):
                 name = os.path.splitext(filename)[0]
                 # .convert_alpha converts it to the right format, alpha means it works with images that have transparency
                 rawImage = pygame.image.load(imgPath).convert_alpha()
-                scaledImage = pygame.transform.smoothscale(rawImage, (tileSize, tileSize))
+                imageW, imageH = rawImage.get_size()
+                scaledImage = pygame.transform.smoothscale(rawImage, (imageW * scale, imageH * scale))
                 images[name] = scaledImage
 
     # Returns a dictionary with all the images
     # Keys are filenames, values are the images
     return images
 
-def StampImage(screen, imageAssets, imageToLoad, pos, tileSize, ):
+def StampImage(screen, imageAssets, imageToLoad, pos, tileSize):
     try:
         currentTileImage = imageAssets[imageToLoad]
     except:
-        #print(f'ERROR: Failed to load tile {imageToLoad}')
+        print(f'ERROR: Failed to load tile {imageToLoad}')
         currentTileImage = imageAssets['Failed to Load']
     screen.blit(currentTileImage, (pos[0] * tileSize, pos[1] * tileSize))
 
@@ -99,6 +100,6 @@ def calculateTileSize(screenSize, gridSize):
     gridHeight = gridSize[1]
 
     tryTileHeight = math.ceil(screenHeight/gridHeight)
-    tryTileWidth = math.ceil(screenWidth/(gridWidth + 2.5)) # The +2.5 gives some space for the inventory on the right
+    tryTileWidth = math.ceil(screenWidth/(gridWidth + 3)) # The +2.2 gives some space for the inventory on the right
 
     return(min(tryTileHeight, tryTileWidth))

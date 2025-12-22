@@ -40,7 +40,35 @@ class Button():
     def click(self): # Returns a value to be used by the main script depending on what the button is
         if self.name == 'Start':
             return 'Active'
+        elif self.name == 'PlayerSelector':
+            newPlayerNum = int(self.text[len(self.text) - 1]) + 1 # This takes the current ending and adds 1
+            if newPlayerNum == 5:
+                newPlayerNum = 2
+            self.text = f'Players: {newPlayerNum}'
+            return newPlayerNum
     
+
+def stampImage(screen, imageAssets, imageToLoad, pos, tileSize):
+    try:
+        currentImage = imageAssets[imageToLoad]
+    except:
+        print(f'ERROR: Failed to load tile {imageToLoad}')
+        currentImage = imageAssets['Failed to Load']
+    screen.blit(currentImage, (pos[0] * tileSize, pos[1] * tileSize))
+
+
 def drawButtons(surface, buttons):
     for button in buttons:
         button.draw(surface, (0,0,0))
+
+
+
+def drawShop(surface, imageAssets, rarities, shop, gridSize, tileSize):
+    gridWidth = gridSize[0]
+    gridHeight = gridSize[1]
+
+    itemIndex = 0
+    for item in shop:
+        stampImage(surface, imageAssets, rarities[item.rarity], (gridWidth + 0.5, itemIndex + 0.5), tileSize)
+        stampImage(surface, imageAssets, item.image, (gridWidth + 0.5, itemIndex + 0.5), tileSize)
+        itemIndex += 1

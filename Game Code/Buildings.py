@@ -1,9 +1,10 @@
 import pygame
 
 class Building():
-    def __init__(self, name, cost):
+    def __init__(self, name, cost, rarity):
         self.name = name
         self.cost = cost
+        self.rarity = rarity
 
     def whenActivated(self):
         if self.name == 'Brick House':
@@ -22,5 +23,4 @@ class Building():
             pass
         elif self.name == 'Log House':
             pass
-
         return currentMoney - self.cost

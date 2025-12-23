@@ -52,16 +52,17 @@ class Building():
 # These lists will store all the data for the buildings
 
 # Example:
-Building('Brick House', 5,  'Brick House', 'Common',        (5, 0),              (1, 0),                'This is a\nbasic house')
-#             ^         ^         ^            ^             ^  ^                 ^  ^                             ^
-#            Name      Cost    Name of       Rarity        Score when          Money when                   Mouseover message
-#                             image file              (activated, placed)  (activated, placed)          (use \n for multiple lines)
+Building('Brick House', 5,    'Brick House',   'Common',        (5, 0),              (1, 0),                'This is a\nbasic house')
+#             ^         ^           ^             ^              ^  ^                 ^  ^                             ^
+#            Name     Cost    Name of image     Rarity        Score when          Money when                   Mouseover message
+#                           file (without .png)           (activated, placed)  (activated, placed)          (use \n for multiple lines)
          
 
+starterTent = Building('Starter Tent', 5,  'Starter Tent', '', (1,0), (0,0), 'Everyone has to start somewhere')
 
-commonBuildings = [Building('Brick House', 5,  'Brick House', 'Common', (0,0), (0,0), 'Mouseover text'),
-                   Building('Log House', 4,  'Log House', 'Common', (0,0), (0,0), 'Placeholder text'),
-                   Building('Modern House', 6, 'Modern House', 'Common', (0,0), (0,0), 'Cool text')]
+commonBuildings =  [Building('Brick House', 5,  'Brick House', 'Common', (0,0), (0,0), 'Mouseover text'),
+                    Building('Log House', 4,  'Log House', 'Common', (0,0), (0,0), 'Placeholder text'),
+                    Building('Modern House', 6, 'Modern House', 'Common', (0,0), (0,0), 'Cool text')]
 uncommonBuildings = []
 rareBuildings = []
 epicBuildings = []

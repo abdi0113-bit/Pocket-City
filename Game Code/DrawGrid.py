@@ -46,7 +46,7 @@ def DrawMouse(screen, imageAssets, selectedTile, tileSize, gridSize):
     mousePos = pygame.mouse.get_pos()
     mouseTileX, mouseTileY = mousePos[0] // tileSize, mousePos[1] // tileSize
 
-    if mouseTileX < gridWidth and mouseTileX < gridHeight:
+    if mouseTileX < gridWidth and mouseTileY < gridHeight:
         # Stamp mouse overlay
         if selectedTile == (-1, -1): # If unselected
             StampImage(screen, imageAssets, 'Hover Tile', (mouseTileX, mouseTileY), tileSize)
@@ -93,7 +93,7 @@ def DrawGrid(screen, imageAssets, screenSettings, tileMap, gridSize):
                     StampImage(screen, imageAssets, tileMap[row][column], (column, row), tileSize)        
 
 
-def calculateTileSize(screenSize, gridSize):
+def CalculateTileSize(screenSize, gridSize, shopLength):
     screenWidth = screenSize[0]
     screenHeight = screenSize[1]
     gridWidth = gridSize[0]
@@ -101,5 +101,6 @@ def calculateTileSize(screenSize, gridSize):
 
     tryTileHeight = math.ceil(screenHeight/gridHeight)
     tryTileWidth = math.ceil(screenWidth/(gridWidth + 3)) # The +2.2 gives some space for the inventory on the right
+    tryInventory = math.ceil(screenHeight/(shopLength + 1))
 
-    return(min(tryTileHeight, tryTileWidth))
+    return(min(tryTileHeight, tryTileWidth, tryInventory, 100))

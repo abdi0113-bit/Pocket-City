@@ -24,4 +24,15 @@ class Building():
             pass
         elif self.name == 'Log House':
             pass
+
         return currentMoney - self.cost
+    
+
+
+commonBuildings = [Building('Brick House', 5,  'Brick House', 'Common'),
+                   Building('Log House', 4,  'Log House', 'Common'),
+                   Building('Modern House', 6, 'Modern House', 'Common')]
+uncommonBuildings = []
+rareBuildings = []
+epicBuildings = []
+legendaryBuildings = []

@@ -9,8 +9,8 @@ import Buildings
 pygame.init()
 
 # This function reloads the images to the correct size
-def ReloadImages(screenSize, gridSize):
-    tileSize = DrawGrid.calculateTileSize(screenSize, gridSize)
+def ReloadImages(screenSize, gridSize, shopLength):
+    tileSize = DrawGrid.CalculateTileSize(screenSize, gridSize, shopLength)
     imageAssets = DrawGrid.LoadImagesFromFolder('Image Assets', tileSize/50)
 
     return tileSize, imageAssets
@@ -33,38 +33,41 @@ def Main():
     # Screen width and height in pixels
     screenWidth, screenHeight = 640, 480
     # Grid width and height in tiles
-    gridWidth, gridHeight = 8, 8
+    # Start at 4x4
+    gridWidth, gridHeight = 3, 3
     # Tile size in pixels
     tileSize = 50
     # screen variable will store the screen
     screen = pygame.display.set_mode((screenWidth, screenHeight), pygame.RESIZABLE)
-    pygame.display.set_caption("Buildings Game")
+    pygame.display.set_caption("Pocket City")
 
-    tileSize, imageAssets = ReloadImages((screenWidth, screenHeight), (gridWidth, gridHeight))
+    shop = []
+    # Test the shop
+    [shop.append(random.choice(Buildings.commonBuildings)) for i in range(3)]
+
+    gridOffsetY = 50
     #print(imageAssets)
 
-    backgroundColour = (24,24,48) # Pure black background that everything is drawn on
+    backgroundColour = (24,24,48) # dark blue background that everything is drawn on
 
     selectedTile = (-1,-1) # -1, -1 means unselected
 
-    mapData = [[random.choice(['Brick House Top', 'Log House Top', 'Modern House Top', '']) for j in range(gridWidth)] for i in range(gridHeight)]
+    mapData = [['' for j in range(gridWidth)] for i in range(gridHeight)]
 
     gameState = 'Start'
 
     buttons = []
     pressedButtons = []
-    buttons.append(UserInterface.Button('Start', (128,128,128), screenWidth/2, screenHeight/2, 200, 50, 'Start')) # Start button
+    buttons.append(UserInterface.Button('Start', (128,128,128), screenWidth * 0.5, screenHeight * 0.5, 200, 50, 'Start')) # Start button
     numberOfPlayers = 2
-    buttons.append(UserInterface.Button('PlayerSelector', (128,128,128), screenWidth/2, screenHeight/2 + 100, 200, 50, f'Players: {numberOfPlayers}'))
+    currentTurn = 1
+    buttons.append(UserInterface.Button('PlayerSelector', (128,128,128), screenWidth * 0.5, screenHeight * 0.65, 200, 50, f'Players: {numberOfPlayers}'))
 
-    buildingsList = []
     # Construct a dictionary of rarity background files
-    shop = []
     rarities = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary']
     rarityFiles = dict([(rarity, rarity + ' Rarity Background') for rarity in rarities])
-    
-    # Test the shop
-    #[shop.append(Buildings.Building('name', 0, random.choice(['Brick House', 'Log House', 'Modern House']), random.choice(rarities))) for i in range(5)]
+
+    tileSize, imageAssets = ReloadImages((screenWidth, screenHeight), (gridWidth, gridHeight), len(shop))
 
     # Game loop
     gameIsRunning = True
@@ -93,20 +96,19 @@ def Main():
                 #Scale the buttons by the amount that the screen changed by
                 for button in buttons:
                     if button.name == 'Start':
-                        button.x = event.w/2
-                        button.y = event.h/2
+                        button.x = event.w * 0.5
+                        button.y = event.h * 0.5
                     elif button.name == 'PlayerSelector':
-                        button.x = event.w/2
-                        button.y = (event.h + 100)/2
-                    button.width *= event.w/screenWidth
-                    button.height *= event.h/screenHeight
+                        button.x = event.w * 0.5
+                        button.y = event.h * 0.65
+                    button.resize(event.w/screenWidth, event.h/screenHeight)
                     
                 # Resize the screen
                 screenWidth, screenHeight = event.w, event.h
                 screen = pygame.display.set_mode((screenWidth, screenHeight), pygame.RESIZABLE)
             
                 # Reload image assets
-                tileSize, imageAssets = ReloadImages((screenWidth, screenHeight), (gridWidth, gridHeight))
+                tileSize, imageAssets = ReloadImages((screenWidth, screenHeight), (gridWidth, gridHeight), len(shop))
                 
         
             if event.type == pygame.MOUSEBUTTONDOWN: # On click
@@ -151,10 +153,10 @@ def Main():
         if gameState == 'Active':
             DrawGrid.DrawGrid(screen, imageAssets, screenSettings, mapData, (gridWidth, gridHeight))
             DrawGrid.DrawMouse(screen, imageAssets, selectedTile, tileSize, (gridWidth, gridHeight))
-            UserInterface.drawShop(screen, imageAssets, rarityFiles, shop, (gridWidth, gridHeight), tileSize)
+            UserInterface.DrawShop(screen, imageAssets, rarityFiles, shop, screenSettings, (gridWidth, gridHeight))
 
         elif gameState == 'Start':
-            UserInterface.drawButtons(screen, buttons)
+            UserInterface.DrawButtons(screen, buttons)
         
         pygame.display.flip() # This updates the entire screen
 

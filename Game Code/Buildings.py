@@ -58,7 +58,7 @@ Building('Brick House', 5,    'Brick House',   'Common',        (5, 0),         
 #                           file (without .png)           (activated, placed)  (activated, placed)          (use \n for multiple lines)
          
 
-starterTent = Building('Starter Tent', 5,  'Starter Tent', '', (1,0), (0,0), 'Everyone has to start somewhere')
+starterTent = Building('Starter Tent', 5,  'Starter Tent', '', (1,0), (0,0), 'Everyone has to\nstart somewhere')
 
 commonBuildings =  [Building('Brick House', 5,  'Brick House', 'Common', (0,0), (0,0), 'Mouseover text'),
                     Building('Log House', 4,  'Log House', 'Common', (0,0), (0,0), 'Placeholder text'),

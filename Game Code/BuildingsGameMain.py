@@ -4,6 +4,7 @@ import random
 import DrawGrid
 import UserInterface
 import Buildings
+import Player
 
 # This initialises pygame
 pygame.init()
@@ -11,7 +12,12 @@ pygame.init()
 # This function reloads the images to the correct size
 def ReloadImages(screenSize, gridSize, shopLength):
     tileSize = DrawGrid.CalculateTileSize(screenSize, gridSize, shopLength)
-    imageAssets = DrawGrid.LoadImagesFromFolder('Image Assets', tileSize/50)
+    imageAssets = {}
+    # The |= operator merges 2 dictionaries
+    imageAssets |= DrawGrid.LoadImagesFromFolder('Image Assets/Inventory Sprites', tileSize/50)
+    imageAssets |= DrawGrid.LoadImagesFromFolder('Image Assets/Tile Sprites', tileSize/50)
+    imageAssets |= DrawGrid.LoadImagesFromFolder('Image Assets/UI', tileSize/50)
+    imageAssets |= DrawGrid.LoadImagesFromFolder('Image Assets/Start Screen', 1)
 
     return tileSize, imageAssets
 
@@ -19,10 +25,18 @@ def ReloadImages(screenSize, gridSize, shopLength):
 def SelectTile(gridSize, selectedTile, pos):
     if selectedTile == pos: # If the position is the selected tile, unselect it
         return (-1, -1)
-    elif pos[0] >= gridSize[0] or pos[1] >= gridSize[1]: # Out of bounds
+    elif pos[0] >= gridSize[0] or pos[1] >= gridSize[1] or pos[0] < 0 or pos[1] < 0: # Out of bounds
         return (-1, -1)
     else: # Otherwise just update the selected tile
         return pos
+    
+def startGame(numPlayers):
+    players = []
+    startingBoard = [[None for j in range(3)] for i in range(3)]
+    startingBoard[1][1] = Buildings.starterTent
+    for i in range(numPlayers):
+        players.append(Player.Player(100, f'Player {i+1}', 0, i + 1, startingBoard))
+    return players
 
 # Main funtion
 def Main():
@@ -48,11 +62,12 @@ def Main():
     gridOffsetY = 50
     #print(imageAssets)
 
-    backgroundColour = (24,24,48) # dark blue background that everything is drawn on
+    backgroundColour = (115, 197, 245) # sky blue background at the start
 
     selectedTile = (-1,-1) # -1, -1 means unselected
 
-    mapData = [['' for j in range(gridWidth)] for i in range(gridHeight)]
+    mapData = [[None for j in range(gridWidth)] for i in range(gridHeight)]
+    mapData[1][1] = Buildings.starterTent
 
     gameState = 'Start'
 
@@ -79,6 +94,10 @@ def Main():
 
         # Clear the screen
         screen.fill(backgroundColour)
+        if gameState == 'Start':
+            screen.blit(imageAssets['Pocket City Background'], (0,0))
+            screen.blit(imageAssets['Pocket City Icon'], (0,0))
+            screen.blit(imageAssets['Pocket City Title'], (0,0))
 
         # Get mouse position
         mousePos = pygame.mouse.get_pos()
@@ -122,7 +141,7 @@ def Main():
                 """
                 if event.button == 1:
                     if gameState == 'Active':
-                        selectedTile = SelectTile((gridWidth, gridHeight), selectedTile, (event.pos[0] // tileSize, event.pos[1] // tileSize))
+                        selectedTile = SelectTile((gridWidth, gridHeight), selectedTile, (event.pos[0] // tileSize, (event.pos[1] - gridOffsetY) // tileSize))
                     
                     for button in buttons:
                         if button.isOver(mousePos):
@@ -144,15 +163,17 @@ def Main():
 
                             if button.name == 'Start':
                                 gameState = result
+                                backgroundColour = (0, 0, 0)
+                                players = startGame(numberOfPlayers)
                             elif button.name == 'PlayerSelector':
                                 numberOfPlayers = result
 
                     pressedButtons = []
     
-        screenSettings = (screenWidth, screenHeight, tileSize)
+        screenSettings = (screenWidth, screenHeight, tileSize, gridOffsetY)
         if gameState == 'Active':
-            DrawGrid.DrawGrid(screen, imageAssets, screenSettings, mapData, (gridWidth, gridHeight))
-            DrawGrid.DrawMouse(screen, imageAssets, selectedTile, tileSize, (gridWidth, gridHeight))
+            DrawGrid.DrawGrid(screen, imageAssets, screenSettings, players[currentTurn].board, (gridWidth, gridHeight))
+            DrawGrid.DrawMouse(screen, imageAssets, players[currentTurn].board, selectedTile, screenSettings, (gridWidth, gridHeight))
             UserInterface.DrawShop(screen, imageAssets, rarityFiles, shop, screenSettings, (gridWidth, gridHeight))
 
         elif gameState == 'Start':

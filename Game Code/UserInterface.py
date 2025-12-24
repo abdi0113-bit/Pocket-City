@@ -98,24 +98,28 @@ def DrawShop(surface, imageAssets, rarities, shop, screenSettings, gridSize):
     screenWidth = screenSettings[0]
     screenHeight = screenSettings[1]
     tileSize = screenSettings[2]
+    gridOffsetY = screenSettings[3]
 
     gridWidth = gridSize[0]
     gridHeight = gridSize[1]
 
     mousePos = pygame.mouse.get_pos()
 
-    StampImage(surface, imageAssets, 'Shop Sign', (gridWidth + 0.5, 0), tileSize)
+    pygame.draw.rect(surface, (129, 91, 55), (0,0,(gridWidth+2.5)*tileSize,gridOffsetY), 0)
+
+    StampImage(surface, imageAssets, 'Shop Sign', (gridWidth + 0.5, gridOffsetY/tileSize), tileSize)
 
     for itemIndex, item in enumerate(shop):
         # Stamp the rarity background
-        imageRect = imageAssets[rarities[item.rarity]].get_rect(topleft = ((gridWidth + 0.5)*tileSize, (itemIndex + 0.5)*tileSize))
+        x,y = gridWidth + 0.5, itemIndex + 0.5 + gridOffsetY/tileSize
+        imageRect = imageAssets[rarities[item.rarity]].get_rect(topleft = (x*tileSize, y*tileSize))
         if imageRect.collidepoint(mousePos):
             lightness = 64
         else:
             lightness = 0
-        StampImage(surface, imageAssets, rarities[item.rarity], (gridWidth + 0.5, itemIndex + 0.5), tileSize, lightness)
+        StampImage(surface, imageAssets, rarities[item.rarity], (x, y), tileSize, lightness)
         # Stamp the building's image
-        StampImage(surface, imageAssets, item.image, (gridWidth - 0.5, itemIndex + 0.5), tileSize, lightness)
+        StampImage(surface, imageAssets, item.image, (x-1, y), tileSize, lightness)
 
         # Write out the cost and the name
         lines = item.name.split(' ')
@@ -130,4 +134,4 @@ def DrawShop(surface, imageAssets, rarities, shop, screenSettings, gridSize):
             textRender = font.render(line, True, (lightness, lightness, lightness))
 
             # Calculate vertical position based on line number, font height, and spacing
-            surface.blit(textRender, ((gridWidth + 1.6) * tileSize, (itemIndex + 0.6) * tileSize + index * (font.get_height() * 1.1)))
+            surface.blit(textRender, ((x + 1.1) * tileSize, (y + 0.1) * tileSize + index * (font.get_height() * 1.1)))

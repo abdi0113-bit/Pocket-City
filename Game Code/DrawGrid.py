@@ -38,28 +38,55 @@ def StampImage(screen, imageAssets, imageToLoad, pos, tileSize):
         currentTileImage = imageAssets['Failed to Load']
     screen.blit(currentTileImage, (pos[0] * tileSize, pos[1] * tileSize))
 
-def DrawMouse(screen, imageAssets, selectedTile, tileSize, gridSize):
+def DrawMouse(screen, imageAssets, tilemap, selectedTile, screenSettings, gridSize):
     gridWidth = gridSize[0]
     gridHeight = gridSize[1]
 
+    screenWidth = screenSettings[0]
+    screenHeight = screenSettings[1]
+    tileSize = screenSettings[2]
+    gridOffsetY = screenSettings[3]
+
     # Get mouse position
     mousePos = pygame.mouse.get_pos()
-    mouseTileX, mouseTileY = mousePos[0] // tileSize, mousePos[1] // tileSize
+    mouseTileX, mouseTileY = mousePos[0] // tileSize, (mousePos[1] - gridOffsetY) // tileSize
+    
+    #print(selectedTile[0], selectedTile[1])
+    # Stamp mouse overlay
+    if selectedTile == (-1, -1): # If unselected
+        if not (mouseTileX >= gridWidth or mouseTileY >= gridHeight or mouseTileX < 0 or mouseTileY < 0):
+            StampImage(screen, imageAssets, 'Hover Tile', (mouseTileX, mouseTileY + gridOffsetY/tileSize), tileSize)
+            
+            # Draw the mouseover text
+            if tilemap[mouseTileY][mouseTileX]:
+                font = pygame.font.SysFont('amertype', int(20))
+                
+                lines = tilemap[mouseTileY][mouseTileX].message.split('\n')
 
-    if mouseTileX < gridWidth and mouseTileY < gridHeight:
-        # Stamp mouse overlay
-        if selectedTile == (-1, -1): # If unselected
-            StampImage(screen, imageAssets, 'Hover Tile', (mouseTileX, mouseTileY), tileSize)
+                # This is an inline (lambda) function which draws the rectangle with the specified colour and padding
+                drawTextRect = lambda colour, padding:    pygame.draw.rect(screen, colour, (mousePos[0] - (textRender.get_width() + padding)/2, mousePos[1] - textHeight - padding/2, (textRender.get_width() + padding),(textHeight + padding)),0)
 
-        else: # If selected
-            StampImage(screen, imageAssets, 'Selected Tile', selectedTile, tileSize)
+                longestLine = font.render(max(lines, key=len), True, (0,0,0))
+                textHeight = longestLine.get_height() * len(lines)
+
+                textRender = longestLine
+                drawTextRect((0,0,0), 12)
+                drawTextRect((255,255,255), 8)
+                
+                for index, line in enumerate(lines):
+                    textRender = font.render(line, True, (0,0,0))
+
+                    screen.blit(textRender, (mousePos[0] - textRender.get_width()/2, mousePos[1] - textHeight/2 + textRender.get_height() * (index - 1)))
+
+    else: # If selected
+        StampImage(screen, imageAssets, 'Selected Tile', (selectedTile[0], selectedTile[1] + gridOffsetY/tileSize), tileSize)
 
 def TileExists(tileMap, pos):
-    if len(tileMap) > pos[1] and len(tileMap[pos[1]]) > pos[0] and pos[1] >= 0 and pos[0] >= 0: # If the tilemap contains that location
-        currentTile = tileMap[pos[1]][pos[0]]
-        return 1
-    else:
+    if len(tileMap) <= pos[1] or len(tileMap[pos[1]]) <= pos[0] or pos[1] < 0 or pos[0] < 0: # If the tile is out of bounds
         return 0
+    else:
+        currentTile = tileMap[pos[1]][pos[0]]
+        return int(currentTile not in [0, '', None])
 
 # Draws the grid
 def DrawGrid(screen, imageAssets, screenSettings, tileMap, gridSize):
@@ -69,6 +96,7 @@ def DrawGrid(screen, imageAssets, screenSettings, tileMap, gridSize):
     screenWidth = screenSettings[0]
     screenHeight = screenSettings[1]
     tileSize = screenSettings[2]
+    gridOffsetY = screenSettings[3]
 
     gridWidth = gridSize[0]
     gridHeight = gridSize[1]
@@ -84,13 +112,13 @@ def DrawGrid(screen, imageAssets, screenSettings, tileMap, gridSize):
 
             #print(f'Stone Tile {connections}')
             if f'Stone Tile {connections}' in imageAssets:
-                StampImage(screen, imageAssets, f'Stone Tile {connections}', (column, row), tileSize)
+                StampImage(screen, imageAssets, f'Stone Tile {connections}', (column, row + gridOffsetY/tileSize), tileSize)
             else:
-                StampImage(screen, imageAssets, f'Stone Tile', (column, row), tileSize)
+                StampImage(screen, imageAssets, f'Stone Tile', (column, row + gridOffsetY/tileSize), tileSize)
 
             if len(tileMap) > row and len(tileMap[row]) > column:
-                if not tileMap[row][column] in [0, '']:
-                    StampImage(screen, imageAssets, tileMap[row][column], (column, row), tileSize)        
+                if not tileMap[row][column] in [0, '', None]:
+                    StampImage(screen, imageAssets, tileMap[row][column].image + ' Top', (column, row + gridOffsetY/tileSize), tileSize)        
 
 
 def CalculateTileSize(screenSize, gridSize, shopLength):

@@ -1,9 +1,10 @@
 import pygame
 
 class Building():
-    def __init__(self, name, cost, image, rarity, scoreIncreaseValues, moneyIncreaseValues, message):
+    def __init__(self, name, cost, sellAmt, image, rarity, scoreIncreaseValues, moneyIncreaseValues, message):
         self.name = name
         self.cost = cost
+        self.sellAmt = sellAmt
         self.image = image
         self.rarity = rarity
         self.scoreIncreaseActivate = scoreIncreaseValues[0]
@@ -52,17 +53,17 @@ class Building():
 # These lists will store all the data for the buildings
 
 # Example:
-Building('Brick House', 5,    'Brick House',   'Common',        (5, 0),              (1, 0),                'This is a\nbasic house')
-#             ^         ^           ^             ^              ^  ^                 ^  ^                             ^
-#            Name     Cost    Name of image     Rarity        Score when          Money when                   Mouseover message
-#                           file (without .png)           (activated, placed)  (activated, placed)          (use \n for multiple lines)
+Building('Brick House', 5,   3,      'Brick House',   'Common',        (5, 0),              (1, 0),                'This is a\nbasic house')
+#             ^         ^    ^             ^             ^              ^  ^                 ^  ^                             ^
+#            Name     Cost  Sell      Name of image     Rarity        Score when          Money when                   Mouseover message
+#                           cost   file (without .png)           (activated, placed)  (activated, placed)         (use \n for multiple lines)
          
 
-starterTent = Building('Starter Tent', 5,  'Starter Tent', '', (1,0), (0,0), 'Everyone has to\nstart somewhere')
+starterTent = Building('Starter Tent', 5, 1,  'Starter Tent', '', (1,0), (0,0), 'Starter Tent\n--------------\nIncreases score\nby 1 when\nactivated.')
 
-commonBuildings =  [Building('Brick House', 5,  'Brick House', 'Common', (0,0), (0,0), 'Mouseover text'),
-                    Building('Log House', 4,  'Log House', 'Common', (0,0), (0,0), 'Placeholder text'),
-                    Building('Modern House', 6, 'Modern House', 'Common', (0,0), (0,0), 'Cool text')]
+commonBuildings =  [Building('Brick House', 5, 4,  'Brick House', 'Common', (10,0), (0,0), 'Mouseover text'),
+                    Building('Log House', 4, 3,  'Log House', 'Common', (6,0), (0,0), 'Placeholder text'),
+                    Building('Modern House', 7, 5, 'Modern House', 'Common', (0,0), (10,0), 'Cool text')]
 uncommonBuildings = []
 rareBuildings = []
 epicBuildings = []

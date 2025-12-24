@@ -10,14 +10,14 @@ import Player
 pygame.init()
 
 # This function reloads the images to the correct size
-def ReloadImages(screenSize, gridSize, shopLength):
+def ReloadImages(screenSize, gridSize, shopLength=3):
     tileSize = DrawGrid.CalculateTileSize(screenSize, gridSize, shopLength)
     imageAssets = {}
     # The |= operator merges 2 dictionaries
     imageAssets |= DrawGrid.LoadImagesFromFolder('Image Assets/Inventory Sprites', tileSize/50)
     imageAssets |= DrawGrid.LoadImagesFromFolder('Image Assets/Tile Sprites', tileSize/50)
     imageAssets |= DrawGrid.LoadImagesFromFolder('Image Assets/UI', tileSize/50)
-    imageAssets |= DrawGrid.LoadImagesFromFolder('Image Assets/Start Screen', 1)
+    imageAssets |= DrawGrid.LoadImagesFromFolder('Image Assets/Start Screen', min(screenSize[0]/640, screenSize[1]/480))
 
     return tileSize, imageAssets
 
@@ -56,6 +56,7 @@ def Main():
     pygame.display.set_caption("Pocket City")
 
     mouseShopItem, selectedShopItem = -1, -1
+    oldSelectedTile, selectedTile = (-1, -1), (-1, -1)
 
     gridOffsetY = 50
     #print(imageAssets)
@@ -68,19 +69,22 @@ def Main():
 
     buttons = []
     pressedButtons = []
-    buttons.append(UserInterface.Button('Start', (128,128,128), screenWidth * 0.5, screenHeight * 0.5, 200, 50, 'Start')) # Start button
+
     numberOfPlayers = 2
+    players = []
 
     # Turn number starts at 0 to make indexing easier
     currentTurn = 0
     currentRound = 0
-    buttons.append(UserInterface.Button('PlayerSelector', (128,128,128), screenWidth * 0.5, screenHeight * 0.65, 200, 50, f'Players: {numberOfPlayers}'))
 
     # Construct a dictionary of rarity background files
     rarities = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary']
     rarityFiles = dict([(rarity, rarity + ' Rarity Background') for rarity in rarities])
 
-    tileSize, imageAssets = ReloadImages((screenWidth, screenHeight), (gridWidth, gridHeight), 3)
+    tileSize, imageAssets = ReloadImages((screenWidth, screenHeight, gridOffsetY), (gridWidth, gridHeight), 1)
+
+    buttons.append(UserInterface.Button('Start', (128,128,128), screenWidth * 0.25, screenHeight * 0.55, 200, 50, 'Start', imageAssets['Pocket City Button'])) # Start button
+    buttons.append(UserInterface.Button('PlayerSelector', (128,128,128), screenWidth * 0.25, screenHeight * 0.8, 200, 50, f'Players: {numberOfPlayers}', imageAssets['Pocket City Button']))
 
     # Game loop
     gameIsRunning = True
@@ -111,25 +115,39 @@ def Main():
                 # event.h and event.w are methods of the VIDEORESIZE event, which are the new height and width of the window
 
                 # Resize the screen
+                oldScreenWidth, oldScreenHeight = screenWidth, screenHeight
                 screenWidth, screenHeight = event.w, event.h
                 screen = pygame.display.set_mode((screenWidth, screenHeight), pygame.RESIZABLE)
 
                 # Reload image assets
-                tileSize, imageAssets = ReloadImages((screenWidth, screenHeight), (gridWidth, gridHeight), len(players[currentTurn].shop))
+                if gameState == 'Start':
+                    tileSize, imageAssets = ReloadImages((screenWidth, screenHeight, gridOffsetY), (gridWidth, gridHeight))
+                else:
+                    tileSize, imageAssets = ReloadImages((screenWidth, screenHeight, gridOffsetY), (gridWidth, gridHeight), len(players[currentTurn].shop))
 
                 #Scale the buttons by the amount that the screen changed by
                 for button in buttons:
                     if button.name == 'Start':
-                        button.x = event.w * 0.5
-                        button.y = event.h * 0.5
+                        button.x = event.w * 0.25
+                        button.y = event.h * 0.55
                     elif button.name == 'PlayerSelector':
-                        button.x = event.w * 0.5
-                        button.y = event.h * 0.65
+                        button.x = event.w * 0.25
+                        button.y = event.h * 0.8
                     elif button.name == 'NextTurn':
                         button.x = min(event.w - 100, (gridWidth + 1.8) * tileSize)
+                    elif button.name == 'Sell':
+                        button.x = min(event.w - 220, (gridWidth + 0.5) * tileSize)
+                    elif button.name == 'Reroll':
+                        button.x = min(event.w, (gridWidth + 2.25) * tileSize)
+                        button.y = gridOffsetY + tileSize * 0.25
 
-                    if button.name not in ['NextTurn']:
-                        button.resize(event.w/screenWidth, event.h/screenHeight)
+                    # Only some buttons should be resized
+                    if button.name in ['Start', 'PlayerSelector']:
+                        button.image = imageAssets['Pocket City Button']
+                        button.resize(event.w/oldScreenWidth, event.h/oldScreenHeight)
+                    if button.name == 'Reroll':
+                        button.image = imageAssets['Reload Icon']
+                        button.resize(event.w/oldScreenWidth, event.h/oldScreenHeight)
                 
             if event.type == pygame.MOUSEBUTTONDOWN: # On click
                 """
@@ -142,11 +160,13 @@ def Main():
                 """
                 if event.button == 1:
                     if gameState == 'Active':
+                        oldSelectedTile = selectedTile
 
                         selectedTile = SelectTile((gridWidth, gridHeight), selectedTile, (event.pos[0] // tileSize, (event.pos[1] - gridOffsetY) // tileSize))
                         currentBoardItem = players[currentTurn].board[selectedTile[1]][selectedTile[0]]
 
-                        if selectedShopItem > -1 and players[currentTurn].canAfford(players[currentTurn].shop[selectedShopItem].cost) and currentBoardItem  in [0, '', None]:
+                        # If a shop item is selected, and the mouse isn't on the shop, and the player can afford the purchase:
+                        if selectedShopItem > -1 and mouseShopItem == -1 and players[currentTurn].canAfford(players[currentTurn].shop[selectedShopItem].cost) and currentBoardItem  in [0, '', None]:
                             # Transfer the selected shop item to the current space
                             transferItem = players[currentTurn].shop.pop(selectedShopItem)
                             players[currentTurn].board[selectedTile[1]][selectedTile[0]] = transferItem
@@ -156,6 +176,7 @@ def Main():
                         else:
                             # If no selected shop item, or current one is too expensive, select current tile
                             pass
+                        
                             
                     
                     for button in buttons:
@@ -182,6 +203,8 @@ def Main():
                                 players = startGame(numberOfPlayers)
                                 buttons = []
                                 buttons.append(UserInterface.Button('NextTurn', (128,128,128), (gridWidth + 1.8) * tileSize, 25, 100, 30, 'Next Turn'))
+                                buttons.append(UserInterface.Button('Sell', (128,128,128), (gridWidth + 0.5) * tileSize, 25, 100, 30, 'Sell ($)'))
+                                buttons.append(UserInterface.Button('Reroll', (128,128,128), (gridWidth + 2.25) * tileSize, 75, 100, 30, image=imageAssets['Reload Icon']))
 
                             elif button.name == 'PlayerSelector':
                                 numberOfPlayers = result
@@ -195,11 +218,27 @@ def Main():
                                     # Unselect shop and tile
                                     selectedTile = (-1,-1)
                                     selectedShopItem = -1
+                                    if gameState == 'Action':
+                                        gameState = 'Active'
+                                    else:
+                                        gameState = 'Action'
+                                players[currentTurn].rerollShop(currentRound)
+
+                            elif button.name == 'Sell':
+                                # I need to use oldSelectedTile since, by the time the click registers, selectedTile will already be (-1, -1), unselected
+                                players[currentTurn].money += players[currentTurn].board[oldSelectedTile[1]][oldSelectedTile[0]].sellAmt
+                                players[currentTurn].board[oldSelectedTile[1]][oldSelectedTile[0]] = None
+                            
+                            elif button.name == 'Reroll':
+                                if players[currentTurn].money > 0:
+                                    players[currentTurn].rerollShop(currentRound)
+                                    # Costs $1 to reroll
+                                    players[currentTurn].money -= 1
 
                     pressedButtons = []
 
                     #print(mouseShopItem)
-                    if mouseShopItem > -1:
+                    if mouseShopItem > -1 and gameState == 'Active':
                         # Select current shop item, if any
                         if mouseShopItem == selectedShopItem:
                             selectedShopItem = -1
@@ -208,11 +247,26 @@ def Main():
     
         screenSettings = (screenWidth, screenHeight, tileSize, gridOffsetY)
         if gameState == 'Active':
+            # Draw a blue background
+            pygame.draw.rect(screen, (115, 197, 245), (0,0,(gridWidth + 2.5) * tileSize, max(gridOffsetY + gridHeight * tileSize, ((len(players[currentTurn].shop)) + 0.5) * tileSize + gridOffsetY)), 0)
+
             DrawGrid.DrawGrid(screen, imageAssets, screenSettings, players[currentTurn].board, (gridWidth, gridHeight))
             DrawGrid.DrawMouse(screen, imageAssets, players[currentTurn].board, selectedTile, screenSettings, (gridWidth, gridHeight))
-            mouseShopItem = UserInterface.DrawShop(screen, imageAssets, rarityFiles, players[currentTurn].shop, screenSettings, (gridWidth, gridHeight), players[currentTurn], selectedShopItem)
+            UserInterface.DrawHud(screen, imageAssets, screenSettings, (gridWidth, gridHeight), players[currentTurn])
+            mouseShopItem = UserInterface.DrawShop(screen, imageAssets, rarityFiles, screenSettings, (gridWidth, gridHeight), players[currentTurn], selectedShopItem)
+        
+        if gameState == 'Action':
+            pygame.draw.rect(screen, (115, 197, 245), (0,0,(gridWidth + 2.5) * tileSize, max(gridOffsetY + gridHeight * tileSize, ((len(players[currentTurn].shop)) + 0.5) * tileSize + gridOffsetY)), 0)
 
-        UserInterface.DrawButtons(screen, buttons)
+            UserInterface.DrawHud(screen, imageAssets, screenSettings, (gridWidth, gridHeight), players[currentTurn])
+            DrawGrid.DrawGrid(screen, imageAssets, screenSettings, players[currentTurn].board, (gridWidth, gridHeight))
+
+        sellAvailable = (False, None)
+        if gameState == 'Active' or gameState == 'Action':
+            if selectedTile != (-1, -1):
+                if players[currentTurn].board[selectedTile[1]][selectedTile[0]] not in [0, '', None]:
+                    sellAvailable = (True, players[currentTurn].board[selectedTile[1]][selectedTile[0]])
+        UserInterface.DrawButtons(screen, buttons, sellAvailable)
         
         pygame.display.flip() # This updates the entire screen
 

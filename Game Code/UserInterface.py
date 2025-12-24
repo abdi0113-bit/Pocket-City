@@ -1,8 +1,24 @@
 import pygame
 
+def LightenImage(image, brightnessLevel):
+    # Creates a lighter copy of the given image
+
+    # Create a copy of the original image to avoid destructive modifications
+    lighter_image = image.copy()
+    
+    # Define the fill color (gray value for even brightening across all channels)
+    # A higher value means more brightness added, 0 to 255
+    fillColour = (brightnessLevel, brightnessLevel, brightnessLevel)
+    
+    # Apply the fill color with the BLEND_RGB_ADD flag
+    # This adds the fill color values to the pixel values of the image
+    lighter_image.fill(fillColour, special_flags=pygame.BLEND_RGB_ADD)
+    
+    return lighter_image
+
 # Button class
 class Button():
-    def __init__(self, name, colour, x, y, width, height, text=''):
+    def __init__(self, name, colour, x, y, width, height, text='', image=None):
         self.name = name
         self.colour = colour
         self.x = x
@@ -10,6 +26,10 @@ class Button():
         self.width = width
         self.height = height
         self.text = text
+        self.image = image
+        if self.image:
+            self.width = self.image.get_width()
+            self.height = self.image.get_height()
         self.font = pygame.font.SysFont('amertype', int(self.height))
 
     def draw(self, surface, outline = False):
@@ -17,18 +37,27 @@ class Button():
         text = self.font.render(self.text, True, (0,0,0))
 
         drawWidth = max(self.width, text.get_width() * 1.05)
-
-        if outline:
-            pygame.draw.rect(surface, outline, (self.x-4 - drawWidth/2, self.y-4 - self.height/2, drawWidth+8,self.height+8),0)
-        
         mousePos = pygame.mouse.get_pos()
-        # Draw the button brighter if it's being hovered over
-        if self.isOver(mousePos):
-            drawColour = [(colour * 15) // 10 for colour in self.colour]
-        else:
-            drawColour = self.colour
 
-        pygame.draw.rect(surface, drawColour, (self.x - drawWidth/2, self.y - self.height/2, drawWidth, self.height),0)
+        if self.image:
+            # Draw the button brighter if it's being hovered over
+            currentImage = self.image
+            if self.isOver(mousePos):
+                currentImage = LightenImage(self.image, 64)
+
+            surface.blit(currentImage, (self.x - self.width/2, self.y - self.height/2))
+            
+        else:
+            if outline:
+                pygame.draw.rect(surface, outline, (self.x-4 - drawWidth/2, self.y-4 - self.height/2, drawWidth+8,self.height+8),0)
+            
+            # Draw the button brighter if it's being hovered over
+            if self.isOver(mousePos):
+                drawColour = [(colour * 15) // 10 for colour in self.colour]
+            else:
+                drawColour = self.colour
+
+            pygame.draw.rect(surface, drawColour, (self.x - drawWidth/2, self.y - self.height/2, drawWidth, self.height),0)
         
         if self.text != '':
             surface.blit(text, (self.x - text.get_width()/2, self.y - text.get_height()/2))
@@ -54,26 +83,17 @@ class Button():
             return newPlayerNum
         
     def resize(self, scaleW, scaleH):
-        self.width *= scaleW
-        self.height *= scaleH
-        self.font = pygame.font.SysFont('amertype', int(self.height))
+        if self.image:
+            self.width = self.image.get_width()
+            self.height = self.image.get_height()
+            self.font = pygame.font.SysFont('amertype', int(self.height))
+        else:
+            self.width *= scaleW
+            self.height *= scaleH
+            self.font = pygame.font.SysFont('amertype', int(self.height))
 
-
-def LightenImage(image, brightnessLevel):
-    # Creates a lighter copy of the given image
-
-# Create a copy of the original image to avoid destructive modifications
-    lighter_image = image.copy()
-    
-    # Define the fill color (gray value for even brightening across all channels)
-    # A higher value means more brightness added, 0 to 255
-    fillColour = (brightnessLevel, brightnessLevel, brightnessLevel)
-    
-    # Apply the fill color with the BLEND_RGB_ADD flag
-    # This adds the fill color values to the pixel values of the image
-    lighter_image.fill(fillColour, special_flags=pygame.BLEND_RGB_ADD)
-    
-    return lighter_image
+    def sellAmt(self, currentTile):
+        self.text = f'Sell (${currentTile.sellAmt})'
 
 
 def StampImage(screen, imageAssets, imageToLoad, pos, tileSize, lighten=0):
@@ -89,12 +109,17 @@ def StampImage(screen, imageAssets, imageToLoad, pos, tileSize, lighten=0):
     screen.blit(currentImage, (pos[0] * tileSize, pos[1] * tileSize))
 
 
-def DrawButtons(surface, buttons):
+def DrawButtons(surface, buttons, sellAvailable):
+    # sellAvailable = (true/false, amount to sell for)
     for button in buttons:
+        if button.name == 'Sell':
+            if sellAvailable[0]:
+                button.sellAmt(sellAvailable[1])
+            else:
+                continue
         button.draw(surface, (0,0,0))
 
-
-def DrawShop(surface, imageAssets, rarities, shop, screenSettings, gridSize, currentPlayer, selectedShopItem):
+def DrawHud(surface, imageAssets, screenSettings, gridSize, currentPlayer):
     screenWidth = screenSettings[0]
     screenHeight = screenSettings[1]
     tileSize = screenSettings[2]
@@ -103,9 +128,52 @@ def DrawShop(surface, imageAssets, rarities, shop, screenSettings, gridSize, cur
     gridWidth = gridSize[0]
     gridHeight = gridSize[1]
 
-    mousePos = pygame.mouse.get_pos()
+    pygame.draw.rect(surface, (129, 91, 55), (0,0,(gridWidth + 2.5) * tileSize, gridOffsetY), 0)
 
-    pygame.draw.rect(surface, (129, 91, 55), (0,0,(gridWidth+2.5)*tileSize,gridOffsetY), 0)
+    # Show player number
+    font = pygame.font.SysFont('amertype', 32)
+    textRender = font.render(f'Player {currentPlayer.turn}', True, (0,0,0))
+    surface.blit(textRender, (5, 17))
+
+
+    # Show coins
+    surface.blit(imageAssets['Coin'], (100, 5))
+    textRender = font.render(str(currentPlayer.money), True, (0,0,0))
+    surface.blit(textRender, (145, 17))
+
+def MouseoverShop(screen, mousePos, mouseShopItem):
+
+    font = pygame.font.SysFont('amertype', int(20))
+    lines = mouseShopItem.message.split('\n')
+
+    # This is an inline (lambda) function which draws the rectangle with the specified colour and padding
+    drawTextRect = lambda colour, padding:    pygame.draw.rect(screen, colour, (mousePos[0] - (textRender.get_width() + padding)/2, mousePos[1] - textHeight - padding/2, (textRender.get_width() + padding),(textHeight + padding)),0)
+
+    longestLine = font.render(max(lines, key=len), True, (0,0,0))
+    textHeight = font.render('|', True, (0,0,0)).get_height() * len(lines)
+
+    textRender = longestLine
+    drawTextRect((0,0,0), 12)
+    drawTextRect((255,255,255), 8)
+    
+    for index, line in enumerate(lines):
+        textRender = font.render(line, True, (0,0,0))
+
+        screen.blit(textRender, (mousePos[0] - textRender.get_width()/2, mousePos[1] - textHeight + textHeight/len(lines) * (index)))
+
+
+def DrawShop(surface, imageAssets, rarities, screenSettings, gridSize, currentPlayer, selectedShopItem):
+    screenWidth = screenSettings[0]
+    screenHeight = screenSettings[1]
+    tileSize = screenSettings[2]
+    gridOffsetY = screenSettings[3]
+
+    gridWidth = gridSize[0]
+    gridHeight = gridSize[1]
+
+    shop = currentPlayer.shop
+
+    mousePos = pygame.mouse.get_pos()
 
     StampImage(surface, imageAssets, 'Shop Sign', (gridWidth + 0.5, gridOffsetY/tileSize), tileSize)
 
@@ -117,10 +185,12 @@ def DrawShop(surface, imageAssets, rarities, shop, screenSettings, gridSize, cur
         imageRect = imageAssets[rarities[item.rarity]].get_rect(topleft = (x*tileSize, y*tileSize))
         
         # Deal with selecting the shop item
+        mouseover = False
         if selectedShopItem == -1:
             if imageRect.collidepoint(mousePos):
                 lightness = 64
                 mouseShopItem = itemIndex
+                mouseover = True
             else:
                 lightness = 0
 
@@ -152,16 +222,8 @@ def DrawShop(surface, imageAssets, rarities, shop, screenSettings, gridSize, cur
             # Calculate vertical position based on line number, font height, and spacing
             surface.blit(textRender, ((x + 1.1) * tileSize, (y + 0.1) * tileSize + index * (font.get_height() * 1.1)))
 
-    # Show player number
-    font = pygame.font.SysFont('amertype', 32)
-    textRender = font.render(f'Player {currentPlayer.turn}', True, (0,0,0))
-    surface.blit(textRender, (5, 17))
-
-
-    # Show coins
-    surface.blit(imageAssets['Coin'], (100, 5))
-    textRender = font.render(str(currentPlayer.money), True, (0,0,0))
-    surface.blit(textRender, (145, 17))
+        if mouseover:
+            MouseoverShop(surface, mousePos, shop[mouseShopItem])
 
     return mouseShopItem
 

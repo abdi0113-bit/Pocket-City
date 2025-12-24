@@ -94,7 +94,7 @@ def DrawButtons(surface, buttons):
         button.draw(surface, (0,0,0))
 
 
-def DrawShop(surface, imageAssets, rarities, shop, screenSettings, gridSize):
+def DrawShop(surface, imageAssets, rarities, shop, screenSettings, gridSize, currentPlayer, selectedShopItem):
     screenWidth = screenSettings[0]
     screenHeight = screenSettings[1]
     tileSize = screenSettings[2]
@@ -109,14 +109,30 @@ def DrawShop(surface, imageAssets, rarities, shop, screenSettings, gridSize):
 
     StampImage(surface, imageAssets, 'Shop Sign', (gridWidth + 0.5, gridOffsetY/tileSize), tileSize)
 
+    mouseShopItem = -1
+
     for itemIndex, item in enumerate(shop):
         # Stamp the rarity background
         x,y = gridWidth + 0.5, itemIndex + 0.5 + gridOffsetY/tileSize
         imageRect = imageAssets[rarities[item.rarity]].get_rect(topleft = (x*tileSize, y*tileSize))
-        if imageRect.collidepoint(mousePos):
-            lightness = 64
+        
+        # Deal with selecting the shop item
+        if selectedShopItem == -1:
+            if imageRect.collidepoint(mousePos):
+                lightness = 64
+                mouseShopItem = itemIndex
+            else:
+                lightness = 0
+
         else:
-            lightness = 0
+            if itemIndex == selectedShopItem:
+                lightness = 64
+            else:
+                lightness = 0
+            
+            if imageRect.collidepoint(mousePos):
+                mouseShopItem = itemIndex
+
         StampImage(surface, imageAssets, rarities[item.rarity], (x, y), tileSize, lightness)
         # Stamp the building's image
         StampImage(surface, imageAssets, item.image, (x-1, y), tileSize, lightness)
@@ -135,3 +151,17 @@ def DrawShop(surface, imageAssets, rarities, shop, screenSettings, gridSize):
 
             # Calculate vertical position based on line number, font height, and spacing
             surface.blit(textRender, ((x + 1.1) * tileSize, (y + 0.1) * tileSize + index * (font.get_height() * 1.1)))
+
+    # Show player number
+    font = pygame.font.SysFont('amertype', 32)
+    textRender = font.render(f'Player {currentPlayer.turn}', True, (0,0,0))
+    surface.blit(textRender, (5, 17))
+
+
+    # Show coins
+    surface.blit(imageAssets['Coin'], (100, 5))
+    textRender = font.render(str(currentPlayer.money), True, (0,0,0))
+    surface.blit(textRender, (145, 17))
+
+    return mouseShopItem
+

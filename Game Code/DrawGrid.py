@@ -23,7 +23,11 @@ def LoadImagesFromFolder(path, scale):
                 # .convert_alpha converts it to the right format, alpha means it works with images that have transparency
                 rawImage = pygame.image.load(imgPath).convert_alpha()
                 imageW, imageH = rawImage.get_size()
-                scaledImage = pygame.transform.smoothscale(rawImage, (imageW * scale, imageH * scale))
+                hardCodedScale = scale
+                if name == 'Coin':
+                    hardCodedScale = 2
+                
+                scaledImage = pygame.transform.smoothscale(rawImage, (imageW * hardCodedScale, imageH * hardCodedScale))
                 images[name] = scaledImage
 
     # Returns a dictionary with all the images

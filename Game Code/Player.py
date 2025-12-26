@@ -4,15 +4,15 @@ import random
 import Buildings
 
 class Player():
-    def __init__(self, money, name, score, turn):
+    def __init__(self, money, name, score, turn, boardSize):
         self.money = money
         self.name = name
         self.score = score
         self.turn = turn
 
         # Initialise shop and board
-        self.board = [[None for j in range(3)] for i in range(3)]
-        self.board[1][1] = Buildings.starterTent
+        self.board = [[None for j in range(boardSize[0])] for i in range(boardSize[1])]
+        self.board[int(boardSize[1]/2)][int(boardSize[0]/2)] = Buildings.starterTent
         self.shop = []
         self.rerollShop(1)
 

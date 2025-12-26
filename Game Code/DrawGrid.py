@@ -115,6 +115,9 @@ def DrawGrid(screen, imageAssets, screenSettings, tileMap, gridSize):
     gridWidth = gridSize[0]
     gridHeight = gridSize[1]
     
+    # Black background behind the tiles
+    pygame.draw.rect(screen, (0, 0, 0), (0, 0, gridWidth * tileSize, gridOffsetY + gridHeight * tileSize), 0)
+
     for row in range(gridHeight):
         for column in range(gridWidth):
             # Stamp the stone tile
@@ -143,8 +146,8 @@ def CalculateTileSize(screenSettings, gridSize, shopLength):
     gridWidth = gridSize[0]
     gridHeight = gridSize[1]
 
-    tryTileHeight = math.ceil(screenHeight/gridHeight)
-    tryTileWidth = math.ceil(screenWidth/(gridWidth + 3)) # The +3 gives some space for the inventory on the right
-    tryInventory = math.ceil(screenHeight/(shopLength + 1) + gridOffsetY/50)
+    tryTileHeight = math.floor((screenHeight - gridOffsetY)/gridHeight)
+    tryTileWidth = math.floor(screenWidth/(gridWidth + 2.5)) # The +2.5 gives some space for the inventory on the right
+    tryInventory = math.floor((screenHeight - gridOffsetY)/(shopLength + 0.5))
 
-    return(min(tryTileHeight, tryTileWidth, tryInventory, 100))
+    return(min(tryTileHeight, tryTileWidth, tryInventory, 120))

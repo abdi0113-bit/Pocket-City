@@ -27,16 +27,24 @@ class Button():
         self.height = height
         self.text = text
         self.image = image
+        self.shown = False
         if self.image:
             self.width = self.image.get_width()
             self.height = self.image.get_height()
-        self.font = pygame.font.SysFont('amertype', int(self.height))
+
+        fontSize = self.height
+        self.font = pygame.font.SysFont('amertype', int(fontSize))
+
+        fontRenderTemp = self.font.render(self.text, True, (0,0,0))
+        if fontRenderTemp.get_width() > self.width * 0.9:
+            fontSize /= fontRenderTemp.get_width() / (self.width * 0.9)
+            self.font = pygame.font.SysFont('amertype', int(fontSize))
 
     def draw(self, surface, outline = False):
         # This method draws the button on the screen
-        text = self.font.render(self.text, True, (0,0,0))
+        textRender = self.font.render(self.text, True, (0,0,0))
 
-        drawWidth = max(self.width, text.get_width() * 1.05)
+        drawWidth = max(self.width, textRender.get_width() * 1.05)
         mousePos = pygame.mouse.get_pos()
 
         if self.image:
@@ -60,7 +68,7 @@ class Button():
             pygame.draw.rect(surface, drawColour, (self.x - drawWidth/2, self.y - self.height/2, drawWidth, self.height),0)
         
         if self.text != '':
-            surface.blit(text, (self.x - text.get_width()/2, self.y - text.get_height()/2))
+            surface.blit(textRender, (self.x - textRender.get_width()/2, self.y - textRender.get_height()/2))
 
     def isOver(self, pos):
         # pos is the mouse position
@@ -109,14 +117,23 @@ def StampImage(screen, imageAssets, imageToLoad, pos, tileSize, lighten=0):
     screen.blit(currentImage, (pos[0] * tileSize, pos[1] * tileSize))
 
 
-def DrawButtons(surface, buttons, sellAvailable):
+def DrawButtons(surface, buttons, gameState, sellAvailable):
     # sellAvailable = (true/false, amount to sell for)
     for button in buttons:
+        button.shown = False
+        # Some exceptions
         if button.name == 'Sell':
             if sellAvailable[0]:
                 button.sellAmt(sellAvailable[1])
             else:
                 continue
+            
+        elif button.name == 'Expand':
+            if sellAvailable[0]:
+                continue
+
+        # Draw the button
+        button.shown = True
         button.draw(surface, (0,0,0))
 
 def DrawHud(surface, imageAssets, screenSettings, gridSize, currentPlayer):

@@ -1,5 +1,6 @@
 import pygame
 import random
+import time
 
 import DrawGrid
 import UserInterface
@@ -30,13 +31,17 @@ def SelectTile(gridSize, selectedTile, pos):
     else: # Otherwise just update the selected tile
         return pos
     
-def startGame(numPlayers):
+def StartGame(numPlayers, boardSize):
     players = []
-    startingBoard = [[None for j in range(3)] for i in range(3)]
-    startingBoard[1][1] = Buildings.starterTent
     for i in range(numPlayers):
-        players.append(Player.Player(100, f'Player {i+1}', 0, i + 1))
+        players.append(Player.Player(100, f'Player {i+1}', 0, i + 1, (boardSize)))
     return players
+
+def PostResizeEvent(screenSize):
+    screenWidth, screenHeight = screenSize
+    resizeEvent = pygame.event.Event(pygame.VIDEORESIZE, {'size': (screenWidth, screenHeight), 'w': screenWidth, 'h': screenHeight})
+    # This adds the event to the built-in Pygame event queue
+    pygame.event.post(resizeEvent)
 
 # Main funtion
 def Main():
@@ -47,7 +52,7 @@ def Main():
     # Screen width and height in pixels
     screenWidth, screenHeight = 640, 480
     # Grid width and height in tiles
-    # Start at 4x4
+    # Start at 3x3
     gridWidth, gridHeight = 3, 3
     # Tile size in pixels
     tileSize = 50
@@ -76,6 +81,9 @@ def Main():
     # Turn number starts at 0 to make indexing easier
     currentTurn = 0
     currentRound = 0
+
+    expandCost = 10
+    rerollCost = 1
 
     # Construct a dictionary of rarity background files
     rarities = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary']
@@ -134,12 +142,14 @@ def Main():
                         button.x = event.w * 0.25
                         button.y = event.h * 0.8
                     elif button.name == 'NextTurn':
-                        button.x = min(event.w - 100, (gridWidth + 1.8) * tileSize)
+                        button.x = min(event.w - 100, (gridWidth + 2.5) * tileSize - 60)
                     elif button.name == 'Sell':
-                        button.x = min(event.w - 220, (gridWidth + 0.5) * tileSize)
+                        button.x = min(event.w - 220, (gridWidth + 2.5) * tileSize - 180)
                     elif button.name == 'Reroll':
-                        button.x = min(event.w, (gridWidth + 2.25) * tileSize)
+                        button.x = (gridWidth + 2.25) * tileSize
                         button.y = gridOffsetY + tileSize * 0.25
+                    elif button.name == 'Expand':
+                        button.x = min(event.w - 270, (gridWidth + 2.5) * tileSize - 230)
 
                     # Only some buttons should be resized
                     if button.name in ['Start', 'PlayerSelector']:
@@ -170,6 +180,10 @@ def Main():
                             # Transfer the selected shop item to the current space
                             transferItem = players[currentTurn].shop.pop(selectedShopItem)
                             players[currentTurn].board[selectedTile[1]][selectedTile[0]] = transferItem
+
+                            # Activate when placed ability
+                            players[currentTurn].board[selectedTile[1]][selectedTile[0]].whenPlaced()
+
                             players[currentTurn].spendMoney(transferItem.cost)
                             selectedShopItem = -1
                             selectedTile = (-1, -1)
@@ -180,7 +194,7 @@ def Main():
                             
                     
                     for button in buttons:
-                        if button.isOver(mousePos):
+                        if button.isOver(mousePos) and button.shown:
                             pressedButtons.append(button)
 
             if event.type == pygame.MOUSEBUTTONUP: # On release  
@@ -200,17 +214,20 @@ def Main():
                             if button.name == 'Start':
                                 gameState = result
                                 backgroundColour = (0, 0, 0)
-                                players = startGame(numberOfPlayers)
+                                players = StartGame(numberOfPlayers, (gridWidth, gridHeight))
                                 buttons = []
-                                buttons.append(UserInterface.Button('NextTurn', (128,128,128), (gridWidth + 1.8) * tileSize, 25, 100, 30, 'Next Turn'))
-                                buttons.append(UserInterface.Button('Sell', (128,128,128), (gridWidth + 0.5) * tileSize, 25, 100, 30, 'Sell ($)'))
+                                buttons.append(UserInterface.Button('NextTurn', (128,128,128), (gridWidth + 2.5) * tileSize - 60, 25, 100, 30, 'Next Turn'))
+                                buttons.append(UserInterface.Button('Sell', (128,128,128), (gridWidth + 2.5) * tileSize - 180, 25, 100, 30, 'Sell ($)'))
                                 buttons.append(UserInterface.Button('Reroll', (128,128,128), (gridWidth + 2.25) * tileSize, 75, 100, 30, image=imageAssets['Reload Icon']))
+                                buttons.append(UserInterface.Button('Expand', (128,128,128), (gridWidth + 2.5) * tileSize - 230, 25, 200, 30, f'Expand Grid (${expandCost})'))
 
                             elif button.name == 'PlayerSelector':
                                 numberOfPlayers = result
 
                             elif button.name == 'NextTurn':
+                                # Next turn
                                 currentTurn += 1
+
                                 if currentTurn == numberOfPlayers:
                                     # New round
                                     currentRound += 1
@@ -222,7 +239,17 @@ def Main():
                                         gameState = 'Active'
                                     else:
                                         gameState = 'Action'
+                                        startTime = time.time()
+                                        players[currentTurn].score = 0
+                                        selectedTile = (0,0)
+                                        activatedYet = False
+                                
+                                gridHeight = len(players[currentTurn].board)
+                                gridWidth = len(players[currentTurn].board[0])
                                 players[currentTurn].rerollShop(currentRound)
+
+                                # Post a resize event to the event queue
+                                PostResizeEvent((screenWidth, screenHeight))
 
                             elif button.name == 'Sell':
                                 # I need to use oldSelectedTile since, by the time the click registers, selectedTile will already be (-1, -1), unselected
@@ -230,11 +257,23 @@ def Main():
                                 players[currentTurn].board[oldSelectedTile[1]][oldSelectedTile[0]] = None
                             
                             elif button.name == 'Reroll':
-                                if players[currentTurn].money > 0:
+                                if not players[currentTurn].money < rerollCost:
                                     players[currentTurn].rerollShop(currentRound)
-                                    # Costs $1 to reroll
-                                    players[currentTurn].money -= 1
+                                    
+                                    players[currentTurn].money -= rerollCost
 
+                            elif button.name == 'Expand':
+                                if not players[currentTurn].money < expandCost:
+                                    gridHeight += 1
+                                    gridWidth += 1
+                                    [row.append(None) for row in players[currentTurn].board]
+                                    players[currentTurn].board.append([None for i in range(gridWidth)])
+
+                                    # Post a resize event to the event queue
+                                    PostResizeEvent((screenWidth, screenHeight))
+
+                                    players[currentTurn].money -= expandCost
+                                    
                     pressedButtons = []
 
                     #print(mouseShopItem)
@@ -258,15 +297,70 @@ def Main():
         if gameState == 'Action':
             pygame.draw.rect(screen, (115, 197, 245), (0,0,(gridWidth + 2.5) * tileSize, max(gridOffsetY + gridHeight * tileSize, ((len(players[currentTurn].shop)) + 0.5) * tileSize + gridOffsetY)), 0)
 
-            UserInterface.DrawHud(screen, imageAssets, screenSettings, (gridWidth, gridHeight), players[currentTurn])
             DrawGrid.DrawGrid(screen, imageAssets, screenSettings, players[currentTurn].board, (gridWidth, gridHeight))
+            DrawGrid.DrawMouse(screen, imageAssets, players[currentTurn].board, selectedTile, screenSettings, (gridWidth, gridHeight))
+            UserInterface.DrawHud(screen, imageAssets, screenSettings, (gridWidth, gridHeight), players[currentTurn])
+
+            waitTime = 5/(gridWidth*gridHeight)
+
+            # Activate when the time is halfway up
+            if time.time() - startTime > waitTime/2 and not activatedYet:
+                activatedYet = True
+                # Activate the current tile
+                if players[currentTurn].board[selectedTile[1]][selectedTile[0]] not in [0, '', None]:
+                    scoreIncrease, moneyIncrease = players[currentTurn].board[selectedTile[1]][selectedTile[0]].whenActivated()
+                    players[currentTurn].score += scoreIncrease
+                    players[currentTurn].money += moneyIncrease
+
+            # If elapsed time has reached the threshhold
+            if time.time() - startTime > waitTime:
+                
+                x, y = selectedTile
+                x += 1
+
+                if x == gridWidth:
+                    x = 0
+                    y += 1
+
+                    if y == gridHeight:
+                        # Last square, next player
+                        currentTurn += 1
+
+                        if currentTurn == numberOfPlayers:
+                            # End of action phase
+                            currentRound += 1
+                            currentTurn = 0
+                            selectedTile = (-1, -1)
+                            gameState = 'Active'
+
+                        else:
+                            selectedTile = (0, 0)
+                            players[currentTurn].score = 0
+                        
+                        gridHeight = len(players[currentTurn].board)
+                        gridWidth = len(players[currentTurn].board[0])
+
+                        PostResizeEvent((screenWidth, screenHeight))
+
+                    else:
+                        selectedTile = (x, y)
+                
+                else:
+                    selectedTile = (x, y)
+
+                # Reset elapsed time
+                startTime = time.time()
+                activatedYet = False
 
         sellAvailable = (False, None)
         if gameState == 'Active' or gameState == 'Action':
             if selectedTile != (-1, -1):
                 if players[currentTurn].board[selectedTile[1]][selectedTile[0]] not in [0, '', None]:
                     sellAvailable = (True, players[currentTurn].board[selectedTile[1]][selectedTile[0]])
-        UserInterface.DrawButtons(screen, buttons, sellAvailable)
+        
+        if gameState != 'Action':
+            # Don't process buttons during action phase
+            UserInterface.DrawButtons(screen, buttons, gameState, sellAvailable)
         
         pygame.display.flip() # This updates the entire screen
 

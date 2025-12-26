@@ -34,6 +34,7 @@ class Building():
         return self.scoreIncreasePlace, self.moneyIncreasePlace
 
     def whenBought(self, currentMoney):
+        # UNUSED FOR NOW
         # These are any custom abilities, placeholders for now
         if self.name == 'Brick House':
             pass

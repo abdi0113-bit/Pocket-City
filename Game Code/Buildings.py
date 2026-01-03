@@ -71,7 +71,7 @@ starterTent = Building('Starter Tent', 1, 1,  'Starter Tent', '', (1,0), (0,0), 
 commonBuildings =  [Building('Brick House', 1, 1,  'Brick House', 'Common', (5,0), (0,0), 'Brick House\n--------------\nIncreases score by 5\nWhen Activated.'),
                     Building('Log House', 1, 1,  'Log House', 'Common', (5,0), (0,0), 'Log House\n--------------\nIncreases score by 5\nWhen Activated.'),
                     Building('Modern House', 1, 1, 'Modern House', 'Common', (5,0), (0,0), 'Modern House\n--------------\nIncreases score by 5\nWhen Activated.'),
-                    Building('Farm', 2, 1,  'Farm', 'Common', (10,0), (0,0), 'Farm\n--------------\nIncreases score by 10\nWhen Activated.'),
+                    Building('Farm', 2, 1,  'Barn', 'Common', (10,0), (0,0), 'Farm\n--------------\nIncreases score by 10\nWhen Activated.'),
                     Building('Crop Field', 1, 1,  'Crop Field', 'Common', (0,0), (1,0), 'Crop Field\n--------------\nIncreases coins by 1\nWhen Activated.'),
                     Building('School', 2, 1, 'School', 'Common', (10,0), (0,0), 'School\n--------------\nIncreases score by 10\nWhen Activated.')]
 
@@ -103,3 +103,4 @@ legendaryBuildings = [Building('Pyramid', 9, 7,  'Pyramid', 'Legendary', (500,0)
                      Building('Space Station', 10, 8, 'Space Station', 'Legendary', (200,0), (0,0), 'Church\n--------------\nIncreases score by 200\nWhen Activated.'),
                      Building('Volcano', 9, 7, 'Volcano', 'Legendary', (1000,0), (0,0), 'Volcano\n--------------\nIncreases score by 1000\nWhen Activated.'),
                      Building('Giant Statue', 10, 8, 'Giant Statue', 'Legendary', (0,0), (0,0), 'Giant Statue\n--------------\nIBuffs Everything\nWhen Activated.'),]
+

@@ -28,8 +28,38 @@ class Player():
         return False
     
     def rerollShop(self, roundNum):
+        # Percentages of each rarity, order is C, U, R, E, L
+        rarityDistribution = (
+            (1.00, 0.00, 0.00, 0.00, 0.00),
+            (1.00, 0.00, 0.00, 0.00, 0.00),
+            (0.70, 0.30, 0.00, 0.00, 0.00),
+            (0.60, 0.40, 0.00, 0.00, 0.00),
+            (0.40, 0.50, 0.10, 0.00, 0.00),
+            (0.30, 0.50, 0.20, 0.00, 0.00),
+            (0.20, 0.45, 0.25, 0.10, 0.00),
+            (0.20, 0.35, 0.30, 0.15, 0.00),
+            (0.10, 0.25, 0.35, 0.20, 0.10)
+        )
+
+        shopLength = 3
 
         self.shop = []
-        for i in range(3):
-            self.shop.append(random.choice(Buildings.commonBuildings))
+        for i in range(shopLength):
+            rarityToUse = 0
+
+            roundNumAdjusted = roundNum
+            if roundNumAdjusted >= len(rarityDistribution):
+                # Use the distribution for the last programmed round if round number is bigger
+                roundNumAdjusted = len(rarityDistribution) - 1
+            
+            rarityRoll = random.random()
+            
+            # Finds the right rarity based on roll
+            for rarity in range(5):
+                rarityRoll -= rarityDistribution[roundNumAdjusted][rarity]
+                if rarityRoll < 0:
+                    rarityToUse = rarity
+                    break
+
+            self.shop.append(random.choice(Buildings.allBuildings[rarityToUse]))
     

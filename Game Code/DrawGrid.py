@@ -42,7 +42,7 @@ def StampImage(screen, imageAssets, imageToLoad, pos, tileSize):
         print(f'ERROR: Failed to load tile {imageToLoad}')
         currentTileImage = imageAssets['Failed to Load']
     screen.blit(currentTileImage, (pos[0] * tileSize, pos[1] * tileSize))
-    
+
 
 def DrawMouse(screen, imageAssets, tilemap, selectedTile, screenSettings, gridSize):
     gridWidth = gridSize[0]

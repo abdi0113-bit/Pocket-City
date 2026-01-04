@@ -82,7 +82,7 @@ def Main():
     numberOfPlayers = 2
     players = []
 
-    # Turn number starts at 0 to make indexing easier
+    # Turn & round number starts at 0 to make indexing easier
     currentTurn = 0
     currentRound = 0
 
@@ -309,7 +309,8 @@ def Main():
             UserInterface.DrawHud(screen, imageAssets, screenSettings, (gridWidth, gridHeight), players[currentTurn], gameState)
 
             # 5 seconds regardless of number of tiles
-            waitTime = 5/(gridWidth*gridHeight)
+            waitSeconds = 1
+            waitTime = waitSeconds/(gridWidth*gridHeight)
 
             # Activate when the time is halfway up
             if time.time() - startTime > waitTime/2 and not activatedYet:

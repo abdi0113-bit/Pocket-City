@@ -42,31 +42,7 @@ def StampImage(screen, imageAssets, imageToLoad, pos, tileSize):
         print(f'ERROR: Failed to load tile {imageToLoad}')
         currentTileImage = imageAssets['Failed to Load']
     screen.blit(currentTileImage, (pos[0] * tileSize, pos[1] * tileSize))
-
-def MouseoverText(screen, mousePos, tilemap, tileSize, gridOffsetY):
-    mouseTileX, mouseTileY = mousePos[0] // tileSize, (mousePos[1] - gridOffsetY) // tileSize
-
-    # Draw the mouseover text
-    if tilemap[mouseTileY][mouseTileX]:
-        font = pygame.font.SysFont('amertype', int(20))
-        
-        lines = tilemap[mouseTileY][mouseTileX].message.split('\n')
-
-        # This is an inline (lambda) function which draws the rectangle with the specified colour and padding
-        drawTextRect = lambda colour, padding:    pygame.draw.rect(screen, colour, (mousePos[0] - (textRender.get_width() + padding)/2, mousePos[1] - textHeight - padding/2, (textRender.get_width() + padding),(textHeight + padding)),0)
-
-        longestLine = font.render(max(lines, key=len), True, (0,0,0))
-        textHeight = font.render('|', True, (0,0,0)).get_height() * len(lines)
-
-        textRender = longestLine
-        drawTextRect((0,0,0), 12)
-        drawTextRect((255,255,255), 8)
-        
-        for index, line in enumerate(lines):
-            textRender = font.render(line, True, (0,0,0))
-
-            screen.blit(textRender, (mousePos[0] - textRender.get_width()/2, mousePos[1] - textHeight + textHeight/len(lines) * (index)))
-
+    
 
 def DrawMouse(screen, imageAssets, tilemap, selectedTile, screenSettings, gridSize):
     gridWidth = gridSize[0]
@@ -87,9 +63,6 @@ def DrawMouse(screen, imageAssets, tilemap, selectedTile, screenSettings, gridSi
         if not (mouseTileX >= gridWidth or mouseTileY >= gridHeight or mouseTileX < 0 or mouseTileY < 0):
             StampImage(screen, imageAssets, 'Hover Tile', (mouseTileX, mouseTileY + gridOffsetY/tileSize), tileSize)
             
-            # Draw the mouseover text
-            MouseoverText(screen, mousePos, tilemap, tileSize, gridOffsetY)
-
     else: # If selected
         StampImage(screen, imageAssets, 'Selected Tile', (selectedTile[0], selectedTile[1] + gridOffsetY/tileSize), tileSize)
 
@@ -98,9 +71,9 @@ def TileExists(tileMap, pos):
         return 0
     else:
         #Use this once Vishwa makes the 1 connection
-        #currentTile = tileMap[pos[1]][pos[0]]
-        #return int(currentTile not in [0, '', None])
-        return 1
+        currentTile = tileMap[pos[1]][pos[0]]
+        return int(currentTile not in [0, '', None])
+        #return 1
 
 # Draws the grid
 def DrawGrid(screen, imageAssets, screenSettings, tileMap, gridSize):
@@ -122,10 +95,11 @@ def DrawGrid(screen, imageAssets, screenSettings, tileMap, gridSize):
         for column in range(gridWidth):
             # Stamp the stone tile
             connections = ''
-            connections += str(TileExists(tileMap, (column, row - 1))) # Tile above
-            connections += str(TileExists(tileMap, (column + 1, row))) # Tile to right
-            connections += str(TileExists(tileMap, (column, row + 1))) # Tile below
-            connections += str(TileExists(tileMap, (column - 1, row))) # Tile to left
+            if TileExists(tileMap, (column, row)): # If there is a building at the current tile, draw connections
+                connections += str(TileExists(tileMap, (column, row - 1))) # Tile above
+                connections += str(TileExists(tileMap, (column + 1, row))) # Tile to right
+                connections += str(TileExists(tileMap, (column, row + 1))) # Tile below
+                connections += str(TileExists(tileMap, (column - 1, row))) # Tile to left
 
             #print(f'Stone Tile {connections}')
             if f'Stone Tile {connections}' in imageAssets:

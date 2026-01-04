@@ -136,7 +136,7 @@ def DrawButtons(surface, buttons, gameState, sellAvailable):
         button.shown = True
         button.draw(surface, (0,0,0))
 
-def DrawHud(surface, imageAssets, screenSettings, gridSize, currentPlayer):
+def DrawHud(surface, imageAssets, screenSettings, gridSize, currentPlayer, gameState):
     screenWidth = screenSettings[0]
     screenHeight = screenSettings[1]
     tileSize = screenSettings[2]
@@ -158,10 +158,15 @@ def DrawHud(surface, imageAssets, screenSettings, gridSize, currentPlayer):
     textRender = font.render(str(currentPlayer.money), True, (0,0,0))
     surface.blit(textRender, (145, 17))
 
-def MouseoverShop(screen, mousePos, mouseShopItem):
+    # If action phase, show score
+    if gameState == 'Action':
+        textRender = font.render(f'SCORE: {currentPlayer.score}', True, (0,0,0))
+        surface.blit(textRender, (180, 17))
+
+def MouseoverText(screen, mousePos, text):
 
     font = pygame.font.SysFont('amertype', int(20))
-    lines = mouseShopItem.message.split('\n')
+    lines = text.split('\n')
 
     # This is an inline (lambda) function which draws the rectangle with the specified colour and padding
     drawTextRect = lambda colour, padding:    pygame.draw.rect(screen, colour, (mousePos[0] - (textRender.get_width() + padding)/2, mousePos[1] - textHeight - padding/2, (textRender.get_width() + padding),(textHeight + padding)),0)
@@ -202,12 +207,10 @@ def DrawShop(surface, imageAssets, rarities, screenSettings, gridSize, currentPl
         imageRect = imageAssets[rarities[item.rarity]].get_rect(topleft = (x*tileSize, y*tileSize))
         
         # Deal with selecting the shop item
-        mouseover = False
         if selectedShopItem == -1:
             if imageRect.collidepoint(mousePos):
                 lightness = 64
                 mouseShopItem = itemIndex
-                mouseover = True
             else:
                 lightness = 0
 
@@ -222,14 +225,14 @@ def DrawShop(surface, imageAssets, rarities, screenSettings, gridSize, currentPl
 
         StampImage(surface, imageAssets, rarities[item.rarity], (x, y), tileSize, lightness)
         # Stamp the building's image
-        StampImage(surface, imageAssets, item.image, (x-1, y), tileSize, lightness)
+        StampImage(surface, imageAssets, item.image, (x-0.4, y+0.1), tileSize, lightness)
 
         # Write out the cost and the name
         lines = item.name.split(' ')
 
         lines.insert(0, f'Cost: {item.cost}') # Insert the cost at the start to print with the name
 
-        fontSize = min((tileSize)/(len(lines)), 2 * (tileSize)/len(max(lines, key=len)))
+        fontSize = min((tileSize * 0.8)/(len(lines)), 2 * (tileSize)/len(max(lines, key=len)))
         font = pygame.font.SysFont('amertype', int(fontSize))
         
         for index, line in enumerate(lines):
@@ -237,10 +240,7 @@ def DrawShop(surface, imageAssets, rarities, screenSettings, gridSize, currentPl
             textRender = font.render(line, True, (lightness, lightness, lightness))
 
             # Calculate vertical position based on line number, font height, and spacing
-            surface.blit(textRender, ((x + 1.1) * tileSize, (y + 0.1) * tileSize + index * (font.get_height() * 1.1)))
-
-        if mouseover:
-            MouseoverShop(surface, mousePos, shop[mouseShopItem])
+            surface.blit(textRender, ((x + 1.2) * tileSize, (y + 0.1) * tileSize + index * (font.get_height() * 1.1)))
 
     return mouseShopItem
 

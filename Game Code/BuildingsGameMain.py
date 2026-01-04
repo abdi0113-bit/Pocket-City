@@ -15,7 +15,8 @@ def ReloadImages(screenSize, gridSize, shopLength=3):
     tileSize = DrawGrid.CalculateTileSize(screenSize, gridSize, shopLength)
     imageAssets = {}
     # The |= operator merges 2 dictionaries
-    imageAssets |= DrawGrid.LoadImagesFromFolder('Image Assets/Inventory Sprites', tileSize/50)
+    imageAssets |= DrawGrid.LoadImagesFromFolder('Image Assets/Inventory Sprites/Building Sprite', tileSize/67)
+    imageAssets |= DrawGrid.LoadImagesFromFolder('Image Assets/Inventory Sprites/Rarity Background', tileSize/50)
     imageAssets |= DrawGrid.LoadImagesFromFolder('Image Assets/Tile Sprites', tileSize/50)
     imageAssets |= DrawGrid.LoadImagesFromFolder('Image Assets/UI', tileSize/50)
     imageAssets |= DrawGrid.LoadImagesFromFolder('Image Assets/Start Screen', min(screenSize[0]/640, screenSize[1]/480))
@@ -31,10 +32,13 @@ def SelectTile(gridSize, selectedTile, pos):
     else: # Otherwise just update the selected tile
         return pos
     
-def StartGame(numPlayers, boardSize):
+def StartGame(numPlayers, startingMoney, boardSize):
     players = []
+
     for i in range(numPlayers):
-        players.append(Player.Player(100, f'Player {i+1}', 0, i + 1, (boardSize)))
+        players.append(Player.Player(f'Player {i+1}', i + 1, (boardSize)))
+        players[i].money += startingMoney
+
     return players
 
 def PostResizeEvent(screenSize):
@@ -82,8 +86,9 @@ def Main():
     currentTurn = 0
     currentRound = 0
 
-    expandCost = 10
-    rerollCost = 1
+    expandCost = 4
+    rerollCost = 2
+    moneyPerRound = 5
 
     # Construct a dictionary of rarity background files
     rarities = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary']
@@ -111,7 +116,7 @@ def Main():
 
         # Get mouse position
         mousePos = pygame.mouse.get_pos()
-        mouseTileX, mouseTileY = mousePos[0] // tileSize, mousePos[1] // tileSize
+        mouseTileX, mouseTileY = mousePos[0] // tileSize, (mousePos[1] - gridOffsetY) // tileSize
 
         # Run through every event detected by pygame
         for event in pygame.event.get():
@@ -156,7 +161,7 @@ def Main():
                         button.image = imageAssets['Pocket City Button']
                         button.resize(event.w/oldScreenWidth, event.h/oldScreenHeight)
                     if button.name == 'Reroll':
-                        button.image = imageAssets['Reload Icon']
+                        button.image = imageAssets['Reload Icon Cost']
                         button.resize(event.w/oldScreenWidth, event.h/oldScreenHeight)
                 
             if event.type == pygame.MOUSEBUTTONDOWN: # On click
@@ -214,11 +219,11 @@ def Main():
                             if button.name == 'Start':
                                 gameState = result
                                 backgroundColour = (0, 0, 0)
-                                players = StartGame(numberOfPlayers, (gridWidth, gridHeight))
+                                players = StartGame(numberOfPlayers, moneyPerRound, (gridWidth, gridHeight))
                                 buttons = []
                                 buttons.append(UserInterface.Button('NextTurn', (128,128,128), (gridWidth + 2.5) * tileSize - 60, 25, 100, 30, 'Next Turn'))
                                 buttons.append(UserInterface.Button('Sell', (128,128,128), (gridWidth + 2.5) * tileSize - 180, 25, 100, 30, 'Sell ($)'))
-                                buttons.append(UserInterface.Button('Reroll', (128,128,128), (gridWidth + 2.25) * tileSize, 75, 100, 30, image=imageAssets['Reload Icon']))
+                                buttons.append(UserInterface.Button('Reroll', (128,128,128), (gridWidth + 2.25) * tileSize, 75, 100, 30, image=imageAssets['Reload Icon Cost']))
                                 buttons.append(UserInterface.Button('Expand', (128,128,128), (gridWidth + 2.5) * tileSize - 230, 25, 200, 30, f'Expand Grid (${expandCost})'))
 
                             elif button.name == 'PlayerSelector':
@@ -226,12 +231,14 @@ def Main():
 
                             elif button.name == 'NextTurn':
                                 # Next turn
+                                players[currentTurn].money = 0 # Get rid of unspent money
+
                                 currentTurn += 1
 
                                 if currentTurn == numberOfPlayers:
-                                    # New round
-                                    currentRound += 1
+                                    # Not the new round yet, since action phase still needs to happen
                                     currentTurn = 0
+
                                     # Unselect shop and tile
                                     selectedTile = (-1,-1)
                                     selectedShopItem = -1
@@ -291,7 +298,7 @@ def Main():
 
             DrawGrid.DrawGrid(screen, imageAssets, screenSettings, players[currentTurn].board, (gridWidth, gridHeight))
             DrawGrid.DrawMouse(screen, imageAssets, players[currentTurn].board, selectedTile, screenSettings, (gridWidth, gridHeight))
-            UserInterface.DrawHud(screen, imageAssets, screenSettings, (gridWidth, gridHeight), players[currentTurn])
+            UserInterface.DrawHud(screen, imageAssets, screenSettings, (gridWidth, gridHeight), players[currentTurn], gameState)
             mouseShopItem = UserInterface.DrawShop(screen, imageAssets, rarityFiles, screenSettings, (gridWidth, gridHeight), players[currentTurn], selectedShopItem)
         
         if gameState == 'Action':
@@ -299,8 +306,9 @@ def Main():
 
             DrawGrid.DrawGrid(screen, imageAssets, screenSettings, players[currentTurn].board, (gridWidth, gridHeight))
             DrawGrid.DrawMouse(screen, imageAssets, players[currentTurn].board, selectedTile, screenSettings, (gridWidth, gridHeight))
-            UserInterface.DrawHud(screen, imageAssets, screenSettings, (gridWidth, gridHeight), players[currentTurn])
+            UserInterface.DrawHud(screen, imageAssets, screenSettings, (gridWidth, gridHeight), players[currentTurn], gameState)
 
+            # 5 seconds regardless of number of tiles
             waitTime = 5/(gridWidth*gridHeight)
 
             # Activate when the time is halfway up
@@ -327,11 +335,18 @@ def Main():
                         currentTurn += 1
 
                         if currentTurn == numberOfPlayers:
-                            # End of action phase
+                            # End of action phase, next round
                             currentRound += 1
                             currentTurn = 0
                             selectedTile = (-1, -1)
                             gameState = 'Active'
+
+                            #print(currentRound, moneyPerRound)
+                            if currentRound % 2 == 0:
+                                moneyPerRound += 1
+
+                            for player in players:
+                                player.money += moneyPerRound
 
                         else:
                             selectedTile = (0, 0)
@@ -352,15 +367,27 @@ def Main():
                 startTime = time.time()
                 activatedYet = False
 
+
         sellAvailable = (False, None)
-        if gameState == 'Active' or gameState == 'Action':
-            if selectedTile != (-1, -1):
-                if players[currentTurn].board[selectedTile[1]][selectedTile[0]] not in [0, '', None]:
-                    sellAvailable = (True, players[currentTurn].board[selectedTile[1]][selectedTile[0]])
-        
         if gameState != 'Action':
             # Don't process buttons during action phase
+            if gameState != 'Start' and selectedTile != (-1, -1):
+                if players[currentTurn].board[selectedTile[1]][selectedTile[0]] not in [0, '', None]:
+                    sellAvailable = (True, players[currentTurn].board[selectedTile[1]][selectedTile[0]])
+            # Draw the buttons
             UserInterface.DrawButtons(screen, buttons, gameState, sellAvailable)
+
+
+        if gameState == 'Active' or gameState == 'Action':
+            # Draw the mouseover text
+            if mouseShopItem > -1: # If the mouse is on the shopo
+                UserInterface.MouseoverText(screen, mousePos, players[currentTurn].shop[mouseShopItem].message)
+
+            if selectedTile == (-1, -1): # If unselected
+                if not (mouseTileX >= gridWidth or mouseTileY >= gridHeight or mouseTileX < 0 or mouseTileY < 0): # If in bounds
+                    if players[currentTurn].board[mouseTileY][mouseTileX]: # If building exists
+                        UserInterface.MouseoverText(screen, mousePos, players[currentTurn].board[mouseTileY][mouseTileX].message)
+        
         
         pygame.display.flip() # This updates the entire screen
 

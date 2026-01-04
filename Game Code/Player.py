@@ -4,11 +4,13 @@ import random
 import Buildings
 
 class Player():
-    def __init__(self, money, name, score, turn, boardSize):
-        self.money = money
+    def __init__(self, name, turn, boardSize):
         self.name = name
-        self.score = score
         self.turn = turn
+
+        #
+        self.score = 0
+        self.money = 0
 
         # Initialise shop and board
         self.board = [[None for j in range(boardSize[0])] for i in range(boardSize[1])]
@@ -26,6 +28,7 @@ class Player():
         return False
     
     def rerollShop(self, roundNum):
+
         self.shop = []
         for i in range(3):
             self.shop.append(random.choice(Buildings.commonBuildings))

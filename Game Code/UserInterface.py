@@ -108,7 +108,7 @@ def StampImage(screen, imageAssets, imageToLoad, pos, tileSize, lighten=0):
     try:
         currentImage = imageAssets[imageToLoad]
     except:
-        print(f'ERROR: Failed to load tile {imageToLoad}')
+        #print(f'ERROR: Failed to load tile {imageToLoad}')
         currentImage = imageAssets['Failed to Load']
 
     if lighten > 0:

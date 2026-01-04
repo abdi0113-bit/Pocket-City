@@ -1,4 +1,6 @@
 import pygame
+import random
+import math
 
 class Building():
     def __init__(self, name, cost, sellAmt, image, rarity, scoreIncreaseValues, moneyIncreaseValues, message):
@@ -15,13 +17,18 @@ class Building():
 
     def whenActivated(self):
         # These are any custom abilities, placeholders for now
+        scoreIncrease, moneyIncrease = self.scoreIncreaseActivate, self.moneyIncreaseActivate
+        
         if self.name == 'Resturant':
             pass
         elif self.name == 'Casino':
-            pass
+            modifierFunc = lambda x: math.ceil((x - 0.5) / (x - x**2)) # This creates the probability distribution
+            
+            moneyIncrease = modifierFunc(random.random()) # Apply modifier function
+            print(moneyIncrease)
 
         # This will automatically deal with increasing score and money
-        return self.scoreIncreaseActivate, self.moneyIncreaseActivate
+        return scoreIncrease, moneyIncrease
 
     def whenPlaced(self):
         # These are any custom abilities, placeholders for now
@@ -33,6 +40,7 @@ class Building():
             pass
         elif self.name == 'Giant Statue':
             pass
+
         # This will automatically deal with increasing score and money
         return self.scoreIncreasePlace, self.moneyIncreasePlace
 
@@ -47,6 +55,7 @@ class Building():
             pass
         elif self.name == 'Giant Statue':
             pass
+
         # Return the current money minus the cost
         return currentMoney - self.cost
     

@@ -39,7 +39,7 @@ def StampImage(screen, imageAssets, imageToLoad, pos, tileSize):
     try:
         currentTileImage = imageAssets[imageToLoad]
     except:
-        print(f'ERROR: Failed to load tile {imageToLoad}')
+        #print(f'ERROR: Failed to load tile {imageToLoad}')
         currentTileImage = imageAssets['Failed to Load']
     screen.blit(currentTileImage, (pos[0] * tileSize, pos[1] * tileSize))
 

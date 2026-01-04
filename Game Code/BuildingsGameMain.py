@@ -180,8 +180,8 @@ def Main():
                         selectedTile = SelectTile((gridWidth, gridHeight), selectedTile, (event.pos[0] // tileSize, (event.pos[1] - gridOffsetY) // tileSize))
                         currentBoardItem = players[currentTurn].board[selectedTile[1]][selectedTile[0]]
 
-                        # If a shop item is selected, and the mouse isn't on the shop, and the player can afford the purchase:
-                        if selectedShopItem > -1 and mouseShopItem == -1 and players[currentTurn].canAfford(players[currentTurn].shop[selectedShopItem].cost) and currentBoardItem  in [0, '', None]:
+                        # If a tile is selected, and a shop item is selected, and the mouse isn't on the shop, and the player can afford the purchase:
+                        if selectedTile != (-1, -1) and selectedShopItem > -1 and mouseShopItem == -1 and players[currentTurn].canAfford(players[currentTurn].shop[selectedShopItem].cost) and currentBoardItem  in [0, '', None]:
                             # Transfer the selected shop item to the current space
                             transferItem = players[currentTurn].shop.pop(selectedShopItem)
                             players[currentTurn].board[selectedTile[1]][selectedTile[0]] = transferItem
@@ -233,16 +233,18 @@ def Main():
                                 # Next turn
                                 players[currentTurn].money = 0 # Get rid of unspent money
 
+                                # Unselect shop and tile
+                                selectedTile = (-1,-1)
+                                selectedShopItem = -1
+
                                 currentTurn += 1
 
                                 if currentTurn == numberOfPlayers:
                                     # Not the new round yet, since action phase still needs to happen
                                     currentTurn = 0
 
-                                    # Unselect shop and tile
-                                    selectedTile = (-1,-1)
-                                    selectedShopItem = -1
                                     if gameState == 'Action':
+                                        # Unused
                                         gameState = 'Active'
                                     else:
                                         gameState = 'Action'
@@ -265,8 +267,8 @@ def Main():
                             
                             elif button.name == 'Reroll':
                                 if not players[currentTurn].money < rerollCost:
+                                    selectedShopItem = -1
                                     players[currentTurn].rerollShop(currentRound)
-                                    
                                     players[currentTurn].money -= rerollCost
 
                             elif button.name == 'Expand':

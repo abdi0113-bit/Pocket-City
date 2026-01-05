@@ -252,6 +252,10 @@ def Main():
                                         players[currentTurn].score = 0
                                         selectedTile = (0,0)
                                         activatedYet = False
+
+                                        # Create blank multiplier and addend tables
+                                        multipliers = [[1 for i in range(gridWidth)] for j in range(gridHeight)]
+                                        addends = [[0 for i in range(gridWidth)] for j in range(gridHeight)]
                                 
                                 gridHeight = len(players[currentTurn].board)
                                 gridWidth = len(players[currentTurn].board[0])
@@ -336,6 +340,10 @@ def Main():
                     if y == gridHeight:
                         # Last square, next player
                         currentTurn += 1
+                        
+                        # Reset multiplier and addend tables
+                        multipliers = [[1 for i in range(gridWidth)] for j in range(gridHeight)]
+                        addends = [[0 for i in range(gridWidth)] for j in range(gridHeight)]
 
                         if currentTurn == numberOfPlayers:
                             # End of action phase, next round

@@ -338,7 +338,7 @@ def Main():
             UserInterface.DrawHud(screen, imageAssets, screenSettings, (gridWidth, gridHeight), players[currentTurn], gameState)
 
             # 5 seconds regardless of number of tiles
-            waitSeconds = 8
+            waitSeconds = 1
             waitTime = waitSeconds/(gridWidth*gridHeight)
 
             # Activate when the time is halfway up

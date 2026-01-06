@@ -21,9 +21,12 @@ class Building():
         
         if self.name == 'Resturant':
             pass
+
+        elif self.name == 'Mine Quarry':
+            moneyIncrease = random.randint(1,5)
+
         elif self.name == 'Casino':
             modifierFunc = lambda x: (x - 0.5) / (x - x**2) # This creates the probability distribution
-            
             moneyIncrease = math.ceil(modifierFunc(random.random())) # Apply modifier function
             scoreIncrease = 10 * math.ceil(modifierFunc(random.random())) # Score uses the same function but is multiplied by 10
             
@@ -130,15 +133,15 @@ commonBuildings =  (Building('Brick House', 1, 1,  'Brick House', 'Common', (5,0
                     Building('Modern House', 1, 1, 'Modern House', 'Common', (5,0), (0,0), 'Modern House\n--------------\n+ 5 Score\nwhen activated.'),
                     Building('Farm', 2, 1,  'Barn', 'Common', (10,0), (0,0), 'Farm\n--------------\n+ 10 Score\nwhen activated.'),
                     Building('Crop Field', 1, 1,  'Crop Field', 'Common', (0,0), (1,0), 'Crop Field\n--------------\n+ $1\nwhen activated.'),
-                    Building('School', 2, 1, 'School', 'Common', (10,0), (0,0), 'School\n--------------\n+ 10 Score\nwhen activated.'))
+                    Building('School', 2, 1, 'School', 'Common', (10,0), (0,0), 'School\n--------------\n+ 10 Score\nwhen activated.\nDoubles score of\nadjacent buildings.'))
 
 uncommonBuildings = (Building('Condo', 3, 2,  'Condo', 'Uncommon', (10,0), (0,0), 'Condo\n--------------\n+ 10 Score\nwhen activated.'),
                     Building('Tall House', 2, 1,  'Tall House', 'Uncommon', (10,0), (0,0), 'Tall House\n--------------\n+ 10 Score\nwhen activated.'),
                     Building('Pool', 3, 2, 'Pool', 'Uncommon', (50,0), (0,0), 'Pool\n--------------\n+ 50 Score\nwhen activated.'),
                     Building('Wind Turbine', 2, 1,  'Wind Turbine', 'Uncommon', (10,0), (0,0), 'Wind Turbine\n--------------\n+ 10 Score\nwhen activated.'),
-                    Building('Bridge', 3, 2,  'Bridge', 'Uncommon', (0,0), (0,0), 'Bridge\n--------------\nRepeats the last Building\'s ability\nwhen activated.'),
+                    Building('Bridge', 3, 2,  'Bridge', 'Uncommon', (0,0), (0,0), 'Bridge\n--------------\nRepeats the ability\nof the Building\nto the left\nwhen activated.'),
                     Building('Resturant', 4, 3, 'Resturant', 'Uncommon', (15,0), (0,0), 'Resturant\n--------------\n+ 15 Score\nwhen activated.'),
-                    Building('Mine Quarry', 4, 3, 'Mine Quarry', 'Uncommon', (15,0), (0,0), 'Mine Quarry\n--------------\n+ 15 Score\nwhen activated.'))
+                    Building('Mine Quarry', 4, 3, 'Mine Quarry', 'Uncommon', (15,0), (0,0), 'Mine Quarry\n--------------\n+ 15 Score\nand + $1-5\nwhen activated.'))
 
 rareBuildings = (Building('Power Plant', 5, 4,  'Power Plant', 'Rare', (30,0), (0,0), 'Power Plant\n--------------\n+ 30 Score\nwhen activated.'),
                 Building('Mansion', 5, 4,  'Mansion', 'Rare', (100,0), (0,0), 'Mansion\n--------------\n+ 100 Score\nwhen activated.'),
@@ -152,7 +155,7 @@ epicBuildings = (Building('Skyscraper', 7, 5,  'Skyscraper', 'Epic', (50,0), (0,
                 Building('Casino', 8, 6, 'Casino', 'Epic', (0,0), (0,0), 'Casino\n--------------\nGives random score and money\nwhen activated.'),
                 Building('Bank', 6, 4,  'Bank', 'Epic', (30,0), (0,0), 'Bank\n--------------\n+ 30 Score\nwhen activated.'),
                 Building('Police Station', 6, 5,  'Police Station', 'Epic', (30,0), (0,0), 'Police Station\n--------------\n+ 30 Score\nwhen activated.'),
-                Building('Airport', 6, 4,  'Airport', 'Epic', (0,0), (0,0), 'Airport\n--------------\nRepeats all nearby Buildings\' abilities\nwhen activated.'),)
+                Building('Airport', 6, 4,  'Airport', 'Epic', (0,0), (0,0), 'Airport\n--------------\nRepeats all\nnearby Buildings\' abilities\nwhen activated.'),)
 
 legendaryBuildings = (Building('Pyramid', 9, 7,  'Pyramid', 'Legendary', (500,0), (0,0), 'Pyramid\n--------------\n+ 500 Score\nwhen activated.'),
                      Building('Colloseum', 8, 6,  'Colloseum', 'Legendary', (400,0), (0,0), 'Colloseum\n--------------\n+ 400 Score\nwhen activated.'),

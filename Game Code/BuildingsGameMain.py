@@ -307,7 +307,7 @@ def Main():
                                     players[currentTurn].money -= players[currentTurn].expandCost
 
                                     # Increase expand cost
-                                    players[currentTurn].expandCost += 2
+                                    players[currentTurn].expandCost *= 2
                                     button.updateMessage(players[currentTurn].expandCost)
                                     
                     pressedButtons = []
@@ -447,4 +447,5 @@ def Main():
 
 #This function runs everything. If you want the game to do something, it needs to go in main()
 if __name__ == "__main__":
+
     Main()

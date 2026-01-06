@@ -53,7 +53,8 @@ class Building():
         # Easy function for multiplying the surrounding 8 spaces
 
         newMultipliers = multipliers
-        
+        count = 0
+
         for row in [y-1, y, y+1]:
             for column in [x-1, x, x+1]:
                 # If not the starting space and not out of bounds
@@ -64,15 +65,18 @@ class Building():
                             # If the current tile is whitelisted or whitelist is empty 
                             if board[row][column].name in whitelist or whitelist == []:
 
-                                #Multiply the current row/col by the amount
+                                # Multiply the current row/col by the amount
                                 newMultipliers[row][column] *= amt
-            
-        return newMultipliers
+                                # Increment the count
+                                count += 1
+                                
+        return newMultipliers, count
     
     def addTo3x3(self, board, addends, x, y, amt, whitelist=[]):
         # Easy function for adding to the surrounding 8 spaces
 
         newAddends = addends
+        count = 0
         
         for row in [y-1, y, y+1]:
             for column in [x-1, x, x+1]:
@@ -86,15 +90,17 @@ class Building():
 
                                 # Add the amount to the row/col
                                 newAddends[row][column] += amt
+                                # Increment the count
+                                count += 1
             
-        return newAddends
+        return newAddends, count
 
     def beforeRound(self, board, multipliers, addends, x, y):
         newMultipliers, newAddends = multipliers, addends
 
         # Here go abilities which modify other buildings around them
         if self.name == 'School':
-            newMultipliers = self.multiply3x3(board, newMultipliers, x, y, 2, whitelist=['Brick House', 'Log House', 'Modern House', 'Tall House'])
+            newMultipliers, count = self.multiply3x3(board, newMultipliers, x, y, 2, whitelist=['Brick House', 'Log House', 'Modern House', 'Tall House'])
 
         return newMultipliers, newAddends
 
@@ -164,5 +170,6 @@ legendaryBuildings = (Building('Pyramid', 9, 7,  'Pyramid', 'Legendary', (500,0)
                      Building('Giant Statue', 10, 8, 'Giant Statue', 'Legendary', (0,0), (0,0), 'Giant Statue\n--------------\nBuffs everything\nwhen activated.'),)
 
 allBuildings = (commonBuildings, uncommonBuildings, rareBuildings, epicBuildings, legendaryBuildings)
+
 
 

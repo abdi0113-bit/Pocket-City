@@ -95,6 +95,21 @@ class Building():
             
         return newAddends, count
 
+    def findEmpty3x3(self, board, x, y):
+        emptySpots = []
+
+        for row in [y-1, y, y+1]:
+            for column in [x-1, x, x+1]:
+                # If not the starting space and not out of bounds
+                if (column, row) != (x,y) and not (column < 0 or row < 0 or row >= len(newAddends)):
+                    if column < len(newAddends[row]):
+                        
+                        # If tile is empty:
+                        if not board[row][column]:
+                            emptySpots.append((column, row))
+
+        return emptySpots
+
     def beforeRound(self, board, multipliers, addends, x, y):
         newMultipliers, newAddends = multipliers, addends
 
@@ -170,6 +185,7 @@ legendaryBuildings = (Building('Pyramid', 9, 7,  'Pyramid', 'Legendary', (500,0)
                      Building('Giant Statue', 10, 8, 'Giant Statue', 'Legendary', (0,0), (0,0), 'Giant Statue\n--------------\nBuffs everything\nwhen activated.'),)
 
 allBuildings = (commonBuildings, uncommonBuildings, rareBuildings, epicBuildings, legendaryBuildings)
+
 
 
 

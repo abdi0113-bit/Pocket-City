@@ -95,6 +95,21 @@ class Building():
             
         return newAddends, count
 
+    def findEmpty3x3(self, board, x, y):
+        emptySpots = []
+
+        for row in [y-1, y, y+1]:
+            for column in [x-1, x, x+1]:
+                # If not the starting space and not out of bounds
+                if (column, row) != (x,y) and not (column < 0 or row < 0 or row >= len(newAddends)):
+                    if column < len(newAddends[row]):
+                        
+                        # If tile is empty:
+                        if not board[row][column]:
+                            emptySpots.append((column, row))
+
+        return emptySpots
+
     def beforeRound(self, board, multipliers, addends, x, y):
         newMultipliers, newAddends = multipliers, addends
 

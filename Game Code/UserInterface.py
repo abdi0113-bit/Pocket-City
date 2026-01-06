@@ -102,6 +102,10 @@ class Button():
 
     def sellAmt(self, currentTile):
         self.text = f'Sell (${currentTile.sellAmt})'
+    
+    def updateMessage(self, var):
+        if self.name == 'Expand':
+            self.text = f'Expand Grid (${var})' # In this case var is expand cost
 
 
 def StampImage(screen, imageAssets, imageToLoad, pos, tileSize, lighten=0):

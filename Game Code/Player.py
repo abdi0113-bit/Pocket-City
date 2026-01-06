@@ -11,12 +11,16 @@ class Player():
         #
         self.score = 0
         self.money = 0
+        self.lives = 10
 
         # Initialise shop and board
         self.board = [[None for j in range(boardSize[0])] for i in range(boardSize[1])]
         self.board[int(boardSize[1]/2)][int(boardSize[0]/2)] = Buildings.starterTent
         self.shop = []
-        self.rerollShop(1)
+        self.rerollShop(1, 3)
+
+        # Cost of expanding the board
+        self.expandCost = 4
 
     def canAfford(self, cost):
         return self.money >= cost
@@ -27,7 +31,7 @@ class Player():
             return True
         return False
     
-    def rerollShop(self, roundNum):
+    def rerollShop(self, roundNum, shopLength):
         # Percentages of each rarity, order is C, U, R, E, L
         rarityDistribution = (
             (1.00, 0.00, 0.00, 0.00, 0.00),
@@ -40,8 +44,6 @@ class Player():
             (0.20, 0.35, 0.30, 0.15, 0.00),
             (0.10, 0.25, 0.35, 0.20, 0.10)
         )
-
-        shopLength = 3
 
         self.shop = []
         for i in range(shopLength):

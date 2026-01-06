@@ -22,10 +22,12 @@ class Building():
         if self.name == 'Resturant':
             pass
         elif self.name == 'Casino':
-            modifierFunc = lambda x: math.ceil((x - 0.5) / (x - x**2)) # This creates the probability distribution
+            modifierFunc = lambda x: (x - 0.5) / (x - x**2) # This creates the probability distribution
             
-            moneyIncrease = modifierFunc(random.random()) # Apply modifier function
-            print(moneyIncrease)
+            moneyIncrease = math.ceil(modifierFunc(random.random())) # Apply modifier function
+            scoreIncrease = 10 * math.ceil(modifierFunc(random.random())) # Score uses the same function but is multiplied by 10
+            
+            #print(moneyIncrease, scoreIncrease) # Debug tool
 
         # This will automatically deal with increasing score and money
         return scoreIncrease, moneyIncrease
@@ -44,7 +46,56 @@ class Building():
         # This will automatically deal with increasing score and money
         return self.scoreIncreasePlace, self.moneyIncreasePlace
 
-    def whenBought(self, currentMoney):
+    def multiply3x3(self, board, multipliers, x, y, amt, whitelist=[]):
+        # Easy function for multiplying the surrounding 8 spaces
+
+        newMultipliers = multipliers
+        
+        for row in [y-1, y, y+1]:
+            for column in [x-1, x, x+1]:
+                # If not the starting space and not out of bounds
+                if (column, row) != (x,y) and not (column < 0 or row < 0 or row >= len(newMultipliers)):
+                    if column < len(newMultipliers[row]):
+                        # If a tile exists:
+                        if board[row][column]:
+                            # If the current tile is whitelisted or whitelist is empty 
+                            if board[row][column].name in whitelist or whitelist == []:
+
+                                #Multiply the current row/col by the amount
+                                newMultipliers[row][column] *= amt
+            
+        return newMultipliers
+    
+    def addTo3x3(self, board, addends, x, y, amt, whitelist=[]):
+        # Easy function for adding to the surrounding 8 spaces
+
+        newAddends = addends
+        
+        for row in [y-1, y, y+1]:
+            for column in [x-1, x, x+1]:
+                # If not the starting space and not out of bounds
+                if (column, row) != (x,y) and not (column < 0 or row < 0 or row >= len(newAddends)):
+                    if column < len(newAddends[row]):
+                        # If a tile exists:
+                        if board[row][column]:
+                            # If the current tile is whitelisted or whitelist is empty 
+                            if board[row][column].name in whitelist or whitelist == []:
+
+                                # Add the amount to the row/col
+                                newAddends[row][column] += amt
+            
+        return newAddends
+
+    def beforeRound(self, board, multipliers, addends, x, y):
+        newMultipliers, newAddends = multipliers, addends
+
+        # Here go abilities which modify other buildings around them
+        if self.name == 'School':
+            newMultipliers = self.multiply3x3(board, newMultipliers, x, y, 2, whitelist=['Brick House', 'Log House', 'Modern House', 'Tall House'])
+
+        return newMultipliers, newAddends
+
+    def whenBought(self):
         # UNUSED FOR NOW
         # These are any custom abilities, placeholders for now
         if self.name == 'Food Stand':
@@ -55,9 +106,6 @@ class Building():
             pass
         elif self.name == 'Giant Statue':
             pass
-
-        # Return the current money minus the cost
-        return currentMoney - self.cost
     
     def showMessage(self, surface, pos):
         # Shows the mouseover message when called

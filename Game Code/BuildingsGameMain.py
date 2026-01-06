@@ -1,6 +1,7 @@
 import pygame
 import random
 import time
+import math
 
 import DrawGrid
 import UserInterface
@@ -47,6 +48,22 @@ def PostResizeEvent(screenSize):
     # This adds the event to the built-in Pygame event queue
     pygame.event.post(resizeEvent)
 
+def DoBeforeRound(currentPlayer, gridSize):
+    gridWidth, gridHeight = gridSize
+    
+    # Create blank multiplier and addend tables
+    multipliers = [[1 for i in range(gridWidth)] for j in range(gridHeight)]
+    addends = [[0 for i in range(gridWidth)] for j in range(gridHeight)]
+
+    for row in range(gridHeight):
+        for column in range(gridWidth):
+            if currentPlayer.board[row][column] not in [0, '', None]:
+                multipliers, addends = currentPlayer.board[row][column].beforeRound(currentPlayer.board, multipliers, addends, column, row)
+
+    #[print(i) for i in multipliers] # Debug tool
+    return multipliers, addends
+
+
 # Main funtion
 def Main():
     # Clock is set to pygame's clock object
@@ -58,6 +75,7 @@ def Main():
     # Grid width and height in tiles
     # Start at 3x3
     gridWidth, gridHeight = 3, 3
+    gridSizeLimit = 10
     # Tile size in pixels
     tileSize = 50
     # screen variable will store the screen
@@ -86,9 +104,9 @@ def Main():
     currentTurn = 0
     currentRound = 0
 
-    expandCost = 4
     rerollCost = 2
     moneyPerRound = 5
+    shopLength = 3
 
     # Construct a dictionary of rarity background files
     rarities = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary']
@@ -224,7 +242,7 @@ def Main():
                                 buttons.append(UserInterface.Button('NextTurn', (128,128,128), (gridWidth + 2.5) * tileSize - 60, 25, 100, 30, 'Next Turn'))
                                 buttons.append(UserInterface.Button('Sell', (128,128,128), (gridWidth + 2.5) * tileSize - 180, 25, 100, 30, 'Sell ($)'))
                                 buttons.append(UserInterface.Button('Reroll', (128,128,128), (gridWidth + 2.25) * tileSize, 75, 100, 30, image=imageAssets['Reload Icon Cost']))
-                                buttons.append(UserInterface.Button('Expand', (128,128,128), (gridWidth + 2.5) * tileSize - 230, 25, 200, 30, f'Expand Grid (${expandCost})'))
+                                buttons.append(UserInterface.Button('Expand', (128,128,128), (gridWidth + 2.5) * tileSize - 230, 25, 200, 30, f'Expand Grid (${players[currentTurn].expandCost})'))
 
                             elif button.name == 'PlayerSelector':
                                 numberOfPlayers = result
@@ -242,24 +260,25 @@ def Main():
                                 if currentTurn == numberOfPlayers:
                                     # Not the new round yet, since action phase still needs to happen
                                     currentTurn = 0
-
-                                    if gameState == 'Action':
-                                        # Unused
-                                        gameState = 'Active'
-                                    else:
-                                        gameState = 'Action'
-                                        startTime = time.time()
-                                        players[currentTurn].score = 0
-                                        selectedTile = (0,0)
-                                        activatedYet = False
-
-                                        # Create blank multiplier and addend tables
-                                        multipliers = [[1 for i in range(gridWidth)] for j in range(gridHeight)]
-                                        addends = [[0 for i in range(gridWidth)] for j in range(gridHeight)]
-                                
+                                    
+                                    gameState = 'Action'
+                                    startTime = time.time()
+                                    players[currentTurn].score = 0
+                                    selectedTile = (0,0)
+                                    activatedYet = False
+                                                         
                                 gridHeight = len(players[currentTurn].board)
                                 gridWidth = len(players[currentTurn].board[0])
-                                players[currentTurn].rerollShop(currentRound)
+                                players[currentTurn].rerollShop(currentRound, shopLength)
+
+                                if gameState == 'Action':
+                                    # Do before round
+                                    multipliers, addends = DoBeforeRound(players[currentTurn], (gridWidth, gridHeight))
+
+
+                                for button in buttons:
+                                    if button.name == 'Expand':
+                                        button.updateMessage(players[currentTurn].expandCost)
 
                                 # Post a resize event to the event queue
                                 PostResizeEvent((screenWidth, screenHeight))
@@ -272,11 +291,11 @@ def Main():
                             elif button.name == 'Reroll':
                                 if not players[currentTurn].money < rerollCost:
                                     selectedShopItem = -1
-                                    players[currentTurn].rerollShop(currentRound)
+                                    players[currentTurn].rerollShop(currentRound, shopLength)
                                     players[currentTurn].money -= rerollCost
 
                             elif button.name == 'Expand':
-                                if not players[currentTurn].money < expandCost:
+                                if not players[currentTurn].money < players[currentTurn].expandCost and gridWidth < gridSizeLimit and gridHeight < gridSizeLimit:
                                     gridHeight += 1
                                     gridWidth += 1
                                     [row.append(None) for row in players[currentTurn].board]
@@ -285,7 +304,11 @@ def Main():
                                     # Post a resize event to the event queue
                                     PostResizeEvent((screenWidth, screenHeight))
 
-                                    players[currentTurn].money -= expandCost
+                                    players[currentTurn].money -= players[currentTurn].expandCost
+
+                                    # Increase expand cost
+                                    players[currentTurn].expandCost += 2
+                                    button.updateMessage(players[currentTurn].expandCost)
                                     
                     pressedButtons = []
 
@@ -315,7 +338,7 @@ def Main():
             UserInterface.DrawHud(screen, imageAssets, screenSettings, (gridWidth, gridHeight), players[currentTurn], gameState)
 
             # 5 seconds regardless of number of tiles
-            waitSeconds = 1
+            waitSeconds = 8
             waitTime = waitSeconds/(gridWidth*gridHeight)
 
             # Activate when the time is halfway up
@@ -324,6 +347,12 @@ def Main():
                 # Activate the current tile
                 if players[currentTurn].board[selectedTile[1]][selectedTile[0]] not in [0, '', None]:
                     scoreIncrease, moneyIncrease = players[currentTurn].board[selectedTile[1]][selectedTile[0]].whenActivated()
+                    
+                    # Apply bonuses
+                    scoreIncrease += addends[selectedTile[1]][selectedTile[0]]
+                    scoreIncrease *= multipliers[selectedTile[1]][selectedTile[0]]
+
+                    # Change score
                     players[currentTurn].score += scoreIncrease
                     players[currentTurn].money += moneyIncrease
 
@@ -341,11 +370,7 @@ def Main():
                         # Last square, next player
                         currentTurn += 1
                         
-                        # Reset multiplier and addend tables
-                        multipliers = [[1 for i in range(gridWidth)] for j in range(gridHeight)]
-                        addends = [[0 for i in range(gridWidth)] for j in range(gridHeight)]
-
-                        if currentTurn == numberOfPlayers:
+                        if currentTurn == numberOfPlayers:                            
                             # End of action phase, next round
                             currentRound += 1
                             currentTurn = 0
@@ -355,13 +380,28 @@ def Main():
                             #print(currentRound, moneyPerRound)
                             if currentRound % 2 == 0:
                                 moneyPerRound += 1
-
+                            
+                            scores = []
+                            # Update lives and money
                             for player in players:
                                 player.money += moneyPerRound
+                                scores.append(player)
+                            
+                            scores.sort(key = lambda p: p.score) # This lambda function returns the score of the input, and is used as a sorting key
+                            
+                            for index in range(math.ceil((numberOfPlayers - 1)/2), (numberOfPlayers - 1)):
+                                # Remove a life from the bottom 1/2 of players
+                                scores[index].lives -= 1
 
                         else:
                             selectedTile = (0, 0)
                             players[currentTurn].score = 0
+                            
+                            # Do before round
+                            gridHeight = len(players[currentTurn].board)
+                            gridWidth = len(players[currentTurn].board[0])
+
+                            multipliers, addends = DoBeforeRound(players[currentTurn], (gridWidth, gridHeight))
                         
                         gridHeight = len(players[currentTurn].board)
                         gridWidth = len(players[currentTurn].board[0])

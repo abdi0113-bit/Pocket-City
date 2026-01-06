@@ -101,8 +101,8 @@ class Building():
         for row in [y-1, y, y+1]:
             for column in [x-1, x, x+1]:
                 # If not the starting space and not out of bounds
-                if (column, row) != (x,y) and not (column < 0 or row < 0 or row >= len(newAddends)):
-                    if column < len(newAddends[row]):
+                if (column, row) != (x,y) and not (column < 0 or row < 0 or row >= len(board)):
+                    if column < len(board[row]):
                         
                         # If tile is empty:
                         if not board[row][column]:

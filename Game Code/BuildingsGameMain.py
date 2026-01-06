@@ -179,7 +179,7 @@ def Main():
                         button.image = imageAssets['Pocket City Button']
                         button.resize(event.w/oldScreenWidth, event.h/oldScreenHeight)
                     if button.name == 'Reroll':
-                        button.image = imageAssets['Reload Icon Cost']
+                        button.image = imageAssets['Reload Icon']
                         button.resize(event.w/oldScreenWidth, event.h/oldScreenHeight)
                 
             if event.type == pygame.MOUSEBUTTONDOWN: # On click
@@ -241,7 +241,7 @@ def Main():
                                 buttons = []
                                 buttons.append(UserInterface.Button('NextTurn', (128,128,128), (gridWidth + 2.5) * tileSize - 60, 25, 100, 30, 'Next Turn'))
                                 buttons.append(UserInterface.Button('Sell', (128,128,128), (gridWidth + 2.5) * tileSize - 180, 25, 100, 30, 'Sell ($)'))
-                                buttons.append(UserInterface.Button('Reroll', (128,128,128), (gridWidth + 2.25) * tileSize, 75, 100, 30, image=imageAssets['Reload Icon Cost']))
+                                buttons.append(UserInterface.Button('Reroll', (128,128,128), (gridWidth + 2.25) * tileSize, 75, 100, 30, image=imageAssets['Reload Icon']))
                                 buttons.append(UserInterface.Button('Expand', (128,128,128), (gridWidth + 2.5) * tileSize - 230, 25, 200, 30, f'Expand Grid (${players[currentTurn].expandCost})'))
 
                             elif button.name == 'PlayerSelector':
@@ -307,7 +307,7 @@ def Main():
                                     players[currentTurn].money -= players[currentTurn].expandCost
 
                                     # Increase expand cost
-                                    players[currentTurn].expandCost += 2
+                                    players[currentTurn].expandCost *= 2
                                     button.updateMessage(players[currentTurn].expandCost)
                                     
                     pressedButtons = []

@@ -100,7 +100,7 @@ class Building():
 
         # Here go abilities which modify other buildings around them
         if self.name == 'School':
-            newMultipliers, count = self.multiply3x3(board, newMultipliers, x, y, 2, whitelist=['Brick House', 'Log House', 'Modern House', 'Tall House'])
+            newMultipliers, count = self.multiply3x3(board, newMultipliers, x, y, 2, whitelist=['Brick House', 'Log House', 'Modern House', 'Tall House', 'Condo'])
 
         return newMultipliers, newAddends
 

@@ -35,7 +35,7 @@ class Building():
         # This will automatically deal with increasing score and money
         return scoreIncrease, moneyIncrease
 
-   def whenPlaced(self,board,x,y):
+    def whenPlaced(self,board,x,y):
         # These are any custom abilities, placeholders for now
         if self.name == 'Barn':
             emptySpaces = findEmpty3x3(board,x,y)
@@ -199,6 +199,7 @@ legendaryBuildings = (Building('Pyramid', 9, 7,  'Pyramid', 'Legendary', (500,0)
                      Building('Giant Statue', 10, 8, 'Giant Statue', 'Legendary', (0,0), (0,0), 'Giant Statue\n--------------\nBuffs everything\nwhen activated.'),)
 
 allBuildings = (commonBuildings, uncommonBuildings, rareBuildings, epicBuildings, legendaryBuildings)
+
 
 
 

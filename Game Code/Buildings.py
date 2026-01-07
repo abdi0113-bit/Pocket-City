@@ -115,7 +115,7 @@ class Building():
 
         # Here go abilities which modify other buildings around them
         if self.name == 'School':
-            newMultipliers, count = self.multiply3x3(board, newMultipliers, x, y, 2, whitelist=['Brick House', 'Log House', 'Modern House', 'Tall House', 'Condo'])
+            newAddends, count = self.addTo3x3(board, newAddends, x, y, 20, whitelist=['Brick House', 'Log House', 'Modern House', 'Tall House', 'Condo'])
         
         elif self.name == 'Colloseum':
             for y in range(len(newAddends)):
@@ -123,7 +123,13 @@ class Building():
                     newAddends[y][x] += 10
 
         elif self.name == 'Food Stand':
-            newAddends, count = self.addTo3x3(board, addends, x, y, 5, whitelist=['Crop Field'])
+            newAddends, count = self.addTo3x3(board, newAddends, x, y, 5, whitelist=['Crop Field'])
+
+        elif self.name == 'Ferris Wheel':
+            newMultipliers, count = self.multiply3x3(board, newMultipliers, x, y, 3, whitelist=['Food Stand', 'Resturant', 'Casino', 'Bank'])
+
+        elif self.name == 'Giant Statue':
+            newMultipliers, count = self.multiply3x3(board, newMultipliers, x, y, 10)
 
         return newMultipliers, newAddends
 
@@ -164,7 +170,9 @@ commonBuildings =  (Building('Brick House', 1, 1,  'Brick House', 'Common', (5,0
                     Building('Modern House', 1, 1, 'Modern House', 'Common', (5,0), (0,0), 'Modern House\n--------------\n+ 5 Score\nwhen activated.'),
                     Building('Farm', 2, 1,  'Barn', 'Common', (10,0), (0,0), 'Farm\n--------------\n+ 10 Score\nwhen activated.'),
                     Building('Crop Field', 1, 1,  'Crop Field', 'Common', (0,0), (1,0), 'Crop Field\n--------------\n+ $1\nwhen activated.'),
-                    Building('School', 2, 1, 'School', 'Common', (10,0), (0,0), 'School\n--------------\n+ 10 Score\nwhen activated.\nDoubles score of\nadjacent buildings.'))
+                    Building('School', 2, 1, 'School', 'Common', (10,0), (0,0), 'School\n--------------\n+ 10 Score\nwhen activated.\n+ 20 score of\nadjacent house buildings.'),
+                    Building('Food Stand', 2, 1,  'Food Stand', 'Common', (5,0), (0,0), 'Food Stand\n--------------\n+ 5 Score\nwhen activated.\nDouble Coins to adjacent\nCrop Fields.'))
+
 
 uncommonBuildings = (Building('Condo', 3, 2,  'Condo', 'Uncommon', (10,0), (0,0), 'Condo\n--------------\n+ 10 Score\nwhen activated.'),
                     Building('Tall House', 2, 1,  'Tall House', 'Uncommon', (10,0), (0,0), 'Tall House\n--------------\n+ 10 Score\nwhen activated.'),

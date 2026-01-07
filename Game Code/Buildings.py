@@ -124,17 +124,21 @@ class Building():
 
         return newMultipliers, newAddends
 
-    def whenBought(self):
+    def whenBought(self, board, multipliers, addends, x, y):
         # UNUSED FOR NOW
         # These are any custom abilities, placeholders for now
+        newMultipliers, newAddends = multipliers, addends
+
         if self.name == 'Food Stand':
-            pass
+            newAddends = self.addTo3x3(board, addends, x, y, 5, whitelist=['Crop Field'])
         elif self.name == 'Condo':
             pass
         elif self.name == 'Bank':
             pass
         elif self.name == 'Giant Statue':
             pass
+
+        return newMultipliers, newAddends
     
     def showMessage(self, surface, pos):
         # Shows the mouseover message when called

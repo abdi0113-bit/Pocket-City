@@ -116,20 +116,30 @@ class Building():
         # Here go abilities which modify other buildings around them
         if self.name == 'School':
             newMultipliers, count = self.multiply3x3(board, newMultipliers, x, y, 2, whitelist=['Brick House', 'Log House', 'Modern House', 'Tall House', 'Condo'])
+        
+        elif self.name == 'Colloseum':
+            for y in range(len(newAddends)):
+                for x in range(len(newAddends)):
+                    newAddends[y][x] += 10
+
+        elif self.name == 'Food Stand':
+            newAddends, count = self.addTo3x3(board, addends, x, y, 5, whitelist=['Crop Field'])
 
         return newMultipliers, newAddends
 
-    def whenBought(self):
+    def whenBought(self, board, multipliers, addends, x, y):
         # UNUSED FOR NOW
         # These are any custom abilities, placeholders for now
-        if self.name == 'Food Stand':
-            pass
-        elif self.name == 'Condo':
+        newMultipliers, newAddends = multipliers, addends
+
+        if self.name == 'Condo':
             pass
         elif self.name == 'Bank':
             pass
         elif self.name == 'Giant Statue':
             pass
+
+        return newMultipliers, newAddends
     
     def showMessage(self, surface, pos):
         # Shows the mouseover message when called
@@ -185,6 +195,7 @@ legendaryBuildings = (Building('Pyramid', 9, 7,  'Pyramid', 'Legendary', (500,0)
                      Building('Giant Statue', 10, 8, 'Giant Statue', 'Legendary', (0,0), (0,0), 'Giant Statue\n--------------\nBuffs everything\nwhen activated.'),)
 
 allBuildings = (commonBuildings, uncommonBuildings, rareBuildings, epicBuildings, legendaryBuildings)
+
 
 
 

@@ -15,7 +15,7 @@ class Building():
         self.moneyIncreasePlace = moneyIncreaseValues[1]
         self.message = message
 
-    def whenActivated(self):
+    def whenActivated(self, currentPlayer, x, y):
         # These are any custom abilities, placeholders for now
         scoreIncrease, moneyIncrease = self.scoreIncreaseActivate, self.moneyIncreaseActivate
         
@@ -30,8 +30,10 @@ class Building():
             moneyIncrease = math.ceil(modifierFunc(random.random())) # Apply modifier function
             scoreIncrease = 10 * math.ceil(modifierFunc(random.random())) # Score uses the same function but is multiplied by 10
             
-            #print(moneyIncrease, scoreIncrease) # Debug tool
-
+        elif self.name == 'Bridge':
+            if x > 0:
+                currentPlayer.board[y][x - 1].whenActivated(currentPlayer, x-1, y)
+        
         # This will automatically deal with increasing score and money
         return scoreIncrease, moneyIncrease
 
@@ -195,6 +197,8 @@ legendaryBuildings = (Building('Pyramid', 9, 7,  'Pyramid', 'Legendary', (500,0)
                      Building('Giant Statue', 10, 8, 'Giant Statue', 'Legendary', (0,0), (0,0), 'Giant Statue\n--------------\nBuffs everything\nwhen activated.'),)
 
 allBuildings = (commonBuildings, uncommonBuildings, rareBuildings, epicBuildings, legendaryBuildings)
+
+
 
 
 

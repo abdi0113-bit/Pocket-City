@@ -37,10 +37,14 @@ class Building():
         # This will automatically deal with increasing score and money
         return scoreIncrease, moneyIncrease
 
-    def whenPlaced(self):
+    def whenPlaced(self,board,x,y):
         # These are any custom abilities, placeholders for now
         if self.name == 'Barn':
-            pass
+            emptySpaces = findEmpty3x3(board,x,y)
+            if len(emptySpaces) > 0:
+                emptySpace=random.choice(emptySpaces)
+                board[emptySpace[1]][emptySpace[0]] = commonBuildings[4]
+        
         elif self.name == 'Fire Station':
             pass
         elif self.name == 'Volcano':
@@ -49,7 +53,7 @@ class Building():
             pass
 
         # This will automatically deal with increasing score and money
-        return self.scoreIncreasePlace, self.moneyIncreasePlace
+        return self.scoreIncreasePlace, self.moneyIncreasePlace, board
 
     def multiply3x3(self, board, multipliers, x, y, amt, whitelist=[]):
         # Easy function for multiplying the surrounding 8 spaces

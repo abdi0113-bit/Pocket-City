@@ -82,7 +82,7 @@ class Building():
 
     def whenPlaced(self,board,x,y):
         # These are any custom abilities, placeholders for now
-        if self.name == 'Barn':
+        if self.name == 'Farm':
             emptySpaces = self.findEmpty3x3(board,x,y)
             if len(emptySpaces) > 0:
                 emptySpace=random.choice(emptySpaces)

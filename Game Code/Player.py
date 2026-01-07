@@ -63,5 +63,6 @@ class Player():
                     rarityToUse = rarity
                     break
 
-            self.shop.append(random.choice(Buildings.allBuildings[rarityToUse]))
+            buildingsDict = Buildings.allBuildings[rarityToUse]
+            self.shop.append(random.choice(list(buildingsDict.values())))
     

@@ -205,8 +205,11 @@ def Main():
                             players[currentTurn].board[selectedTile[1]][selectedTile[0]] = transferItem
 
                             # Activate when placed ability
-                            players[currentTurn].board[selectedTile[1]][selectedTile[0]].whenPlaced()
+                            scoreIncrease, moneyIncrease = players[currentTurn].board[selectedTile[1]][selectedTile[0]].whenPlaced()
 
+                            players[currentTurn].score += scoreIncrease
+                            players[currentTurn].money += moneyIncrease
+                            
                             players[currentTurn].spendMoney(transferItem.cost)
                             selectedShopItem = -1
                             selectedTile = (-1, -1)
@@ -449,3 +452,4 @@ def Main():
 if __name__ == "__main__":
 
     Main()
+

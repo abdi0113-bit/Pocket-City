@@ -168,7 +168,7 @@ starterTent = Building('Starter Tent', 1, 1,  'Starter Tent', '', (1,0), (0,0), 
 commonBuildings =  (Building('Brick House', 1, 1,  'Brick House', 'Common', (5,0), (0,0), 'Brick House\n--------------\n+ 5 Score\nwhen activated.'),
                     Building('Log House', 1, 1,  'Log House', 'Common', (5,0), (0,0), 'Log House\n--------------\n+ 5 Score\nwhen activated.'),
                     Building('Modern House', 1, 1, 'Modern House', 'Common', (5,0), (0,0), 'Modern House\n--------------\n+ 5 Score\nwhen activated.'),
-                    Building('Farm', 2, 1,  'Barn', 'Common', (10,0), (0,0), 'Farm\n--------------\n+ 10 Score\nwhen activated.'),
+                    Building('Farm', 2, 1,  'Barn', 'Common', (10,0), (0,0), 'Farm\n--------------\n+ 10 Score\nwhen activated.\nPlaces a Crop Field\nin an adjacent empty space.'),
                     Building('Crop Field', 1, 1,  'Crop Field', 'Common', (0,0), (1,0), 'Crop Field\n--------------\n+ $1\nwhen activated.'),
                     Building('School', 2, 1, 'School', 'Common', (10,0), (0,0), 'School\n--------------\n+ 10 Score\nwhen activated.\n+ 20 score of\nadjacent house buildings.'),
                     Building('Food Stand', 2, 1,  'Food Stand', 'Common', (5,0), (0,0), 'Food Stand\n--------------\n+ 5 Score\nwhen activated.\nDouble Coins to adjacent\nCrop Fields.'))
@@ -197,7 +197,7 @@ epicBuildings = (Building('Skyscraper', 7, 5,  'Skyscraper', 'Epic', (50,0), (0,
                 Building('Airport', 6, 4,  'Airport', 'Epic', (0,0), (0,0), 'Airport\n--------------\nRepeats all\nnearby Buildings\' abilities\nwhen activated.'),)
 
 legendaryBuildings = (Building('Pyramid', 9, 7,  'Pyramid', 'Legendary', (500,0), (0,0), 'Pyramid\n--------------\n+ 500 Score\nwhen activated.'),
-                     Building('Colloseum', 8, 6,  'Colloseum', 'Legendary', (400,0), (0,0), 'Colloseum\n--------------\n+ 400 Score\nwhen activated.'),
+                     Building('Colloseum', 8, 6,  'Colloseum', 'Legendary', (400,0), (0,0), 'Colloseum\n--------------\n+ 400 Score\nwhen activated.\n+10 Score to all common buildings.'),
                      Building('Space Station', 10, 8, 'Space Station', 'Legendary', (200,0), (0,0), 'Church\n--------------\n+ 200 Score\nwhen activated.'),
                      Building('Volcano', 9, 7, 'Volcano', 'Legendary', (1000,0), (0,0), 'Volcano\n--------------\n+ 1000 Score\nwhen activated.'),
                      Building('Giant Statue', 10, 8, 'Giant Statue', 'Legendary', (0,0), (0,0), 'Giant Statue\n--------------\nBuffs everything\nwhen activated.'),)

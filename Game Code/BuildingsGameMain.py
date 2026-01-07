@@ -349,7 +349,7 @@ def Main():
                 activatedYet = True
                 # Activate the current tile
                 if players[currentTurn].board[selectedTile[1]][selectedTile[0]] not in [0, '', None]:
-                    scoreIncrease, moneyIncrease = players[currentTurn].board[selectedTile[1]][selectedTile[0]].whenActivated(players[currentTurn])
+                    scoreIncrease, moneyIncrease = players[currentTurn].board[selectedTile[1]][selectedTile[0]].whenActivated(players[currentTurn], selectedTile[0], selectedTile[1])
                     
                     # Apply bonuses
                     scoreIncrease += addends[selectedTile[1]][selectedTile[0]]
@@ -452,6 +452,7 @@ def Main():
 if __name__ == "__main__":
 
     Main()
+
 
 
 

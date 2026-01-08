@@ -92,7 +92,7 @@ class Building():
             emptySpaces = self.findEmpty3x3(board,x,y)
             if len(emptySpaces) > 0:
                 emptySpace=random.choice(emptySpaces)
-                board[emptySpace[1]][emptySpace[0]] = commonBuildings['Brick House, Modern House, Log House, Tall House'][random.randint(0,3)]
+                board[emptySpace[1]][emptySpace[0]] = commonBuildings['Brick House']
         
         elif self.name == 'Fire Station':
             pass

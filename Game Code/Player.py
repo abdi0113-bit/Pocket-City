@@ -64,5 +64,4 @@ class Player():
                     break
 
             buildingsDict = Buildings.allBuildings[rarityToUse]
-            self.shop.append(random.choice(list(buildingsDict.values())))
-    
+            self.shop.append(random.choice(list(buildingsDict.values()))) # This is how to get a random item from a dictionary    

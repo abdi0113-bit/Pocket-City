@@ -87,19 +87,27 @@ class Building():
             if len(emptySpaces) > 0:
                 emptySpace=random.choice(emptySpaces)
                 board[emptySpace[1]][emptySpace[0]] = commonBuildings['Crop Field']
-
+        
         elif self.name == 'Condo':
             emptySpaces = self.findEmpty3x3(board,x,y)
             if len(emptySpaces) > 0:
                 emptySpace=random.choice(emptySpaces)
-                board[emptySpace[1]][emptySpace[0]] = commonBuildings['Brick House']
-        
+                if random.random() < 0.1:
+                    # 10% chance of tall house
+                    board[emptySpace[1]][emptySpace[0]] = uncommonBuildings['Tall House']
+                else:
+                    # Otherwise pick a random common house
+                    board[emptySpace[1]][emptySpace[0]] = commonBuildings[random.choice(['Log House', 'Brick House', 'Modern House'])]
+                    
         elif self.name == 'Fire Station':
             pass
         elif self.name == 'Volcano':
             pass
         elif self.name == 'Giant Statue':
-            pass
+            emptySpaces = self.findEmpty3x3(board,x,y)
+            if len(emptySpaces) > 0:
+                emptySpace=random.choice(emptySpaces)
+                board[emptySpace[1]][emptySpace[0]] = rareBuildings['Church']
 
         # This will automatically deal with increasing score and money
         return self.scoreIncreasePlace, self.moneyIncreasePlace, board
@@ -110,15 +118,19 @@ class Building():
 
         # Here go abilities which modify other buildings around them
         if self.name == 'School':
-            newAddends, count = self.addTo3x3(board, newAddends, x, y, 20, whitelist=['Brick House', 'Log House', 'Modern House', 'Tall House', 'Condo'])
+            newAddends, count = self.addTo3x3(board, newAddends, x, y, 10, whitelist=['Brick House', 'Log House', 'Modern House', 'Tall House', 'Condo'])
         
         elif self.name == 'Colloseum':
-            for y in range(len(newAddends)):
-                for x in range(len(newAddends)):
-                    newAddends[y][x] += 10
+            # Multiply every common by 5
+            for y in range(len(newMultipliers)):
+                for x in range(len(newMultipliers)):
+                    if board[y][x] in commonBuildings:
+                        newMultipliers[y][x] *= 5
 
         elif self.name == 'Food Stand':
-            newAddends, count = self.addTo3x3(board, newAddends, x, y, 5, whitelist=['Crop Field'])
+            newAddends, count = self.addTo3x3(board, newAddends, x, y, 0, whitelist=['Crop Field'])
+            # Add 5 to score for every crop field
+            newAddends[y][x] += 5 * count
 
         elif self.name == 'Ferris Wheel':
             newMultipliers, count = self.multiply3x3(board, newMultipliers, x, y, 3, whitelist=['Food Stand', 'Resturant', 'Casino', 'Bank'])
@@ -126,10 +138,20 @@ class Building():
         elif self.name == 'Giant Statue':
             newMultipliers, count = self.multiply3x3(board, newMultipliers, x, y, 10)
 
+        elif self.name == 'Pool':
+            newMultipliers, count = self.multiply3x3(board, newMultipliers, x, y, 1, whitelist=['Wind Turbine', 'Power Plant'])
+            # Half score for every electrical building
+            newMultipliers[y][x] /= 2**count
+
+        elif self.name == 'Mansion':
+            newAddends, count = self.addTo3x3(board, newAddends, x, y, 0)
+            # Subtract 20 from score for every building
+            newAddends[y][x] += -20 * count
+
         return newMultipliers, newAddends
 
 
-    def whenActivated(self, currentPlayer, x, y):
+    def whenActivated(self, currentPlayer, x, y, multipliers, addends):
         # These are any custom abilities, placeholders for now
         scoreIncrease, moneyIncrease = self.scoreIncreaseActivate, self.moneyIncreaseActivate
         
@@ -146,8 +168,15 @@ class Building():
             
         elif self.name == 'Bridge':
             if x > 0:
-                currentPlayer.board[y][x - 1].whenActivated(currentPlayer, x-1, y)
-        
+                if currentPlayer.board[y][x - 1]:
+                    repeatActivationScore, repeatActivationMoney = currentPlayer.board[y][x - 1].whenActivated(currentPlayer, x-1, y, multipliers, addends)
+            
+                    repeatActivationScore += addends[y][x - 1]
+                    repeatActivationScore *= multipliers[y][x - 1]
+
+                    scoreIncrease += repeatActivationScore
+                    moneyIncrease += repeatActivationMoney
+
         # This will automatically deal with increasing score and money
         return scoreIncrease, moneyIncrease
 
@@ -190,11 +219,11 @@ commonBuildings =  {'Brick House' : Building('Brick House', 1, 1,  'Brick House'
                     'Modern House' : Building('Modern House', 1, 1, 'Modern House', 'Common', (5,0), (0,0), 'Modern House\n--------------\n+ 5 Score\nwhen activated.'),
                     'Farm' : Building('Farm', 2, 1,  'Barn', 'Common', (10,0), (0,0), 'Farm\n--------------\n+ 10 Score\nwhen activated.\nPlaces a Crop Field\nin an adjacent empty space.'),
                     'Crop Field' : Building('Crop Field', 1, 1,  'Crop Field', 'Common', (0,0), (1,0), 'Crop Field\n--------------\n+ $1\nwhen activated.'),
-                    'School' : Building('School', 2, 1, 'School', 'Common', (10,0), (0,0), 'School\n--------------\n+ 10 Score\nwhen activated.\n+ 20 score of\nadjacent house buildings.'),
-                    'Food Stand' : Building('Food Stand', 2, 1,  'Food Stand', 'Common', (5,0), (0,0), 'Food Stand\n--------------\n+ 5 Score\nwhen activated.\nDouble Coins to adjacent\nCrop Fields.')}
+                    'School' : Building('School', 2, 1, 'School', 'Common', (10,0), (0,0), 'School\n--------------\n+ 10 Score\nwhen activated.\n+ 10 score to\nadjacent house buildings.'),
+                    'Food Stand' : Building('Food Stand', 2, 1,  'Food Stand', 'Common', (5,0), (0,0), 'Food Stand\n--------------\n+ 5 Score\nwhen activated.\n+5 Score for every adjacent\nCrop Field.')}
 
 
-uncommonBuildings = {'Condo' : Building('Condo', 3, 2,  'Condo', 'Uncommon', (10,0), (0,0), 'Condo\n--------------\n+ 10 Score\nwhen activated.'),
+uncommonBuildings = {'Condo' : Building('Condo', 3, 2,  'Condo', 'Uncommon', (10,0), (0,0), 'Condo\n--------------\n+ 10 Score\nwhen activated.\nPlaces a random\nhouse nearby\nwhen placed.'),
                     'Tall House' : Building('Tall House', 2, 1,  'Tall House', 'Uncommon', (10,0), (0,0), 'Tall House\n--------------\n+ 10 Score\nwhen activated.'),
                     'Pool' : Building('Pool', 3, 2, 'Pool', 'Uncommon', (50,0), (0,0), 'Pool\n--------------\n+ 50 Score\nwhen activated.'),
                     'Wind Turbine' : Building('Wind Turbine', 2, 1,  'Wind Turbine', 'Uncommon', (10,0), (0,0), 'Wind Turbine\n--------------\n+ 10 Score\nwhen activated.'),
@@ -203,7 +232,7 @@ uncommonBuildings = {'Condo' : Building('Condo', 3, 2,  'Condo', 'Uncommon', (10
                     'Mine Quarry' : Building('Mine Quarry', 4, 3, 'Mine Quarry', 'Uncommon', (15,0), (0,0), 'Mine Quarry\n--------------\n+ 15 Score\nand + $1-5\nwhen activated.')}
 
 rareBuildings = {'Power Plant': Building('Power Plant', 5, 4,  'Power Plant', 'Rare', (30,0), (0,0), 'Power Plant\n--------------\n+ 30 Score\nwhen activated.'),
-                'Mansion' : Building('Mansion', 5, 4,  'Mansion', 'Rare', (100,0), (0,0), 'Mansion\n--------------\n+ 100 Score\nwhen activated.'),
+                'Mansion' : Building('Mansion', 5, 4,  'Mansion', 'Rare', (100,0), (0,0), 'Mansion\n--------------\n+ 100 Score\nwhen activated.\n- 20 Score for each\nnearby building.'),
                 'Church' : Building('Church', 4, 3, 'Church', 'Rare', (20,0), (0,0), 'Church\n--------------\n+ 20 Score\nwhen activated.'),
                 'Hospital' : Building('Hospital', 5, 4, 'Hospital', 'Rare', (20,0), (0,0), 'Hospital\n--------------\n+ 20 Score\nwhen activated.'),
                 'Fire Station' : Building('Fire Station', 5, 4, 'Fire Station', 'Rare', (20,0), (0,0), 'Fire Station\n--------------\n+ 20 Score\nwhen activated.'),
@@ -217,10 +246,10 @@ epicBuildings = {'Skyscraper' : Building('Skyscraper', 7, 5,  'Skyscraper', 'Epi
                 'Airport' : Building('Airport', 6, 4,  'Airport', 'Epic', (0,0), (0,0), 'Airport\n--------------\nRepeats all\nnearby Buildings\' abilities\nwhen activated.')}
 
 legendaryBuildings = {'Pyramid' : Building('Pyramid', 9, 7,  'Pyramid', 'Legendary', (500,0), (0,0), 'Pyramid\n--------------\n+ 500 Score\nwhen activated.'),
-                     'Colloseum' : Building('Colloseum', 8, 6,  'Colloseum', 'Legendary', (400,0), (0,0), 'Colloseum\n--------------\n+ 400 Score\nwhen activated.\n+10 Score to all common buildings.'),
+                     'Colloseum' : Building('Colloseum', 8, 6,  'Colloseum', 'Legendary', (400,0), (0,0), 'Colloseum\n--------------\n+ 400 Score\nwhen activated.\nx5 score to all\ncommon buildings.'),
                      'Space Station' : Building('Space Station', 10, 8, 'Space Station', 'Legendary', (200,0), (0,0), 'Space Station\n--------------\n+ 200 Score\nwhen activated.'),
                      'Volcano' : Building('Volcano', 9, 7, 'Volcano', 'Legendary', (1000,0), (0,0), 'Volcano\n--------------\n+ 1000 Score\nwhen activated.'),
-                     'Giant Statue' : Building('Giant Statue', 10, 8, 'Giant Statue', 'Legendary', (0,0), (0,0), 'Giant Statue\n--------------\nBuffs everything\nwhen activated.')}
+                     'Giant Statue' : Building('Giant Statue', 10, 8, 'Giant Statue', 'Legendary', (0,0), (0,0), 'Giant Statue\n--------------\nPlaces a Church nearby\nwhen placed.')}
 
 allBuildings = (commonBuildings, uncommonBuildings, rareBuildings, epicBuildings, legendaryBuildings)
 

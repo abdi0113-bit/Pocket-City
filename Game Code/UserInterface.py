@@ -94,11 +94,17 @@ class Button():
         if self.image:
             self.width = self.image.get_width()
             self.height = self.image.get_height()
-            self.font = pygame.font.SysFont('amertype', int(self.height))
         else:
             self.width *= scaleW
             self.height *= scaleH
-            self.font = pygame.font.SysFont('amertype', int(self.height))
+        
+        fontSize = self.height
+        self.font = pygame.font.SysFont('amertype', int(fontSize))
+
+        fontRenderTemp = self.font.render(self.text, True, (0,0,0))
+        if fontRenderTemp.get_width() > self.width * 0.9:
+            fontSize /= fontRenderTemp.get_width() / (self.width * 0.9)
+            self.font = pygame.font.SysFont('amertype', int(fontSize))
 
     def sellAmt(self, currentTile):
         self.text = f'Sell (${currentTile.sellAmt})'
@@ -165,7 +171,7 @@ def DrawHud(surface, imageAssets, screenSettings, gridSize, currentPlayer, gameS
     # If action phase, show score
     if gameState == 'Action':
         textRender = font.render(f'SCORE: {currentPlayer.score}', True, (0,0,0))
-        surface.blit(textRender, (180, 17))
+        surface.blit(textRender, (220, 17))
 
 def MouseoverText(screen, mousePos, text):
 

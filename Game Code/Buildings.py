@@ -98,7 +98,7 @@ class Building():
                 else:
                     # Otherwise pick a random common house
                     board[emptySpace[1]][emptySpace[0]] = commonBuildings[random.choice(['Log House', 'Brick House', 'Modern House'])]
-                    
+
         elif self.name == 'Fire Station':
             pass
         elif self.name == 'Volcano':
@@ -177,6 +177,31 @@ class Building():
                     scoreIncrease += repeatActivationScore
                     moneyIncrease += repeatActivationMoney
 
+        elif self.name == 'Airport':
+            if x > 0:
+                for column in range(0, x):
+                    if currentPlayer.board[y][column]:
+                        repeatActivationScore, repeatActivationMoney = currentPlayer.board[y][column].whenActivated(currentPlayer, column, y, multipliers, addends)
+            
+                        repeatActivationScore += addends[y][column]
+                        repeatActivationScore *= multipliers[y][column]
+
+                        scoreIncrease += repeatActivationScore
+                        moneyIncrease += repeatActivationMoney
+
+        elif self.name == 'Bus Stop':
+            if y > 0:
+                for row in range(0, y):
+                    if currentPlayer.board[row][x]:
+                        repeatActivationScore, repeatActivationMoney = currentPlayer.board[row][x].whenActivated(currentPlayer, x, row, multipliers, addends)
+            
+                        repeatActivationScore += addends[row][x]
+                        repeatActivationScore *= multipliers[row][x]
+
+                        scoreIncrease += repeatActivationScore
+                        moneyIncrease += repeatActivationMoney
+
+
         # This will automatically deal with increasing score and money
         return scoreIncrease, moneyIncrease
 
@@ -243,7 +268,9 @@ epicBuildings = {'Skyscraper' : Building('Skyscraper', 7, 5,  'Skyscraper', 'Epi
                 'Casino' : Building('Casino', 8, 6, 'Casino', 'Epic', (0,0), (0,0), 'Casino\n--------------\nGives random score and money\nwhen activated.'),
                 'Bank' : Building('Bank', 6, 4,  'Bank', 'Epic', (30,0), (0,0), 'Bank\n--------------\n+ 30 Score\nwhen activated.'),
                 'Police Station' : Building('Police Station', 6, 5,  'Police Station', 'Epic', (30,0), (0,0), 'Police Station\n--------------\n+ 30 Score\nwhen activated.'),
-                'Airport' : Building('Airport', 6, 4,  'Airport', 'Epic', (0,0), (0,0), 'Airport\n--------------\nRepeats all\nnearby Buildings\' abilities\nwhen activated.')}
+                'Airport' : Building('Airport', 6, 4,  'Airport', 'Epic', (0,0), (0,0), 'Airport\n--------------\nRepeats all\n Buildings to the left\nwhen activated.'),
+                'Bus Stop' : Building('Bus Stop', 6, 4, 'Bus Stop', 'Epic', (0,0), (0,0), 'Bus Stop\n--------------\nRepeats all\nBuildings above\nwhen activated.')}
+
 
 legendaryBuildings = {'Pyramid' : Building('Pyramid', 9, 7,  'Pyramid', 'Legendary', (500,0), (0,0), 'Pyramid\n--------------\n+ 500 Score\nwhen activated.'),
                      'Colloseum' : Building('Colloseum', 8, 6,  'Colloseum', 'Legendary', (400,0), (0,0), 'Colloseum\n--------------\n+ 400 Score\nwhen activated.\nx5 score to all\ncommon buildings.'),

@@ -148,12 +148,41 @@ class Building():
             # Subtract 20 from score for every building
             newAddends[y][x] += -20 * count
 
+        elif self.name == 'Church':
+            newMultipliers, count = self.multiply3x3(board, newMultipliers, x, y, 1, whitelist=['Church'])
+            # Multiply score by 1.5 for every church
+            newAddends[y][x] *= 1.5 ** count
+            newMultipliers, count = self.multiply3x3(board, newMultipliers, x, y, 1, whitelist=['Giant Statue'])
+            # Multiply score by 5 for every giant statue
+            newAddends[y][x] *= 5 ** count
+
+        elif self.name == 'Sky Scraper':
+            newAddends, count = self.addTo3x3(board, newAddends, x, y, 0, whitelist=['Tall House', 'Condo'])
+            # Subtract 20 from score for every building
+            newAddends[y][x] += 30 * count
+
+        elif self.name == 'Castle':
+            occupied = []
+            for row in board:
+                    for column in row:
+                        if column:
+                            occupied.append((column, row))
+
+            random.shuffle(occupied)
+            for i in range(3):
+                if len(occupied) > 0:
+                    chosenBuilding = occupied.pop(0)
+                    newMultipliers[chosenBuilding[1]][chosenBuilding[0]] *= 3
+
+        elif self.name == 'Pyramid':
+            pass
+
         return newMultipliers, newAddends
 
 
     def whenActivated(self, currentPlayer, x, y, multipliers, addends):
         # These are any custom abilities, placeholders for now
-        scoreIncrease, moneyIncrease = self.scoreIncreaseActivate, self.moneyIncreaseActivate
+        scoreIncrease, moneyIncrease, newMultiplies = self.scoreIncreaseActivate, self.moneyIncreaseActivate, multipliers
         
         if self.name == 'Resturant':
             pass
@@ -214,6 +243,10 @@ class Building():
                             scoreIncrease += repeatActivationScore
                             moneyIncrease += repeatActivationMoney
 
+        elif self.name == 'Bank':
+            moneyIncrease += random.randint(-1,-3)
+                
+                
 
         # This will automatically deal with increasing score and money
         return scoreIncrease, moneyIncrease
@@ -222,12 +255,12 @@ class Building():
     def whenBought(self, board, multipliers, addends, x, y):
         # UNUSED FOR NOW
         # These are any custom abilities, placeholders for now
-        newMultipliers, newAddends = multipliers, addends
+        newMultipliers, newAddends, moneyIncrease = multipliers, addends, self.moneyIncreaseActivate
 
         if self.name == 'Condo':
             pass
         elif self.name == 'Bank':
-            pass
+            moneyIncrease += 6
         elif self.name == 'Giant Statue':
             pass
 

@@ -57,7 +57,7 @@ def DoBeforeRound(currentPlayer, gridSize):
 
     for row in range(gridHeight):
         for column in range(gridWidth):
-            if currentPlayer.board[row][column] not in [0, '', None]:
+            if currentPlayer.board[row][column]:
                 multipliers, addends = currentPlayer.board[row][column].beforeRound(currentPlayer.board, multipliers, addends, column, row)
 
     #[print(i) for i in multipliers] # Debug tool
@@ -197,9 +197,9 @@ def Main():
 
                         selectedTile = SelectTile((gridWidth, gridHeight), selectedTile, (event.pos[0] // tileSize, (event.pos[1] - gridOffsetY) // tileSize))
                         currentBoardItem = players[currentTurn].board[selectedTile[1]][selectedTile[0]]
-
+                        
                         # If a tile is selected, and a shop item is selected, and the mouse isn't on the shop, and the player can afford the purchase:
-                        if selectedTile != (-1, -1) and selectedShopItem > -1 and mouseShopItem == -1 and players[currentTurn].canAfford(players[currentTurn].shop[selectedShopItem].cost) and currentBoardItem  in [0, '', None]:
+                        if selectedTile != (-1, -1) and selectedShopItem > -1 and mouseShopItem == -1 and players[currentTurn].canAfford(players[currentTurn].shop[selectedShopItem].cost) and not currentBoardItem:
                             # Transfer the selected shop item to the current space
                             transferItem = players[currentTurn].shop.pop(selectedShopItem)
                             players[currentTurn].board[selectedTile[1]][selectedTile[0]] = transferItem
@@ -341,23 +341,27 @@ def Main():
             UserInterface.DrawHud(screen, imageAssets, screenSettings, (gridWidth, gridHeight), players[currentTurn], gameState)
 
             # 5 seconds regardless of number of tiles
-            waitSeconds = 6
+            waitSeconds = 10
             waitTime = waitSeconds/(gridWidth*gridHeight)
 
             # Activate when the time is halfway up
             if time.time() - startTime > waitTime/2 and not activatedYet:
                 activatedYet = True
                 # Activate the current tile
-                if players[currentTurn].board[selectedTile[1]][selectedTile[0]] not in [0, '', None]:
-                    scoreIncrease, moneyIncrease = players[currentTurn].board[selectedTile[1]][selectedTile[0]].whenActivated(players[currentTurn], selectedTile[0], selectedTile[1])
+                if players[currentTurn].board[selectedTile[1]][selectedTile[0]]:
+                    scoreIncrease, moneyIncrease = players[currentTurn].board[selectedTile[1]][selectedTile[0]].whenActivated(players[currentTurn], selectedTile[0], selectedTile[1], multipliers, addends)
                     
                     # Apply bonuses
                     scoreIncrease += addends[selectedTile[1]][selectedTile[0]]
                     scoreIncrease *= multipliers[selectedTile[1]][selectedTile[0]]
 
                     # Change score
-                    players[currentTurn].score += scoreIncrease
-                    players[currentTurn].money += moneyIncrease
+                    players[currentTurn].score += round(scoreIncrease)
+                    players[currentTurn].money += round(moneyIncrease)
+                
+                else:
+                    # If tile is empty,
+                    startTime -= waitTime
 
             # If elapsed time has reached the threshhold
             if time.time() - startTime > waitTime:
@@ -426,7 +430,7 @@ def Main():
         if gameState != 'Action':
             # Don't process buttons during action phase
             if gameState != 'Start' and selectedTile != (-1, -1):
-                if players[currentTurn].board[selectedTile[1]][selectedTile[0]] not in [0, '', None]:
+                if players[currentTurn].board[selectedTile[1]][selectedTile[0]]:
                     sellAvailable = (True, players[currentTurn].board[selectedTile[1]][selectedTile[0]])
             # Draw the buttons
             UserInterface.DrawButtons(screen, buttons, gameState, sellAvailable)

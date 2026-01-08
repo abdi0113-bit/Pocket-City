@@ -201,6 +201,19 @@ class Building():
                         scoreIncrease += repeatActivationScore
                         moneyIncrease += repeatActivationMoney
 
+        elif self.name == 'Space Station':
+            if x > 0 and y > 0:
+                for row in range(0, y):
+                    for column in range(0, x):
+                        if currentPlayer.board[row][column]:
+                            repeatActivationScore, repeatActivationMoney = currentPlayer.board[row][column].whenActivated(currentPlayer, column, row, multipliers, addends)
+            
+                            repeatActivationScore += addends[row][column]
+                            repeatActivationScore *= multipliers[row][column]
+
+                            scoreIncrease += repeatActivationScore
+                            moneyIncrease += repeatActivationMoney
+
 
         # This will automatically deal with increasing score and money
         return scoreIncrease, moneyIncrease

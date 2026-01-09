@@ -133,10 +133,10 @@ class Building():
             newAddends[y][x] += 5 * count
 
         elif self.name == 'Ferris Wheel':
-            newMultipliers, count = self.multiplyNearby(board, newMultipliers, x, y, 3, whitelist=['Food Stand', 'Resturant', 'Casino', 'Bank'])
+            newMultipliers, count = self.multiplyNearby(board, newMultipliers, x, y, 1.5, whitelist=['Food Stand', 'Resturant', 'Casino', 'Bank'])
 
         elif self.name == 'Giant Statue':
-            newMultipliers, count = self.multiplyNearby(board, newMultipliers, x, y, 10)
+            newMultipliers, count = self.multiplyNearby(board, newMultipliers, x, y, 5)
 
         elif self.name == 'Pool':
             newMultipliers, count = self.multiplyNearby(board, newMultipliers, x, y, 1, whitelist=['Wind Turbine', 'Power Plant'])
@@ -151,10 +151,10 @@ class Building():
         elif self.name == 'Church':
             newMultipliers, count = self.multiplyNearby(board, newMultipliers, x, y, 1, whitelist=['Church'])
             # Multiply score by 1.5 for every church
-            newAddends[y][x] *= 1.5 ** count
+            newAddends[y][x] *= 1.1 ** count
             newMultipliers, count = self.multiplyNearby(board, newMultipliers, x, y, 1, whitelist=['Giant Statue'])
             # Multiply score by 5 for every giant statue
-            newAddends[y][x] *= 5 ** count
+            newAddends[y][x] *= 2.5 ** count
 
         elif self.name == 'Sky Scraper':
             newAddends, count = self.addToNearby(board, newAddends, x, y, 0, whitelist=['Tall House', 'Condo'])
@@ -177,7 +177,7 @@ class Building():
                     newMultipliers[chosenBuilding[1]][chosenBuilding[0]] *= 3
 
         elif self.name == 'Pyramid':
-            newMultipliers, count = self.multiplyNearby(board, newMultipliers, x, y, 5, size=5)
+            newMultipliers, count = self.multiplyNearby(board, newMultipliers, x, y, 3.2, size=5)
 
         return newMultipliers, newAddends
 

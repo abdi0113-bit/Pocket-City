@@ -143,6 +143,10 @@ def DrawButtons(surface, buttons, gameState, sellAvailable):
             if sellAvailable[0]:
                 continue
 
+        elif button.name == 'NextTurn':
+            if gameState == 'Action'
+                continue
+
         # Draw the button
         button.shown = True
         button.draw(surface, (0,0,0))
@@ -257,5 +261,6 @@ def DrawShop(surface, imageAssets, rarities, screenSettings, gridSize, currentPl
             surface.blit(textRender, ((x + 1.2) * tileSize, (y + 0.1) * tileSize + index * (font.get_height() * 1.1)))
 
     return mouseShopItem
+
 
 

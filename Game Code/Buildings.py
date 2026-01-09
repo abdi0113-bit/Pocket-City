@@ -45,8 +45,8 @@ class Building():
         newMultipliers = multipliers
         count = 0
 
-        for row in [y-2, y, y+2]:
-            for column in [x-2, x, x+2]:
+        for row in range((y-2), (y+2) + 1):
+            for column in range((x-2), (x+2) + 1):
                 # If not the starting space and not out of bounds
                 if (column, row) != (x,y) and not (column < 0 or row < 0 or row >= len(newMultipliers)):
                     if column < len(newMultipliers[row]):

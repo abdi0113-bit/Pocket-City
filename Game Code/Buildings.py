@@ -16,37 +16,14 @@ class Building():
         self.message = message
 
     
-    def multiply3x3(self, board, multipliers, x, y, amt, whitelist=[]):
+    def multiplyNearby(self, board, multipliers, x, y, amt, size=3, whitelist=[]):
         # Easy function for multiplying the surrounding 8 spaces
 
         newMultipliers = multipliers
         count = 0
 
-        for row in [y-1, y, y+1]:
-            for column in [x-1, x, x+1]:
-                # If not the starting space and not out of bounds
-                if (column, row) != (x,y) and not (column < 0 or row < 0 or row >= len(newMultipliers)):
-                    if column < len(newMultipliers[row]):
-                        # If a tile exists:
-                        if board[row][column]:
-                            # If the current tile is whitelisted or whitelist is empty 
-                            if board[row][column].name in whitelist or whitelist == []:
-
-                                # Multiply the current row/col by the amount
-                                newMultipliers[row][column] *= amt
-                                # Increment the count
-                                count += 1
-                                
-        return newMultipliers, count
-
-    def multiply5x5(self, board, multipliers, x, y, amt, whitelist=[]):
-        # Easy function for multiplying the surrounding 8 spaces
-
-        newMultipliers = multipliers
-        count = 0
-
-        for row in range((y-2), (y+2) + 1):
-            for column in range((x-2), (x+2) + 1):
+        for row in range(y - (size//2), y + (size//2) + 1):
+            for column in range(x - (size//2), x + (size//2) + 1):
                 # If not the starting space and not out of bounds
                 if (column, row) != (x,y) and not (column < 0 or row < 0 or row >= len(newMultipliers)):
                     if column < len(newMultipliers[row]):
@@ -63,14 +40,14 @@ class Building():
         return newMultipliers, count
     
 
-    def addTo3x3(self, board, addends, x, y, amt, whitelist=[]):
+    def addToNearby(self, board, addends, x, y, amt, size=3, whitelist=[]):
         # Easy function for adding to the surrounding 8 spaces
 
         newAddends = addends
         count = 0
         
-        for row in [y-1, y, y+1]:
-            for column in [x-1, x, x+1]:
+        for row in range(y - (size//2), y + (size//2) + 1):
+            for column in range(x - (size//2), x + (size//2) + 1):
                 # If not the starting space and not out of bounds
                 if (column, row) != (x,y) and not (column < 0 or row < 0 or row >= len(newAddends)):
                     if column < len(newAddends[row]):
@@ -87,11 +64,11 @@ class Building():
         return newAddends, count
 
 
-    def findEmpty3x3(self, board, x, y):
+    def findEmptyNearby(self, board, x, y, size=3):
         emptySpots = []
 
-        for row in [y-1, y, y+1]:
-            for column in [x-1, x, x+1]:
+        for row in range(y - (size//2), y + (size//2) + 1):
+            for column in range(x - (size//2), x + (size//2) + 1):
                 # If not the starting space and not out of bounds
                 if (column, row) != (x,y) and not (column < 0 or row < 0 or row >= len(board)):
                     if column < len(board[row]):
@@ -106,13 +83,13 @@ class Building():
     def whenPlaced(self,board,x,y):
         # These are any custom abilities, placeholders for now
         if self.name == 'Farm':
-            emptySpaces = self.findEmpty3x3(board,x,y)
+            emptySpaces = self.findEmptyNearby(board,x,y)
             if len(emptySpaces) > 0:
                 emptySpace=random.choice(emptySpaces)
                 board[emptySpace[1]][emptySpace[0]] = commonBuildings['Crop Field']
         
         elif self.name == 'Condo':
-            emptySpaces = self.findEmpty3x3(board,x,y)
+            emptySpaces = self.findEmptyNearby(board,x,y)
             if len(emptySpaces) > 0:
                 emptySpace=random.choice(emptySpaces)
                 if random.random() < 0.1:
@@ -127,7 +104,7 @@ class Building():
         elif self.name == 'Volcano':
             pass
         elif self.name == 'Giant Statue':
-            emptySpaces = self.findEmpty3x3(board,x,y)
+            emptySpaces = self.findEmptyNearby(board,x,y)
             if len(emptySpaces) > 0:
                 emptySpace=random.choice(emptySpaces)
                 board[emptySpace[1]][emptySpace[0]] = rareBuildings['Church']
@@ -141,7 +118,7 @@ class Building():
 
         # Here go abilities which modify other buildings around them
         if self.name == 'School':
-            newAddends, count = self.addTo3x3(board, newAddends, x, y, 10, whitelist=['Brick House', 'Log House', 'Modern House', 'Tall House', 'Condo'])
+            newAddends, count = self.addToNearby(board, newAddends, x, y, 10, whitelist=['Brick House', 'Log House', 'Modern House', 'Tall House', 'Condo'])
         
         elif self.name == 'Colloseum':
             # Multiply every common by 5
@@ -151,36 +128,36 @@ class Building():
                         newMultipliers[y][x] *= 5
 
         elif self.name == 'Food Stand':
-            newAddends, count = self.addTo3x3(board, newAddends, x, y, 0, whitelist=['Crop Field'])
+            newAddends, count = self.addToNearby(board, newAddends, x, y, 0, whitelist=['Crop Field'])
             # Add 5 to score for every crop field
             newAddends[y][x] += 5 * count
 
         elif self.name == 'Ferris Wheel':
-            newMultipliers, count = self.multiply3x3(board, newMultipliers, x, y, 3, whitelist=['Food Stand', 'Resturant', 'Casino', 'Bank'])
+            newMultipliers, count = self.multiplyNearby(board, newMultipliers, x, y, 3, whitelist=['Food Stand', 'Resturant', 'Casino', 'Bank'])
 
         elif self.name == 'Giant Statue':
-            newMultipliers, count = self.multiply3x3(board, newMultipliers, x, y, 10)
+            newMultipliers, count = self.multiplyNearby(board, newMultipliers, x, y, 10)
 
         elif self.name == 'Pool':
-            newMultipliers, count = self.multiply3x3(board, newMultipliers, x, y, 1, whitelist=['Wind Turbine', 'Power Plant'])
+            newMultipliers, count = self.multiplyNearby(board, newMultipliers, x, y, 1, whitelist=['Wind Turbine', 'Power Plant'])
             # Half score for every electrical building
             newMultipliers[y][x] /= 2**count
 
         elif self.name == 'Mansion':
-            newAddends, count = self.addTo3x3(board, newAddends, x, y, 0)
+            newAddends, count = self.addToNearby(board, newAddends, x, y, 0)
             # Subtract 20 from score for every building
             newAddends[y][x] += -20 * count
 
         elif self.name == 'Church':
-            newMultipliers, count = self.multiply3x3(board, newMultipliers, x, y, 1, whitelist=['Church'])
+            newMultipliers, count = self.multiplyNearby(board, newMultipliers, x, y, 1, whitelist=['Church'])
             # Multiply score by 1.5 for every church
             newAddends[y][x] *= 1.5 ** count
-            newMultipliers, count = self.multiply3x3(board, newMultipliers, x, y, 1, whitelist=['Giant Statue'])
+            newMultipliers, count = self.multiplyNearby(board, newMultipliers, x, y, 1, whitelist=['Giant Statue'])
             # Multiply score by 5 for every giant statue
             newAddends[y][x] *= 5 ** count
 
         elif self.name == 'Sky Scraper':
-            newAddends, count = self.addTo3x3(board, newAddends, x, y, 0, whitelist=['Tall House', 'Condo'])
+            newAddends, count = self.addToNearby(board, newAddends, x, y, 0, whitelist=['Tall House', 'Condo'])
             # Subtract 20 from score for every building
             newAddends[y][x] += 30 * count
 
@@ -198,7 +175,7 @@ class Building():
                     newMultipliers[chosenBuilding[1]][chosenBuilding[0]] *= 3
 
         elif self.name == 'Pyramid':
-            newMultipliers, count = self.multiply5x5(board, newMultipliers, x, y, 5)
+            newMultipliers, count = self.multiplyNearby(board, newMultipliers, x, y, 5, size=5)
 
         return newMultipliers, newAddends
 

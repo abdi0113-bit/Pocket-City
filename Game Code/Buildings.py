@@ -38,6 +38,29 @@ class Building():
                                 count += 1
                                 
         return newMultipliers, count
+
+    def multiply5x5(self, board, multipliers, x, y, amt, whitelist=[]):
+        # Easy function for multiplying the surrounding 8 spaces
+
+        newMultipliers = multipliers
+        count = 0
+
+        for row in [y-2, y, y+2]:
+            for column in [x-2, x, x+2]:
+                # If not the starting space and not out of bounds
+                if (column, row) != (x,y) and not (column < 0 or row < 0 or row >= len(newMultipliers)):
+                    if column < len(newMultipliers[row]):
+                        # If a tile exists:
+                        if board[row][column]:
+                            # If the current tile is whitelisted or whitelist is empty 
+                            if board[row][column].name in whitelist or whitelist == []:
+
+                                # Multiply the current row/col by the amount
+                                newMultipliers[row][column] *= amt
+                                # Increment the count
+                                count += 1
+                                
+        return newMultipliers, count
     
 
     def addTo3x3(self, board, addends, x, y, amt, whitelist=[]):

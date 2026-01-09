@@ -144,7 +144,7 @@ def DrawButtons(surface, buttons, gameState, sellAvailable):
                 continue
 
         elif button.name == 'NextTurn':
-            if gameState == 'Action'
+            if gameState == 'Action':
                 continue
 
         # Draw the button

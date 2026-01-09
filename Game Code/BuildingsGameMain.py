@@ -384,6 +384,10 @@ def Main():
                             selectedTile = (-1, -1)
                             gameState = 'Active'
 
+                            # Update shop length and per round
+                            if currentRound % 5 == 0:
+                                shopLength += 1
+
                             #print(currentRound, moneyPerRound)
                             if currentRound % 2 == 0:
                                 moneyPerRound += 1

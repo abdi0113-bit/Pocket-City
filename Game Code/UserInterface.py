@@ -131,25 +131,25 @@ def StampImage(screen, imageAssets, imageToLoad, pos, tileSize, lighten=0):
 def DrawButtons(surface, buttons, gameState, sellAvailable):
     # sellAvailable = (true/false, amount to sell for)
     for button in buttons:
-        button.shown = False
+        button.shown = True
         # Some exceptions
         if button.name == 'Sell':
             if sellAvailable[0]:
                 button.sellAmt(sellAvailable[1])
             else:
-                continue
+                button.shown = False
             
         elif button.name == 'Expand':
             if sellAvailable[0]:
-                continue
+                button.shown = False
 
         elif button.name == 'NextTurn':
             if gameState == 'Action':
-                continue
+                button.shown = False
 
         # Draw the button
-        button.shown = True
-        button.draw(surface, (0,0,0))
+        if button.shown:
+            button.draw(surface, (0,0,0))
 
 def DrawHud(surface, imageAssets, screenSettings, gridSize, currentPlayer, gameState):
     screenWidth = screenSettings[0]
@@ -261,6 +261,7 @@ def DrawShop(surface, imageAssets, rarities, screenSettings, gridSize, currentPl
             surface.blit(textRender, ((x + 1.2) * tileSize, (y + 0.1) * tileSize + index * (font.get_height() * 1.1)))
 
     return mouseShopItem
+
 
 
 

@@ -198,7 +198,7 @@ class Building():
                     newMultipliers[chosenBuilding[1]][chosenBuilding[0]] *= 3
 
         elif self.name == 'Pyramid':
-            pass
+            newMultipliers, count = self.multiply5x5(board, newMultipliers, x, y, 5)
 
         return newMultipliers, newAddends
 

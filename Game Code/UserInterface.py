@@ -81,14 +81,15 @@ class Button():
         return False
     
     def click(self): # Returns a value to be used by the main script depending on what the button is
-        if self.name == 'Start':
-            return 'Active'
-        elif self.name == 'PlayerSelector':
-            newPlayerNum = int(self.text[len(self.text) - 1]) + 1 # This takes the current ending and adds 1
-            if newPlayerNum == 5:
-                newPlayerNum = 2
-            self.text = f'Players: {newPlayerNum}'
-            return newPlayerNum
+        if self.shown:
+            if self.name == 'Start':
+                return 'Active'
+            elif self.name == 'PlayerSelector':
+                newPlayerNum = int(self.text[len(self.text) - 1]) + 1 # This takes the current ending and adds 1
+                if newPlayerNum == 5:
+                    newPlayerNum = 2
+                self.text = f'Players: {newPlayerNum}'
+                return newPlayerNum
         
     def resize(self, scaleW, scaleH):
         if self.image:
@@ -256,4 +257,5 @@ def DrawShop(surface, imageAssets, rarities, screenSettings, gridSize, currentPl
             surface.blit(textRender, ((x + 1.2) * tileSize, (y + 0.1) * tileSize + index * (font.get_height() * 1.1)))
 
     return mouseShopItem
+
 

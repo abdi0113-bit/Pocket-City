@@ -162,17 +162,20 @@ def DrawHud(surface, imageAssets, screenSettings, gridSize, currentPlayer, gameS
     textRender = font.render(f'Player {currentPlayer.turn}', True, (0,0,0))
     surface.blit(textRender, (5, 17))
 
+    # Show lives
+    surface.blit(imageAssets['Lives'], (100, 8))
+    textRender = font.render(str(currentPlayer.lives), True, (0,0,0))
+    surface.blit(textRender, (145, 17))
 
     # Show coins
-    surface.blit(imageAssets['Coin'], (100, 5))
+    surface.blit(imageAssets['Coin'], (180, 5))
     textRender = font.render(str(currentPlayer.money), True, (0,0,0))
-    surface.blit(textRender, (145, 17))
+    surface.blit(textRender, (225, 17))
 
     # If action phase, show score
     if gameState == 'Action':
         textRender = font.render(f'SCORE: {currentPlayer.score}', True, (0,0,0))
-        surface.blit(textRender, (220, 17))
-
+        surface.blit(textRender, (300, 17))
 def MouseoverText(screen, mousePos, text):
 
     font = pygame.font.SysFont('amertype', int(20))

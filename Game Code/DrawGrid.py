@@ -27,6 +27,8 @@ def LoadImagesFromFolder(path, scale):
                 hardCodedScale = scale
                 if name == 'Coin':
                     hardCodedScale = 2
+                if name == 'Lives':
+                    hardCodedScale = 1.8
                 
                 scaledImage = pygame.transform.smoothscale(rawImage, (imageW * hardCodedScale, imageH * hardCodedScale))
                 images[name] = scaledImage
@@ -124,4 +126,4 @@ def CalculateTileSize(screenSettings, gridSize, shopLength):
     tryTileWidth = math.floor(screenWidth/(gridWidth + 2.5)) # The +2.5 gives some space for the inventory on the right
     tryInventory = math.floor((screenHeight - gridOffsetY)/(shopLength + 0.5))
 
-    return(min(tryTileHeight, tryTileWidth, tryInventory, 120))
+    return(min(tryTileHeight, tryTileWidth, tryInventory, 180))

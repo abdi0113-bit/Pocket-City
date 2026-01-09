@@ -10,7 +10,7 @@ class Player():
 
         #
         self.score = 0
-        self.money = 100
+        self.money = 0
         self.lives = 10
 
         # Initialise shop and board
@@ -64,6 +64,4 @@ class Player():
                     break
 
             buildingsDict = Buildings.allBuildings[rarityToUse]
-            self.shop.append(random.choice(list(buildingsDict.values()))) # This is how to get a random item from a dictionary    
-        self.shop.append(Buildings.legendaryBuildings['Space Station'])
-        self.shop.append(Buildings.legendaryBuildings['Pyramid'])
+            self.shop.append(random.choice(list(buildingsDict.values()))) # This is how to get a random item from a dictionary

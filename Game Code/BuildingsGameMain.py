@@ -165,14 +165,14 @@ def Main():
                         button.x = event.w * 0.25
                         button.y = event.h * 0.8
                     elif button.name == 'NextTurn':
-                        button.x = min(event.w - 100, (gridWidth + 2.5) * tileSize - 60)
+                        button.x = min(event.w - 60, (gridWidth + 2.5) * tileSize - 60)
                     elif button.name == 'Sell':
-                        button.x = min(event.w - 220, (gridWidth + 2.5) * tileSize - 180)
+                        button.x = min(event.w - 180, (gridWidth + 2.5) * tileSize - 180)
                     elif button.name == 'Reroll':
                         button.x = (gridWidth + 2.25) * tileSize
                         button.y = gridOffsetY + tileSize * 0.25
                     elif button.name == 'Expand':
-                        button.x = min(event.w - 270, (gridWidth + 2.5) * tileSize - 230)
+                        button.x = min(event.w - 230, (gridWidth + 2.5) * tileSize - 230)
 
                     # Only some buttons should be resized
                     if button.name in ['Start', 'PlayerSelector']:
@@ -388,17 +388,19 @@ def Main():
                             if currentRound % 2 == 0:
                                 moneyPerRound += 1
                             
-                            scores = []
                             # Update lives and money
                             for player in players:
                                 player.money += moneyPerRound
-                                scores.append(player)
                             
-                            scores.sort(key = lambda p: p.score) # This lambda function returns the score of the input, and is used as a sorting key
-                            
-                            for index in range(math.ceil((numberOfPlayers - 1)/2), (numberOfPlayers - 1)):
+                            players.sort(key = lambda p: p.score) # This lambda function returns the score of the input, and is used as a sorting key
+                            #It sorts players from low to high score
+                            [print(i.score) for i in players]
+
+                            for index in range(numberOfPlayers//2):
                                 # Remove a life from the bottom 1/2 of players
-                                scores[index].lives -= 1
+                                players[index].lives -= 1
+                            
+                            players.sort(key = lambda p: p.turn) # Sorts players back into turn order
 
                         else:
                             selectedTile = (0, 0)

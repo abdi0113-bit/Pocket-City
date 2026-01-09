@@ -163,12 +163,14 @@ class Building():
 
         elif self.name == 'Castle':
             occupied = []
-            for row in board:
-                    for column in row:
-                        if column:
+            # Find all occupied coords and put them in a list
+            for row in range(len(board)):
+                    for column in range(len(board[row])):
+                        if board[row][column]:
                             occupied.append((column, row))
-
+            # Pick 3 random buildings and multiply scores by 2
             random.shuffle(occupied)
+            # print(occupied)
             for i in range(3):
                 if len(occupied) > 0:
                     chosenBuilding = occupied.pop(0)

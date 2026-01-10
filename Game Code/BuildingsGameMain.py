@@ -370,7 +370,7 @@ def Main():
                     players[currentTurn].money += round(moneyIncrease)
                 
                 else:
-                    # If tile is empty,
+                    # If tile is empty, skip to the next tile
                     startTime -= waitTime
 
             # If elapsed time has reached the threshhold

@@ -173,6 +173,9 @@ def Main():
                         button.y = gridOffsetY + tileSize * 0.25
                     elif button.name == 'Expand':
                         button.x = min(event.w - 230, (gridWidth + 2.5) * tileSize - 230)
+                    elif button.name == 'NextRound':
+                        button.x = screenWidth - 100
+                        button.y = screenHeight - 50
 
                     # Only some buttons should be resized
                     if button.name in ['Start', 'PlayerSelector']:
@@ -221,6 +224,7 @@ def Main():
                     
                     for button in buttons:
                         if button.isOver(mousePos) and button.shown:
+                            #print(button.name)
                             pressedButtons.append(button)
 
             if event.type == pygame.MOUSEBUTTONUP: # On release  
@@ -246,6 +250,7 @@ def Main():
                                 buttons.append(UserInterface.Button('Sell', (128,128,128), (gridWidth + 2.5) * tileSize - 180, 25, 100, 30, 'Sell ($)'))
                                 buttons.append(UserInterface.Button('Reroll', (128,128,128), (gridWidth + 2.25) * tileSize, 75, 100, 30, image=imageAssets['Reload Icon']))
                                 buttons.append(UserInterface.Button('Expand', (128,128,128), (gridWidth + 2.5) * tileSize - 230, 25, 200, 30, f'Expand Grid (${players[currentTurn].expandCost})'))
+                                buttons.append(UserInterface.Button('NextRound', (128,128,128), screenWidth - 100, screenHeight - 50, 100, 30, 'Next Round'))
 
                             elif button.name == 'PlayerSelector':
                                 numberOfPlayers = result
@@ -312,6 +317,11 @@ def Main():
                                     # Increase expand cost
                                     players[currentTurn].expandCost *= 2
                                     button.updateMessage(players[currentTurn].expandCost)
+                            
+                            elif button.name == 'NextRound':
+                                players.sort(key = lambda p: p.turn) # Sorts players list back into turn order
+
+                                gameState = 'Active'
                                     
                     pressedButtons = []
 
@@ -382,7 +392,6 @@ def Main():
                             currentRound += 1
                             currentTurn = 0
                             selectedTile = (-1, -1)
-                            gameState = 'Active'
 
                             # Update shop length and per round
                             if currentRound % 5 == 0:
@@ -403,8 +412,8 @@ def Main():
                             for index in range(numberOfPlayers//2):
                                 # Remove a life from the bottom 1/2 of players
                                 players[index].lives -= 1
-                            
-                            players.sort(key = lambda p: p.turn) # Sorts players back into turn order
+
+                            gameState = 'Results'
 
                         else:
                             selectedTile = (0, 0)
@@ -430,7 +439,11 @@ def Main():
                 # Reset elapsed time
                 startTime = time.time()
                 activatedYet = False
-
+        
+        if gameState == 'Results':
+            # Draw a blue background
+            pygame.draw.rect(screen, (115, 197, 245), (0,0,screenWidth, screenHeight), 0)
+            UserInterface.displayScores(screen, imageAssets, screenSettings, players)
 
         sellAvailable = (False, None)
         if gameState != 'Action':

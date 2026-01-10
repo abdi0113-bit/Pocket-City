@@ -12,6 +12,7 @@ class Player():
         self.score = 0
         self.money = 0
         self.lives = 10
+        self.charge = 0
 
         # Initialise shop and board
         self.board = [[None for j in range(boardSize[0])] for i in range(boardSize[1])]

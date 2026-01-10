@@ -156,7 +156,7 @@ class Building():
             # Multiply score by 5 for every giant statue
             newAddends[y][x] *= 5 ** count
 
-        elif self.name == 'Sky Scraper':
+        elif self.name == 'Skyscraper':
             newAddends, count = self.addToNearby(board, newAddends, x, y, 0, whitelist=['Tall House', 'Condo'])
             # Subtract 20 from score for every building
             newAddends[y][x] += 30 * count

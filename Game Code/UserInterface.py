@@ -275,9 +275,15 @@ def displayScores(surface, imageAssets, screenSettings, players):
     gridOffsetY = screenSettings[3]
 
     for index, player in enumerate(players):
+        displayText = f'{player.name}: {player.score} Score'
+
         font = pygame.font.SysFont('amertype', int(64))
-        textRender = font.render(f'{player.name}: {player.score} Score', True, (0,0,0))
+        textRender = font.render(displayText, True, (0,0,0))
 
-        surface.blit(textRender, (20, screenHeight/2 + (index - len(players)/2) * (font.get_height() * 1.5)))
+        surface.blit(textRender, (120, screenHeight/2 + (index - len(players)/2) * font.get_height() * 1.5))
 
+        textRender = font.render(f'{player.lives}', True, (0,0,0))
+
+        surface.blit(imageAssets['Lives'], (10, screenHeight/2 + (index - len(players)/2) * font.get_height() * 1.5))
+        surface.blit(textRender, (60, screenHeight/2 + (index - len(players)/2) * font.get_height() * 1.5))
 

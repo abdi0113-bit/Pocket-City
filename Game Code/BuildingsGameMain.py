@@ -413,6 +413,9 @@ def Main():
                                 # Remove a life from the bottom 1/2 of players
                                 players[index].lives -= 1
 
+                            # Reverse for displaying
+                            players.reverse()
+
                             gameState = 'Results'
 
                         else:

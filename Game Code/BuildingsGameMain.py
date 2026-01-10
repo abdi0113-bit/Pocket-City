@@ -457,13 +457,12 @@ def Main():
 
         if gameState == 'Active' or gameState == 'Action':
             # Draw the mouseover text
-            if mouseShopItem > -1: # If the mouse is on the shopo
+            if mouseShopItem > -1: # If the mouse is on the shop
                 UserInterface.MouseoverText(screen, mousePos, players[currentTurn].shop[mouseShopItem].message)
 
-            if selectedTile == (-1, -1): # If unselected
-                if not (mouseTileX >= gridWidth or mouseTileY >= gridHeight or mouseTileX < 0 or mouseTileY < 0): # If in bounds
-                    if players[currentTurn].board[mouseTileY][mouseTileX]: # If building exists
-                        UserInterface.MouseoverText(screen, mousePos, players[currentTurn].board[mouseTileY][mouseTileX].message)
+            if not (mouseTileX >= gridWidth or mouseTileY >= gridHeight or mouseTileX < 0 or mouseTileY < 0): # If in bounds
+                if players[currentTurn].board[mouseTileY][mouseTileX]: # If building exists
+                    UserInterface.MouseoverText(screen, mousePos, players[currentTurn].board[mouseTileY][mouseTileX].message)
         
         
         pygame.display.flip() # This updates the entire screen

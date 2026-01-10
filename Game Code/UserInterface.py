@@ -81,14 +81,15 @@ class Button():
         return False
     
     def click(self): # Returns a value to be used by the main script depending on what the button is
-        if self.name == 'Start':
-            return 'Active'
-        elif self.name == 'PlayerSelector':
-            newPlayerNum = int(self.text[len(self.text) - 1]) + 1 # This takes the current ending and adds 1
-            if newPlayerNum == 5:
-                newPlayerNum = 2
-            self.text = f'Players: {newPlayerNum}'
-            return newPlayerNum
+        if self.shown:
+            if self.name == 'Start':
+                return 'Active'
+            elif self.name == 'PlayerSelector':
+                newPlayerNum = int(self.text[len(self.text) - 1]) + 1 # This takes the current ending and adds 1
+                if newPlayerNum == 5:
+                    newPlayerNum = 2
+                self.text = f'Players: {newPlayerNum}'
+                return newPlayerNum
         
     def resize(self, scaleW, scaleH):
         if self.image:
@@ -130,21 +131,25 @@ def StampImage(screen, imageAssets, imageToLoad, pos, tileSize, lighten=0):
 def DrawButtons(surface, buttons, gameState, sellAvailable):
     # sellAvailable = (true/false, amount to sell for)
     for button in buttons:
-        button.shown = False
+        button.shown = True
         # Some exceptions
         if button.name == 'Sell':
             if sellAvailable[0]:
                 button.sellAmt(sellAvailable[1])
             else:
-                continue
+                button.shown = False
             
         elif button.name == 'Expand':
             if sellAvailable[0]:
-                continue
+                button.shown = False
+
+        elif button.name == 'NextTurn':
+            if gameState == 'Action':
+                button.shown = False
 
         # Draw the button
-        button.shown = True
-        button.draw(surface, (0,0,0))
+        if button.shown:
+            button.draw(surface, (0,0,0))
 
 def DrawHud(surface, imageAssets, screenSettings, gridSize, currentPlayer, gameState):
     screenWidth = screenSettings[0]
@@ -256,4 +261,7 @@ def DrawShop(surface, imageAssets, rarities, screenSettings, gridSize, currentPl
             surface.blit(textRender, ((x + 1.2) * tileSize, (y + 0.1) * tileSize + index * (font.get_height() * 1.1)))
 
     return mouseShopItem
+
+
+
 

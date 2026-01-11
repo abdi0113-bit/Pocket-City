@@ -14,6 +14,7 @@ class Building():
         self.moneyIncreaseActivate = moneyIncreaseValues[0]
         self.moneyIncreasePlace = moneyIncreaseValues[1]
         self.message = message
+        self.frozen = False
 
     
     def multiplyNearby(self, board, multipliers, x, y, amt, size=3, whitelist=[]):

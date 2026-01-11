@@ -322,6 +322,10 @@ def Main():
                             selectedShopItem = -1
                         else:
                             selectedShopItem = mouseShopItem
+                
+                if event.button == 3: # Right click
+                    if mouseShopItem > -1 and gameState == 'Active':
+                        players[currentTurn].shop[mouseShopItem].frozen = True
     
         screenSettings = (screenWidth, screenHeight, tileSize, gridOffsetY)
         if gameState == 'Active':

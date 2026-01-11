@@ -357,7 +357,7 @@ def Main():
             UserInterface.DrawHud(screen, imageAssets, screenSettings, (gridWidth, gridHeight), players[currentTurn], gameState)
 
             # This wait time assumes all tiles are occupied - empty board will take half the time
-            waitSeconds = 10
+            waitSeconds = 1
             waitTime = waitSeconds/(gridWidth*gridHeight)
 
             # Activate when the time is halfway up

@@ -227,7 +227,7 @@ def Main():
                             #print(button.name)
                             pressedButtons.append(button)
 
-            if event.type == pygame.MOUSEBUTTONUP: # On release  
+            if event.type == pygame.MOUSEBUTTONUP: # On release
                 """
                 event.button codes:
                 1: left click

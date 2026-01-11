@@ -364,12 +364,12 @@ def Main():
                 activatedYet = True
                 # Activate the current tile
                 if players[currentTurn].board[selectedTile[1]][selectedTile[0]]:
-                    scoreIncrease, moneyIncrease = players[currentTurn].board[selectedTile[1]][selectedTile[0]].whenActivated(players[currentTurn], selectedTile[0], selectedTile[1], multipliers, addends)
+                    scoreIncrease, moneyIncrease = players[currentTurn].board[selectedTile[1]][selectedTile[0]].whenActivated(players[currentTurn], selectedTile[0], selectedTile[1], multipliers, addends, coinMultipliers)
                     
                     # Apply bonuses
                     scoreIncrease += addends[selectedTile[1]][selectedTile[0]]
                     scoreIncrease *= multipliers[selectedTile[1]][selectedTile[0]]
-                    scoreIncrease *= (chargeIncrease/100) + 1
+                    scoreIncrease *= (players[currentTurn].charge/100) + 1
                     moneyIncrease *= coinMultipliers[selectedTile[1]][selectedTile[0]]
 
                     # Change score

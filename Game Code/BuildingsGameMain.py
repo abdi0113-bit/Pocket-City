@@ -58,10 +58,10 @@ def DoBeforeRound(currentPlayer, gridSize):
     for row in range(gridHeight):
         for column in range(gridWidth):
             if currentPlayer.board[row][column]:
-                multipliers, addends = currentPlayer.board[row][column].beforeRound(currentPlayer.board, multipliers, addends, column, row)
+                multipliers, addends, chargeIncrease = currentPlayer.board[row][column].beforeRound(currentPlayer, multipliers, addends, column, row)
 
     #[print(i) for i in multipliers] # Debug tool
-    return multipliers, addends
+    return multipliers, addends, chargeIncrease
 
 
 # Main funtion
@@ -281,7 +281,7 @@ def Main():
 
                                 if gameState == 'Action':
                                     # Do before round
-                                    multipliers, addends = DoBeforeRound(players[currentTurn], (gridWidth, gridHeight))
+                                    multipliers, addends, chargeIncrease = DoBeforeRound(players[currentTurn], (gridWidth, gridHeight))
 
 
                                 for button in buttons:
@@ -430,7 +430,7 @@ def Main():
                             gridHeight = len(players[currentTurn].board)
                             gridWidth = len(players[currentTurn].board[0])
 
-                            multipliers, addends = DoBeforeRound(players[currentTurn], (gridWidth, gridHeight))
+                            multipliers, addends, chargeIncrease = DoBeforeRound(players[currentTurn], (gridWidth, gridHeight))
                         
                         gridHeight = len(players[currentTurn].board)
                         gridWidth = len(players[currentTurn].board[0])

@@ -103,7 +103,9 @@ class Building():
         elif self.name == 'Fire Station':
             pass
         elif self.name == 'Volcano':
-            pass
+            emptySpaces = self.findEmptyNearby(board,x,y)
+            
+
         elif self.name == 'Giant Statue':
             emptySpaces = self.findEmptyNearby(board,x,y)
             if len(emptySpaces) > 0:

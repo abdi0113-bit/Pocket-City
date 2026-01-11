@@ -104,7 +104,8 @@ class Building():
             pass
         elif self.name == 'Volcano':
             emptySpaces = self.findEmptyNearby(board,x,y)
-            
+            for emptySpace in emptySpaces:
+                board[emptySpace[1]][emptySpace[0]] = None
 
         elif self.name == 'Giant Statue':
             emptySpaces = self.findEmptyNearby(board,x,y)
@@ -180,6 +181,20 @@ class Building():
                 if len(occupied) > 0:
                     chosenBuilding = occupied.pop(0)
                     newMultipliers[chosenBuilding[1]][chosenBuilding[0]] *= 3
+
+        elif self.name == 'Volcano':
+            occupied = []
+            # Find all occupied coords and put them in a list
+            for row in range(len(currentPlayer.board)):
+                    for column in range(len(currentPlayer.board[row])):
+                        if currentPlayer.board[row][column]:
+                            occupied.append((column, row))
+            # Pick 1 random building and divide score by 2
+            random.shuffle(occupied)
+            # print(occupied)
+            if len(occupied) > 0:
+                chosenBuilding = occupied.pop(0)
+                newMultipliers[chosenBuilding[1]][chosenBuilding[0]] /= 2
 
         elif self.name == 'Pyramid':
             newMultipliers, count = self.multiplyNearby(currentPlayer.board, newMultipliers, x, y, 3.2, size=5)

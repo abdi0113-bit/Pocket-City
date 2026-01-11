@@ -283,6 +283,7 @@ def Main():
                                 if gameState == 'Action':
                                     # Do before round
                                     multipliers, addends, coinMultipliers, chargeIncrease = DoBeforeRound(players[currentTurn], (gridWidth, gridHeight))
+                                    players[currentTurn].charge += chargeIncrease
 
 
                                 for button in buttons:

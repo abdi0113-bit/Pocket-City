@@ -59,10 +59,10 @@ def DoBeforeRound(currentPlayer, gridSize):
     for row in range(gridHeight):
         for column in range(gridWidth):
             if currentPlayer.board[row][column]:
-                multipliers, addends, chargeIncrease = currentPlayer.board[row][column].beforeRound(currentPlayer, multipliers, addends, column, row)
+                multipliers, addends, coinMultipliers, chargeIncrease = currentPlayer.board[row][column].beforeRound(currentPlayer, multipliers, addends, coinMultipliers, column, row)
 
     #[print(i) for i in multipliers] # Debug tool
-    return multipliers, addends, chargeIncrease, coinMultipliers
+    return multipliers, addends, coinMultipliers, chargeIncrease
 
 
 # Main funtion
@@ -209,7 +209,7 @@ def Main():
                             players[currentTurn].board[selectedTile[1]][selectedTile[0]] = transferItem
 
                             # Activate when placed ability
-                            scoreIncrease, moneyIncrease, players[currentTurn].board, newCoinMultipliers = players[currentTurn].board[selectedTile[1]][selectedTile[0]].whenPlaced(players[currentTurn].board, selectedTile[0], selectedTile[1], moneyIncrease, newCoinMultipliers, players[currentTurn])
+                            scoreIncrease, moneyIncrease, players[currentTurn].board, coinMultipliers = players[currentTurn].board[selectedTile[1]][selectedTile[0]].whenPlaced(players[currentTurn].board, selectedTile[0], selectedTile[1], moneyIncrease, coinMultipliers, players[currentTurn])
 
                             players[currentTurn].score += scoreIncrease
                             players[currentTurn].money += moneyIncrease
@@ -282,7 +282,7 @@ def Main():
 
                                 if gameState == 'Action':
                                     # Do before round
-                                    multipliers, addends, chargeIncrease = DoBeforeRound(players[currentTurn], (gridWidth, gridHeight))
+                                    multipliers, addends, coinMultipliers, chargeIncrease = DoBeforeRound(players[currentTurn], (gridWidth, gridHeight))
 
 
                                 for button in buttons:
@@ -370,7 +370,7 @@ def Main():
                     scoreIncrease += addends[selectedTile[1]][selectedTile[0]]
                     scoreIncrease *= multipliers[selectedTile[1]][selectedTile[0]]
                     scoreIncrease *= (chargeIncrease/100) + 1
-                    moneyIncrease *= newCoinMultipliers[selectedTile[1]][selectedTile[0]]
+                    moneyIncrease *= coinMultipliers[selectedTile[1]][selectedTile[0]]
 
                     # Change score
                     players[currentTurn].score += round(scoreIncrease)
@@ -433,7 +433,7 @@ def Main():
                             gridHeight = len(players[currentTurn].board)
                             gridWidth = len(players[currentTurn].board[0])
 
-                            multipliers, addends, chargeIncrease = DoBeforeRound(players[currentTurn], (gridWidth, gridHeight))
+                            multipliers, addends, coinMultipliers, chargeIncrease = DoBeforeRound(players[currentTurn], (gridWidth, gridHeight))
                         
                         gridHeight = len(players[currentTurn].board)
                         gridWidth = len(players[currentTurn].board[0])

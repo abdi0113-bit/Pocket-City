@@ -350,7 +350,7 @@ def Main():
             DrawGrid.DrawMouse(screen, imageAssets, players[currentTurn].board, selectedTile, screenSettings, (gridWidth, gridHeight))
             UserInterface.DrawHud(screen, imageAssets, screenSettings, (gridWidth, gridHeight), players[currentTurn], gameState)
 
-            # 5 seconds regardless of number of tiles
+            # This wait time assumes all tiles are occupied - empty board will take half the time
             waitSeconds = 10
             waitTime = waitSeconds/(gridWidth*gridHeight)
 

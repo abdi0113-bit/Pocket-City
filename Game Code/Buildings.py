@@ -81,8 +81,10 @@ class Building():
         return emptySpots
     
 
-    def whenPlaced(self,board,x,y):
+    def whenPlaced(self,board,x,y, moneyIncrease, coinMultipliers, currentPlayer):
         # These are any custom abilities, placeholders for now
+        moneyIncrease, newCoinMultipliers = self.moneyIncreaseActivate, coinMultipliers
+
         if self.name == 'Farm':
             emptySpaces = self.findEmptyNearby(board,x,y)
             if len(emptySpaces) > 0:
@@ -112,8 +114,14 @@ class Building():
                 emptySpace=random.choice(emptySpaces)
                 board[emptySpace[1]][emptySpace[0]] = rareBuildings['Church']
 
+        elif self.name == 'Bank':
+            moneyIncrease += 6
+
+        elif self.name == 'Resturant':
+            newCoinMultipliers, count = self.multiplyNearby(currentPlayer.board, newCoinMultipliers, x, y, 2)
+
         # This will automatically deal with increasing score and money
-        return self.scoreIncreasePlace, self.moneyIncreasePlace, board
+        return self.scoreIncreasePlace, self.moneyIncreasePlace, board, newCoinMultipliers
 
 
     def beforeRound(self, currentPlayer, multipliers, addends, x, y):
@@ -194,14 +202,11 @@ class Building():
         return newMultipliers, newAddends, chargeIncrease
 
 
-    def whenActivated(self, currentPlayer, x, y, multipliers, addends):
+    def whenActivated(self, currentPlayer, x, y, multipliers, addends, coinMultipliers):
         # These are any custom abilities, placeholders for now
         scoreIncrease, moneyIncrease, newMultiplies = self.scoreIncreaseActivate, self.moneyIncreaseActivate, multipliers
-        
-        if self.name == 'Resturant':
-            pass
 
-        elif self.name == 'Mine Quarry':
+        if self.name == 'Mine Quarry':
             moneyIncrease = random.randint(1,5)
 
         elif self.name == 'Casino':
@@ -257,31 +262,14 @@ class Building():
                             scoreIncrease += repeatActivationScore
                             moneyIncrease += repeatActivationMoney
 
-        elif self.name == 'Bank':
+        elif self.name == 'Bank':  
             moneyIncrease += random.randint(-1,-3)
-
-        
+                 
                 
                 
 
         # This will automatically deal with increasing score and money
-        return scoreIncrease, moneyIncrease
-
-
-    def whenBought(self, board, multipliers, addends, x, y):
-        # UNUSED FOR NOW
-        # These are any custom abilities, placeholders for now
-        newMultipliers, newAddends, moneyIncrease = multipliers, addends, self.moneyIncreaseActivate
-
-        if self.name == 'Condo':
-            pass
-        elif self.name == 'Bank':
-            moneyIncrease += 6
-        elif self.name == 'Giant Statue':
-            pass
-
-        return newMultipliers, newAddends
-    
+        return scoreIncrease, moneyIncrease    
 
     def showMessage(self, surface, pos):
         # Shows the mouseover message when called

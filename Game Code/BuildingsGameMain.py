@@ -53,6 +53,7 @@ def DoBeforeRound(currentPlayer, gridSize):
     
     # Create blank multiplier and addend tables
     multipliers = [[1 for i in range(gridWidth)] for j in range(gridHeight)]
+    coinMultipliers = [[1 for i in range(gridWidth)] for j in range(gridHeight)]
     addends = [[0 for i in range(gridWidth)] for j in range(gridHeight)]
 
     for row in range(gridHeight):
@@ -61,7 +62,7 @@ def DoBeforeRound(currentPlayer, gridSize):
                 multipliers, addends, chargeIncrease = currentPlayer.board[row][column].beforeRound(currentPlayer, multipliers, addends, column, row)
 
     #[print(i) for i in multipliers] # Debug tool
-    return multipliers, addends, chargeIncrease
+    return multipliers, addends, chargeIncrease, coinMultipliers
 
 
 # Main funtion
@@ -208,7 +209,7 @@ def Main():
                             players[currentTurn].board[selectedTile[1]][selectedTile[0]] = transferItem
 
                             # Activate when placed ability
-                            scoreIncrease, moneyIncrease, players[currentTurn].board = players[currentTurn].board[selectedTile[1]][selectedTile[0]].whenPlaced(players[currentTurn].board, selectedTile[0], selectedTile[1])
+                            scoreIncrease, moneyIncrease, players[currentTurn].board, newCoinMultipliers = players[currentTurn].board[selectedTile[1]][selectedTile[0]].whenPlaced(players[currentTurn].board, selectedTile[0], selectedTile[1], moneyIncrease, coinMultipliers, players[currentTurn])
 
                             players[currentTurn].score += scoreIncrease
                             players[currentTurn].money += moneyIncrease
@@ -369,6 +370,7 @@ def Main():
                     scoreIncrease += addends[selectedTile[1]][selectedTile[0]]
                     scoreIncrease *= multipliers[selectedTile[1]][selectedTile[0]]
                     scoreIncrease *= (chargeIncrease/100) + 1
+                    moneyIncrease *= newCoinMultipliers[selectedTile[1]][selectedTile[0]]
 
                     # Change score
                     players[currentTurn].score += round(scoreIncrease)

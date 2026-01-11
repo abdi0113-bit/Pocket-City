@@ -103,10 +103,17 @@ class Building():
         elif self.name == 'Fire Station':
             pass
         elif self.name == 'Volcano':
-            emptySpaces = self.findEmptyNearby(board,x,y)
-            for emptySpace in emptySpaces:
-                board[emptySpace[1]][emptySpace[0]] = None
+            for row in [y-1, y, y+1]:
+                for column in [x-1, x, x+1]:
+                    # If not the starting space and not out of bounds
+                    if (column, row) != (x,y) and not (column < 0 or row < 0 or row >= len(board)):
+                        if column < len(board[row]):
+                            
+                            # If tile is occupied, delete it
+                            if board[row][column]:
+                                board[row][column] = None
 
+        
         elif self.name == 'Giant Statue':
             emptySpaces = self.findEmptyNearby(board,x,y)
             if len(emptySpaces) > 0:
@@ -335,7 +342,7 @@ uncommonBuildings = {'Condo' : Building('Condo', 3, 2,  'Condo', 'Uncommon', (10
 
 rareBuildings = {'Power Plant': Building('Power Plant', 5, 4,  'Power Plant', 'Rare', (30,0), (0,0), 'Power Plant\n--------------\n+ 30 Score\nwhen activated.'),
                 'Mansion' : Building('Mansion', 5, 4,  'Mansion', 'Rare', (100,0), (0,0), 'Mansion\n--------------\n+ 100 Score\nwhen activated.\n- 20 Score for each\nnearby building.'),
-                'Church' : Building('Church', 4, 3, 'Church', 'Rare', (20,0), (0,0), 'Church\n--------------\n+ 20 Score\nwhen activated\nIf church is nearby,\nmultiply by 1.1 per church.\nIf giant statue is nearby,\nmultiply by 2.5 per statue.'),
+                'Church' : Building('Church', 4, 3, 'Church', 'Rare', (20,0), (0,0), 'Church\n--------------\n+ 20 Score\nwhen activated.\nMultiply by 1.1 per\nnearby Church.\nMultiply by 2.5 per\nnearby Giant Statue.'),
                 'Hospital' : Building('Hospital', 5, 4, 'Hospital', 'Rare', (20,0), (0,0), 'Hospital\n--------------\n+ 20 Score\nwhen activated.'),
                 'Fire Station' : Building('Fire Station', 5, 4, 'Fire Station', 'Rare', (20,0), (0,0), 'Fire Station\n--------------\n+ 20 Score\nwhen activated.'),
                 'Ferris Wheel' : Building('Ferris Wheel', 4, 3, 'Ferris Wheel', 'Rare', (15,0), (0,0), 'Ferris Wheel\n--------------\n+ 20 Score\nwhen activated\nMultiplies nearby Businesses by 1.5.')}

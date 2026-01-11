@@ -11,7 +11,7 @@ class Player():
 
         #
         self.score = 0
-        self.money = 100
+        self.money = 0
         self.lives = 10
         self.charge = 0
 
@@ -72,3 +72,7 @@ class Player():
             else:
                 if not self.shop[i].frozen:
                     self.shop[i] = copy.copy(random.choice(list(buildingsDict.values())))
+                else:
+                    pass
+                    #debugItem = Buildings.legendaryBuildings['Volcano']
+                    #self.shop[i] = copy.copy(debugItem)

@@ -134,17 +134,21 @@ def DrawButtons(surface, buttons, gameState, sellAvailable):
         button.shown = True
         # Some exceptions
         if button.name == 'Sell':
-            if sellAvailable[0]:
+            if sellAvailable[0] and gameState == 'Active':
                 button.sellAmt(sellAvailable[1])
             else:
                 button.shown = False
             
         elif button.name == 'Expand':
-            if sellAvailable[0]:
+            if sellAvailable[0] or gameState == 'Results':
                 button.shown = False
 
-        elif button.name == 'NextTurn':
-            if gameState == 'Action':
+        elif button.name == 'NextTurn' or button.name == 'Reroll':
+            if gameState != 'Active':
+                button.shown = False
+        
+        elif button.name == 'NextRound':
+            if gameState != 'Results':
                 button.shown = False
 
         # Draw the button
@@ -181,6 +185,8 @@ def DrawHud(surface, imageAssets, screenSettings, gridSize, currentPlayer, gameS
     if gameState == 'Action':
         textRender = font.render(f'SCORE: {currentPlayer.score}', True, (0,0,0))
         surface.blit(textRender, (300, 17))
+
+
 def MouseoverText(screen, mousePos, text):
 
     font = pygame.font.SysFont('amertype', int(20))
@@ -262,6 +268,22 @@ def DrawShop(surface, imageAssets, rarities, screenSettings, gridSize, currentPl
 
     return mouseShopItem
 
+def displayScores(surface, imageAssets, screenSettings, players):
+    screenWidth = screenSettings[0]
+    screenHeight = screenSettings[1]
+    tileSize = screenSettings[2]
+    gridOffsetY = screenSettings[3]
 
+    for index, player in enumerate(players):
+        displayText = f'{player.name}: {player.score} Score'
 
+        font = pygame.font.SysFont('amertype', int(64))
+        textRender = font.render(displayText, True, (0,0,0))
+
+        surface.blit(textRender, (120, screenHeight/2 + (index - len(players)/2) * font.get_height() * 1.5))
+
+        textRender = font.render(f'{player.lives}', True, (0,0,0))
+
+        surface.blit(imageAssets['Lives'], (10, screenHeight/2 + (index - len(players)/2) * font.get_height() * 1.5))
+        surface.blit(textRender, (60, screenHeight/2 + (index - len(players)/2) * font.get_height() * 1.5))
 

@@ -81,9 +81,8 @@ class Building():
         return emptySpots
     
 
-    def whenPlaced(self,board,x,y, moneyIncrease, coinMultipliers, currentPlayer):
+    def whenPlaced(self,board,x,y):
         # These are any custom abilities, placeholders for now
-        moneyIncrease, newCoinMultipliers = self.moneyIncreasePlace, coinMultipliers
 
         if self.name == 'Farm':
             emptySpaces = self.findEmptyNearby(board,x,y)
@@ -122,18 +121,12 @@ class Building():
                 emptySpace=random.choice(emptySpaces)
                 board[emptySpace[1]][emptySpace[0]] = rareBuildings['Church']
 
-        elif self.name == 'Bank':
-            moneyIncrease += 6
-
-        elif self.name == 'Resturant':
-            newCoinMultipliers, count = self.multiplyNearby(currentPlayer.board, newCoinMultipliers, x, y, 2)
-
         # This will automatically deal with increasing score and money
-        return self.scoreIncreasePlace, self.moneyIncreasePlace, board, newCoinMultipliers
+        return self.scoreIncreasePlace, self.moneyIncreasePlace, board
 
 
-    def beforeRound(self, currentPlayer, multipliers, addends, x, y):
-        newMultipliers, newAddends = multipliers, addends
+    def beforeRound(self, currentPlayer, multipliers, addends, coinMultipliers, x, y):
+        newMultipliers, newAddends, newCoinMultipliers = multipliers, addends, coinMultipliers
 
         chargeIncrease = 0
 
@@ -147,6 +140,9 @@ class Building():
                 for x in range(len(newMultipliers)):
                     if currentPlayer.board[y][x] in commonBuildings:
                         newMultipliers[y][x] *= 5
+
+        elif self.name == 'Resturant':
+            newCoinMultipliers, count = self.multiplyNearby(currentPlayer.board, newCoinMultipliers, x, y, 2)
 
         elif self.name == 'Food Stand':
             newAddends, count = self.addToNearby(currentPlayer.board, newAddends, x, y, 0, whitelist=['Crop Field'])
@@ -221,12 +217,12 @@ class Building():
             chargeIncrease += 50
 
 
-        return newMultipliers, newAddends, chargeIncrease
+        return newMultipliers, newAddends, newCoinMultipliers, chargeIncrease
 
 
     def whenActivated(self, currentPlayer, x, y, multipliers, addends, coinMultipliers):
         # These are any custom abilities, placeholders for now
-        scoreIncrease, moneyIncrease, newMultiplies = self.scoreIncreaseActivate, self.moneyIncreaseActivate, multipliers
+        scoreIncrease, moneyIncrease = self.scoreIncreaseActivate, self.moneyIncreaseActivate
 
         if self.name == 'Mine Quarry':
             moneyIncrease = random.randint(1,5)
@@ -239,10 +235,11 @@ class Building():
         elif self.name == 'Bridge':
             if x > 0:
                 if currentPlayer.board[y][x - 1]:
-                    repeatActivationScore, repeatActivationMoney = currentPlayer.board[y][x - 1].whenActivated(currentPlayer, x-1, y, multipliers, addends)
+                    repeatActivationScore, repeatActivationMoney = currentPlayer.board[y][x - 1].whenActivated(currentPlayer, x-1, y, multipliers, addends, coinMultipliers)
             
                     repeatActivationScore += addends[y][x - 1]
                     repeatActivationScore *= multipliers[y][x - 1]
+                    repeatActivationMoney *= coinMultipliers[y][x - 1]
 
                     scoreIncrease += repeatActivationScore
                     moneyIncrease += repeatActivationMoney
@@ -251,10 +248,11 @@ class Building():
             if x > 0:
                 for column in range(0, x):
                     if currentPlayer.board[y][column]:
-                        repeatActivationScore, repeatActivationMoney = currentPlayer.board[y][column].whenActivated(currentPlayer, column, y, multipliers, addends)
+                        repeatActivationScore, repeatActivationMoney = currentPlayer.board[y][column].whenActivated(currentPlayer, column, y, multipliers, addends, coinMultipliers)
             
                         repeatActivationScore += addends[y][column]
                         repeatActivationScore *= multipliers[y][column]
+                        repeatActivationMoney *= coinMultipliers[y][column]
 
                         scoreIncrease += repeatActivationScore
                         moneyIncrease += repeatActivationMoney
@@ -263,10 +261,11 @@ class Building():
             if y > 0:
                 for row in range(0, y):
                     if currentPlayer.board[row][x]:
-                        repeatActivationScore, repeatActivationMoney = currentPlayer.board[row][x].whenActivated(currentPlayer, x, row, multipliers, addends)
+                        repeatActivationScore, repeatActivationMoney = currentPlayer.board[row][x].whenActivated(currentPlayer, x, row, multipliers, addends, coinMultipliers)
             
                         repeatActivationScore += addends[row][x]
                         repeatActivationScore *= multipliers[row][x]
+                        repeatActivationMoney *= coinMultipliers[row][x]
 
                         scoreIncrease += repeatActivationScore
                         moneyIncrease += repeatActivationMoney
@@ -276,10 +275,11 @@ class Building():
                 for row in range(0, y):
                     for column in range(0, x):
                         if currentPlayer.board[row][column]:
-                            repeatActivationScore, repeatActivationMoney = currentPlayer.board[row][column].whenActivated(currentPlayer, column, row, multipliers, addends)
+                            repeatActivationScore, repeatActivationMoney = currentPlayer.board[row][column].whenActivated(currentPlayer, column, row, multipliers, addends, coinMultipliers)
             
                             repeatActivationScore += addends[row][column]
                             repeatActivationScore *= multipliers[row][column]
+                            repeatActivationMoney *= coinMultipliers[row][column]
 
                             scoreIncrease += repeatActivationScore
                             moneyIncrease += repeatActivationMoney
@@ -338,7 +338,7 @@ rareBuildings = {'Power Plant': Building('Power Plant', 5, 4,  'Power Plant', 'R
 epicBuildings = {'Skyscraper' : Building('Skyscraper', 7, 5,  'Skyscraper', 'Epic', (50,0), (0,0), 'Skyscaper\n--------------\n+ 50 Score\nwhen activated\n+ 30 Score for every\nnearby Tall House or Condo.'),
                 'Castle' : Building('Castle', 7, 5, 'Castle', 'Epic', (75,0), (0,0), 'Castle\n--------------\n+ 75 Score\nwhen activated\nTriples score of 3\nrandom buildings on the board.'),
                 'Casino' : Building('Casino', 8, 6, 'Casino', 'Epic', (0,0), (0,0), 'Casino\n--------------\nGives random score and money\nwhen activated.'),
-                'Bank' : Building('Bank', 6, 4,  'Bank', 'Epic', (30,0), (0,0), 'Bank\n--------------\n+ 30 Score\nand takes away $1 - $3\nwhen activated\n+ $6 when bought.'),
+                'Bank' : Building('Bank', 6, 4,  'Bank', 'Epic', (30,0), (0,6), 'Bank\n--------------\n+ 30 Score\nand takes away $1 - $3\nwhen activated\n+ $6 when bought.'),
                 'Police Station' : Building('Police Station', 6, 5,  'Police Station', 'Epic', (30,0), (0,0), 'Police Station\n--------------\n+ 30 Score\nwhen activated.'),
                 'Airport' : Building('Airport', 6, 4,  'Airport', 'Epic', (0,0), (0,0), 'Airport\n--------------\nRepeats all\n Buildings to the left\nwhen activated.'),
                 'Bus Stop' : Building('Bus Stop', 6, 4, 'Bus Stop', 'Epic', (0,0), (0,0), 'Bus Stop\n--------------\nRepeats all\nBuildings above\nwhen activated.')}

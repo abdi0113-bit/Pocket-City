@@ -368,6 +368,7 @@ def Main():
                     # Apply bonuses
                     scoreIncrease += addends[selectedTile[1]][selectedTile[0]]
                     scoreIncrease *= multipliers[selectedTile[1]][selectedTile[0]]
+                    scoreIncrease *= (chargeIncrease/100) + 1
 
                     # Change score
                     players[currentTurn].score += round(scoreIncrease)

@@ -251,6 +251,9 @@ def DrawShop(surface, imageAssets, rarities, screenSettings, gridSize, currentPl
         # Stamp the building's image
         StampImage(surface, imageAssets, item.image, (x-0.4, y+0.1), tileSize, lightness)
 
+        if item.frozen:
+            StampImage(surface, imageAssets, "Frozen Background", (x, y), tileSize)
+
         # Write out the cost and the name
         lines = item.name.split(' ')
 

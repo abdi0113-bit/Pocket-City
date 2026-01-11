@@ -335,10 +335,10 @@ uncommonBuildings = {'Condo' : Building('Condo', 3, 2,  'Condo', 'Uncommon', (10
 
 rareBuildings = {'Power Plant': Building('Power Plant', 5, 4,  'Power Plant', 'Rare', (30,0), (0,0), 'Power Plant\n--------------\n+ 30 Score\nwhen activated.'),
                 'Mansion' : Building('Mansion', 5, 4,  'Mansion', 'Rare', (100,0), (0,0), 'Mansion\n--------------\n+ 100 Score\nwhen activated.\n- 20 Score for each\nnearby building.'),
-                'Church' : Building('Church', 4, 3, 'Church', 'Rare', (20,0), (0,0), 'Church\n--------------\n+ 20 Score\nwhen activated\nIf church is nearby multiply by 1.1 per church.\nIf giant statue is nearby\nmultiply by 2.5 per statue.'),
+                'Church' : Building('Church', 4, 3, 'Church', 'Rare', (20,0), (0,0), 'Church\n--------------\n+ 20 Score\nwhen activated\nIf church is nearby,\nmultiply by 1.1 per church.\nIf giant statue is nearby,\nmultiply by 2.5 per statue.'),
                 'Hospital' : Building('Hospital', 5, 4, 'Hospital', 'Rare', (20,0), (0,0), 'Hospital\n--------------\n+ 20 Score\nwhen activated.'),
                 'Fire Station' : Building('Fire Station', 5, 4, 'Fire Station', 'Rare', (20,0), (0,0), 'Fire Station\n--------------\n+ 20 Score\nwhen activated.'),
-                'Ferris Wheel' : Building('Ferris Wheel', 4, 3, 'Ferris Wheel', 'Rare', (15,0), (0,0), 'Ferris Wheel\n--------------\n+ 20 Score\nwhen activated\nMultiplies nearby Business by 1.5.')}
+                'Ferris Wheel' : Building('Ferris Wheel', 4, 3, 'Ferris Wheel', 'Rare', (15,0), (0,0), 'Ferris Wheel\n--------------\n+ 20 Score\nwhen activated\nMultiplies nearby Businesses by 1.5.')}
 
 epicBuildings = {'Skyscraper' : Building('Skyscraper', 7, 5,  'Skyscraper', 'Epic', (50,0), (0,0), 'Skyscaper\n--------------\n+ 50 Score\nwhen activated\n+ 30 Score for every\nnearby Tall House or Condo.'),
                 'Castle' : Building('Castle', 7, 5, 'Castle', 'Epic', (75,0), (0,0), 'Castle\n--------------\n+ 75 Score\nwhen activated\nTriples score of 3\nrandom buildings on the board.'),
@@ -352,7 +352,7 @@ epicBuildings = {'Skyscraper' : Building('Skyscraper', 7, 5,  'Skyscraper', 'Epi
 legendaryBuildings = {'Pyramid' : Building('Pyramid', 9, 7,  'Pyramid', 'Legendary', (500,0), (0,0), 'Pyramid\n--------------\n+ 500 Score\nwhen activated\nMultiplies nearby buildings\nby 3.2 in a 5x5 area.'),
                      'Colloseum' : Building('Colloseum', 8, 6,  'Colloseum', 'Legendary', (400,0), (0,0), 'Colloseum\n--------------\n+ 400 Score\nwhen activated.\nx5 score to all\ncommon buildings.'),
                      'Space Station' : Building('Space Station', 10, 8, 'Space Station', 'Legendary', (200,0), (0,0), 'Space Station\n--------------\n+ 200 Score\nwhen activated\nRepeats all\nBuildings above and to the left.'),
-                     'Volcano' : Building('Volcano', 9, 7, 'Volcano', 'Legendary', (1000,0), (0,0), 'Volcano\n--------------\n+ 1000 Score\nwhen activated.'),
+                     'Volcano' : Building('Volcano', 9, 7, 'Volcano', 'Legendary', (1000,0), (0,0), 'Volcano\n--------------\n+ 1000 Score\nwhen activated.\nDeletes all nearby\nbuildings when placed.\nHalves a random\nbuilding\'s score\nbefore round.'),
                      'Giant Statue' : Building('Giant Statue', 10, 8, 'Giant Statue', 'Legendary', (0,0), (0,0), 'Giant Statue\n--------------\nPlaces a Church nearby\nwhen placed.\nMultiplies nearby buildings\nby 5 when activated.')}
 
 allBuildings = (commonBuildings, uncommonBuildings, rareBuildings, epicBuildings, legendaryBuildings)

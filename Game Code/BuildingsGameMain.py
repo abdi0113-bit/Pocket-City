@@ -209,7 +209,7 @@ def Main():
                             players[currentTurn].board[selectedTile[1]][selectedTile[0]] = transferItem
 
                             # Activate when placed ability
-                            scoreIncrease, moneyIncrease, players[currentTurn].board, coinMultipliers = players[currentTurn].board[selectedTile[1]][selectedTile[0]].whenPlaced(players[currentTurn].board, selectedTile[0], selectedTile[1], moneyIncrease, coinMultipliers, players[currentTurn])
+                            scoreIncrease, moneyIncrease, players[currentTurn].board = players[currentTurn].board[selectedTile[1]][selectedTile[0]].whenPlaced(players[currentTurn].board, selectedTile[0], selectedTile[1])
 
                             players[currentTurn].score += scoreIncrease
                             players[currentTurn].money += moneyIncrease

@@ -46,7 +46,6 @@ class Player():
             (0.10, 0.25, 0.35, 0.20, 0.10)
         )
 
-        self.shop = []
         for i in range(shopLength):
             rarityToUse = 0
 
@@ -65,4 +64,10 @@ class Player():
                     break
 
             buildingsDict = Buildings.allBuildings[rarityToUse]
-            self.shop.append(random.choice(list(buildingsDict.values()))) # This is how to get a random item from a dictionary
+            
+            if i >= len(self.shop):
+                self.shop.append(random.choice(list(buildingsDict.values()))) # This is how to get a random item from a dictionary
+            
+            else:
+                if not self.shop[i].frozen:
+                    self.shop[i] = random.choice(list(buildingsDict.values()))

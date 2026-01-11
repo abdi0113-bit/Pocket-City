@@ -83,7 +83,7 @@ class Building():
 
     def whenPlaced(self,board,x,y, moneyIncrease, coinMultipliers, currentPlayer):
         # These are any custom abilities, placeholders for now
-        moneyIncrease, newCoinMultipliers = self.moneyIncreaseActivate, coinMultipliers
+        moneyIncrease, newCoinMultipliers = self.moneyIncreasePlace, coinMultipliers
 
         if self.name == 'Farm':
             emptySpaces = self.findEmptyNearby(board,x,y)

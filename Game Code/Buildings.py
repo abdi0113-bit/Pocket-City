@@ -114,60 +114,62 @@ class Building():
         return self.scoreIncreasePlace, self.moneyIncreasePlace, board
 
 
-    def beforeRound(self, board, multipliers, addends, x, y):
+    def beforeRound(self, currentPlayer, multipliers, addends, x, y):
         newMultipliers, newAddends = multipliers, addends
+
+        chargeIncrease = 0
 
         # Here go abilities which modify other buildings around them
         if self.name == 'School':
-            newAddends, count = self.addToNearby(board, newAddends, x, y, 10, whitelist=['Brick House', 'Log House', 'Modern House', 'Tall House', 'Condo'])
+            newAddends, count = self.addToNearby(currentPlayer.board, newAddends, x, y, 10, whitelist=['Brick House', 'Log House', 'Modern House', 'Tall House', 'Condo'])
         
         elif self.name == 'Colloseum':
             # Multiply every common by 5
             for y in range(len(newMultipliers)):
                 for x in range(len(newMultipliers)):
-                    if board[y][x] in commonBuildings:
+                    if currentPlayer.board[y][x] in commonBuildings:
                         newMultipliers[y][x] *= 5
 
         elif self.name == 'Food Stand':
-            newAddends, count = self.addToNearby(board, newAddends, x, y, 0, whitelist=['Crop Field'])
+            newAddends, count = self.addToNearby(currentPlayer.board, newAddends, x, y, 0, whitelist=['Crop Field'])
             # Add 5 to score for every crop field
             newAddends[y][x] += 5 * count
 
         elif self.name == 'Ferris Wheel':
-            newMultipliers, count = self.multiplyNearby(board, newMultipliers, x, y, 1.5, whitelist=['Food Stand', 'Resturant', 'Casino', 'Bank'])
+            newMultipliers, count = self.multiplyNearby(currentPlayer.board, newMultipliers, x, y, 1.5, whitelist=['Food Stand', 'Restaurant', 'Casino', 'Bank'])
 
         elif self.name == 'Giant Statue':
-            newMultipliers, count = self.multiplyNearby(board, newMultipliers, x, y, 5)
+            newMultipliers, count = self.multiplyNearby(currentPlayer.board, newMultipliers, x, y, 5)
 
         elif self.name == 'Pool':
-            newMultipliers, count = self.multiplyNearby(board, newMultipliers, x, y, 1, whitelist=['Wind Turbine', 'Power Plant'])
+            newMultipliers, count = self.multiplyNearby(currentPlayer.board, newMultipliers, x, y, 1, whitelist=['Wind Turbine', 'Power Plant'])
             # Half score for every electrical building
             newMultipliers[y][x] /= 2**count
 
         elif self.name == 'Mansion':
-            newAddends, count = self.addToNearby(board, newAddends, x, y, 0)
+            newAddends, count = self.addToNearby(currentPlayer.board, newAddends, x, y, 0)
             # Subtract 20 from score for every building
             newAddends[y][x] += -20 * count
 
         elif self.name == 'Church':
-            newMultipliers, count = self.multiplyNearby(board, newMultipliers, x, y, 1, whitelist=['Church'])
+            newMultipliers, count = self.multiplyNearby(currentPlayer.board, newMultipliers, x, y, 1, whitelist=['Church'])
             # Multiply score by 1.5 for every church
             newAddends[y][x] *= 1.1 ** count
-            newMultipliers, count = self.multiplyNearby(board, newMultipliers, x, y, 1, whitelist=['Giant Statue'])
+            newMultipliers, count = self.multiplyNearby(currentPlayer.board, newMultipliers, x, y, 1, whitelist=['Giant Statue'])
             # Multiply score by 5 for every giant statue
             newAddends[y][x] *= 2.5 ** count
 
         elif self.name == 'Skyscraper':
-            newAddends, count = self.addToNearby(board, newAddends, x, y, 0, whitelist=['Tall House', 'Condo'])
+            newAddends, count = self.addToNearby(currentPlayer.board, newAddends, x, y, 0, whitelist=['Tall House', 'Condo'])
             # Add 30 to score for every building
             newAddends[y][x] += 30 * count
 
         elif self.name == 'Castle':
             occupied = []
             # Find all occupied coords and put them in a list
-            for row in range(len(board)):
-                    for column in range(len(board[row])):
-                        if board[row][column]:
+            for row in range(len(currentPlayer.board)):
+                    for column in range(len(currentPlayer.board[row])):
+                        if currentPlayer.board[row][column]:
                             occupied.append((column, row))
             # Pick 3 random buildings and multiply scores by 2
             random.shuffle(occupied)
@@ -178,9 +180,16 @@ class Building():
                     newMultipliers[chosenBuilding[1]][chosenBuilding[0]] *= 3
 
         elif self.name == 'Pyramid':
-            newMultipliers, count = self.multiplyNearby(board, newMultipliers, x, y, 3.2, size=5)
+            newMultipliers, count = self.multiplyNearby(currentPlayer.board, newMultipliers, x, y, 3.2, size=5)
 
-        return newMultipliers, newAddends
+        elif self.name == 'Wind Turbine':
+            chargeIncrease += 10
+        
+        elif self.name == 'Power Plant':
+            chargeIncrease += 50
+
+
+        return newMultipliers, newAddends, chargeIncrease
 
 
     def whenActivated(self, currentPlayer, x, y, multipliers, addends):
@@ -248,6 +257,8 @@ class Building():
 
         elif self.name == 'Bank':
             moneyIncrease += random.randint(-1,-3)
+
+        
                 
                 
 

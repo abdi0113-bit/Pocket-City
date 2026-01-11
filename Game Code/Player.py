@@ -1,5 +1,6 @@
 import pygame
 import random
+import copy
 
 import Buildings
 
@@ -10,7 +11,7 @@ class Player():
 
         #
         self.score = 0
-        self.money = 0
+        self.money = 100
         self.lives = 10
         self.charge = 0
 
@@ -66,8 +67,8 @@ class Player():
             buildingsDict = Buildings.allBuildings[rarityToUse]
             
             if i >= len(self.shop):
-                self.shop.append(random.choice(list(buildingsDict.values()))) # This is how to get a random item from a dictionary
+                self.shop.append(copy.copy(random.choice(list(buildingsDict.values())))) # This is how to get a random item from a dictionary
             
             else:
                 if not self.shop[i].frozen:
-                    self.shop[i] = random.choice(list(buildingsDict.values()))
+                    self.shop[i] = copy.copy(random.choice(list(buildingsDict.values())))

@@ -58,11 +58,27 @@ def DoBeforeRound(currentPlayer, gridSize):
 
     for row in range(gridHeight):
         for column in range(gridWidth):
-            if currentPlayer.board[row][column]:
-                multipliers, addends, coinMultipliers, chargeIncrease = currentPlayer.board[row][column].beforeRound(currentPlayer, multipliers, addends, coinMultipliers, column, row)
+            try:
+                if currentPlayer.board[row][column]:
+                    multipliers, addends, coinMultipliers, chargeIncrease = currentPlayer.board[row][column].beforeRound(currentPlayer, multipliers, addends, coinMultipliers, column, row)
+            except:
+                [print(i) for i in currentPlayer.board]
 
     #[print(i) for i in multipliers] # Debug tool
     return multipliers, addends, coinMultipliers, chargeIncrease
+
+def Median(sortedPlayerList):
+    length = len(sortedPlayerList)
+    middleIndex = length // 2
+
+    if length % 2 == 0:
+        # If the list length is even, average the two middle elements
+        medianScore = (sortedPlayerList[middleIndex - 1].score + sortedPlayerList[middleIndex].score) / 2
+    else:
+        # If the list length is odd, the median is the middle element
+        medianScore = sortedPlayerList[middleIndex].score
+
+    return medianScore
 
 
 # Main funtion
@@ -413,16 +429,16 @@ def Main():
                             for player in players:
                                 player.money += moneyPerRound
                             
-                            players.sort(key = lambda p: p.score) # This lambda function returns the score of the input, and is used as a sorting key
-                            #It sorts players from low to high score
-                            [print(i.score) for i in players]
+                            # The lambda function returns the score of the input, and is used as a sorting key
+                            # Reverse = True means sort from high to low
+                            players.sort(key = lambda p: p.score, reverse=True)
+                            
+                            [print(f'{i.name}: {i.score}') for i in players]
 
-                            for index in range(numberOfPlayers//2):
-                                # Remove a life from the bottom 1/2 of players
-                                players[index].lives -= 1
-
-                            # Reverse for displaying
-                            players.reverse()
+                            medianScore = Median(players)
+                            for index, player in enumerate(players):
+                                if player.score < medianScore:
+                                    players[index].lives -= 1
 
                             gameState = 'Results'
 

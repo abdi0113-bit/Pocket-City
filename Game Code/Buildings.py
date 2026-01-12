@@ -142,7 +142,7 @@ class Building():
                         newMultipliers[y][x] *= 5
 
         elif self.name == 'Restaurant':
-            newCoinMultipliers, count = self.multiplyNearby(currentPlayer.board, newCoinMultipliers, x, y, 2)
+            newCoinMultipliers, count = self.multiplyNearby(currentPlayer.board, newCoinMultipliers, x, y, 1.5 , whitelist=['Crop Field', 'Mine Quarry', 'Casino', 'Bank'])
 
         elif self.name == 'Food Stand':
             newAddends, count = self.addToNearby(currentPlayer.board, newAddends, x, y, 0, whitelist=['Crop Field'])
@@ -326,7 +326,7 @@ uncommonBuildings = {'Condo' : Building('Condo', 3, 2,  'Condo', 'Uncommon', (10
                     'Wind Turbine' : Building('Wind Turbine', 2, 1,  'Wind Turbine', 'Uncommon', (10,0), (0,0), 'Wind Turbine\n--------------\n+ 10 Score\nwhen activated.'),
                     'Bridge' : Building('Bridge', 3, 2,  'Bridge', 'Uncommon', (0,0), (0,0), 'Bridge\n--------------\nRepeats the ability\nof the Building\nto the left\nwhen activated.'),
                     'Restaurant' : Building('Restaurant', 4, 3, 'Restaurant', 'Uncommon', (15,0), (0,0), 'Restaurant\n--------------\n+ 15 Score\nwhen activated.'),
-                    'Mine Quarry' : Building('Mine Quarry', 4, 3, 'Mine Quarry', 'Uncommon', (15,0), (0,0), 'Mine Quarry\n--------------\n+ 15 Score\nand + $1-5\nwhen activated.')}
+                    'Mine Quarry' : Building('Mine Quarry', 4, 3, 'Mine Quarry', 'Uncommon', (15,0), (1-5,0), 'Mine Quarry\n--------------\n+ 15 Score\nand + $1-5\nwhen activated.')}
 
 rareBuildings = {'Power Plant': Building('Power Plant', 5, 4,  'Power Plant', 'Rare', (30,0), (0,0), 'Power Plant\n--------------\n+ 30 Score\nwhen activated.'),
                 'Mansion' : Building('Mansion', 5, 4,  'Mansion', 'Rare', (100,0), (0,0), 'Mansion\n--------------\n+ 100 Score\nwhen activated.\n- 20 Score for each\nnearby building.'),

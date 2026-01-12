@@ -11,7 +11,7 @@ class Player():
 
         #
         self.score = 0
-        self.money = 0
+        self.money = 1000
         self.lives = 10
         self.charge = 0
 

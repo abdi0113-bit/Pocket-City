@@ -1,4 +1,6 @@
 import pygame
+# Supports opacity for fonts, needs to be imported separately
+import pygame.ftfont
 
 def LightenImage(image, brightnessLevel):
     # Creates a lighter copy of the given image
@@ -285,7 +287,7 @@ def DrawShop(surface, imageAssets, rarities, screenSettings, gridSize, currentPl
 
     return mouseShopItem
 
-def displayScores(surface, imageAssets, screenSettings, players):
+def DisplayScores(surface, imageAssets, screenSettings, players):
     screenWidth = screenSettings[0]
     screenHeight = screenSettings[1]
     tileSize = screenSettings[2]
@@ -313,3 +315,23 @@ def displayScores(surface, imageAssets, screenSettings, players):
         textRender = font.render(f'Score: {player.score}', True, (0,0,0))
         surface.blit(textRender, (20, screenHeight/2 + (index*2 - len(players) + 1) * font.get_height() * 1.5))
 
+def Popup(surface, tileSize, score, money, x, y, opacity):
+    # I use pygame.ftfont here since it supports opacity
+    font = pygame.ftfont.SysFont('amertype', tileSize//3)
+    scoreColour = (37, 99, 232, int(opacity))
+    moneyColour = (232, 220, 37, int(opacity))
+    backgroundColour = (0, 0, 0, int(opacity))
+
+    if score < 0:
+        textRender = font.render(f'{score}', True, scoreColour, backgroundColour)
+    else:
+        textRender = font.render(f'+{score}', True, scoreColour, backgroundColour)
+    
+    surface.blit(textRender, (x, y))
+
+    if money < 0:
+        textRender = font.render(f'-${abs(money)}', True, moneyColour, backgroundColour)
+    else:
+        textRender = font.render(f'+${money}', True, moneyColour, backgroundColour)
+    
+    surface.blit(textRender, (x, y + font.get_height() * 1.1))

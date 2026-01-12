@@ -126,4 +126,5 @@ def CalculateTileSize(screenSettings, gridSize, shopLength):
     tryTileWidth = math.floor(screenWidth/(gridWidth + 2.5)) # The +2.5 gives some space for the inventory on the right
     tryInventory = math.floor((screenHeight - gridOffsetY)/(shopLength + 0.5))
 
-    return(min(tryTileHeight, tryTileWidth, tryInventory, 180))
+    maxTileSize = 200
+    return(min(tryTileHeight, tryTileWidth, tryInventory, maxTileSize))

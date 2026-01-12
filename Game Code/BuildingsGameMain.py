@@ -111,6 +111,8 @@ def Main():
     moneyPerRound = 5
     shopLength = 3
 
+    popups = []
+
     # Construct a dictionary of rarity background files
     rarities = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary']
     rarityFiles = dict([(rarity, rarity + ' Rarity Background') for rarity in rarities])
@@ -359,29 +361,53 @@ def Main():
             UserInterface.DrawHud(screen, imageAssets, screenSettings, (gridWidth, gridHeight), players[currentTurn], gameState)
 
             # This wait time assumes all tiles are occupied - empty board will take half the time
-            waitSeconds = 1
+            waitSeconds = 10
             waitTime = waitSeconds/(gridWidth*gridHeight)
 
-            # Activate when the time is halfway up
-            if time.time() - startTime > waitTime/2 and not activatedYet:
-                activatedYet = True
-                # Activate the current tile
-                if players[currentTurn].board[selectedTile[1]][selectedTile[0]]:
-                    scoreIncrease, moneyIncrease = players[currentTurn].board[selectedTile[1]][selectedTile[0]].whenActivated(players[currentTurn], selectedTile[0], selectedTile[1], multipliers, addends, coinMultipliers)
-                    
-                    # Apply bonuses
-                    scoreIncrease += addends[selectedTile[1]][selectedTile[0]]
-                    scoreIncrease *= multipliers[selectedTile[1]][selectedTile[0]]
-                    scoreIncrease *= (players[currentTurn].charge/100) + 1
-                    moneyIncrease *= coinMultipliers[selectedTile[1]][selectedTile[0]]
+            # Delete popups older than 1 second
+            for popupIndex, popup in enumerate(popups):
+                if time.time() - popup['Time'] > 1:
+                    popups.pop(popupIndex)
 
-                    # Change score
-                    players[currentTurn].score += round(scoreIncrease)
-                    players[currentTurn].money += round(moneyIncrease)
-                
-                else:
-                    # If tile is empty, skip to the next tile
-                    startTime -= waitTime
+            # Show popups
+            for popup in popups:
+                UserInterface.Popup(screen, tileSize, popup['Score'], popup['Money'], popup['X'], popup['Y'], popup['Opacity'])
+                popup['Y'] -= 60 * dt
+                popup['Opacity'] -= 128 * dt
+
+
+            # Activate when the time is halfway up
+            if time.time() - startTime > waitTime/2:
+                if not activatedYet:
+                    scorePopupX = (selectedTile[0] + 0.25) * tileSize
+                    scorePopupY = (selectedTile[1] + 0.5) * tileSize + gridOffsetY
+
+                    activatedYet = True
+                    # Activate the current tile
+                    if players[currentTurn].board[selectedTile[1]][selectedTile[0]]:
+                        scoreIncrease, moneyIncrease = players[currentTurn].board[selectedTile[1]][selectedTile[0]].whenActivated(players[currentTurn], selectedTile[0], selectedTile[1], multipliers, addends, coinMultipliers)
+                        
+                        # Apply bonuses
+                        scoreIncrease += addends[selectedTile[1]][selectedTile[0]]
+                        scoreIncrease *= multipliers[selectedTile[1]][selectedTile[0]]
+                        scoreIncrease *= (players[currentTurn].charge/100) + 1
+                        moneyIncrease *= coinMultipliers[selectedTile[1]][selectedTile[0]]
+
+                        # Change score
+                        players[currentTurn].score += round(scoreIncrease)
+                        players[currentTurn].money += round(moneyIncrease)
+
+                        # Create a popup
+                        popups.append({'Time': time.time(),
+                                       'Score': round(scoreIncrease), 
+                                       'Money': round(moneyIncrease),
+                                       'X': scorePopupX,
+                                       'Y': scorePopupY,
+                                       'Opacity': 255})
+
+                    else:
+                        # If tile is empty, skip to the next tile
+                        startTime -= waitTime
 
             # If elapsed time has reached the threshhold
             if time.time() - startTime > waitTime:
@@ -396,6 +422,7 @@ def Main():
                     if y == gridHeight:
                         # Last square, next player
                         currentTurn += 1
+                        popups = []
                         
                         if currentTurn == numberOfPlayers:                            
                             # End of action phase, next round
@@ -456,7 +483,7 @@ def Main():
         if gameState == 'Results':
             # Draw a blue background
             pygame.draw.rect(screen, (115, 197, 245), (0,0,screenWidth, screenHeight), 0)
-            UserInterface.displayScores(screen, imageAssets, screenSettings, players)
+            UserInterface.DisplayScores(screen, imageAssets, screenSettings, players)
 
         sellAvailable = (False, None)
         if gameState != 'Action':

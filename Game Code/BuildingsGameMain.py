@@ -330,6 +330,8 @@ def Main():
                             
                             elif button.name == 'NextRound':
                                 players.sort(key = lambda p: p.turn) # Sorts players list back into turn order
+                                # Deletes players with 0 lives
+                                players = [player for player in players if player.lives > 0]
 
                                 gameState = 'Active'
                                     
@@ -523,6 +525,7 @@ def Main():
 if __name__ == "__main__":
 
     Main()
+
 
 
 

@@ -322,16 +322,18 @@ def Popup(surface, tileSize, score, money, x, y, opacity):
     moneyColour = (232, 220, 37, int(opacity))
     backgroundColour = (0, 0, 0, int(opacity))
 
-    if score < 0:
-        textRender = font.render(f'{score}', True, scoreColour, backgroundColour)
-    else:
-        textRender = font.render(f'+{score}', True, scoreColour, backgroundColour)
-    
-    surface.blit(textRender, (x, y))
+    if score != 0:
+        if score < 0:
+            textRender = font.render(f'{score}', True, scoreColour, backgroundColour)
+        else:
+            textRender = font.render(f'+{score}', True, scoreColour, backgroundColour)
+        
+        surface.blit(textRender, (x, y))
 
-    if money < 0:
-        textRender = font.render(f'-${abs(money)}', True, moneyColour, backgroundColour)
-    else:
-        textRender = font.render(f'+${money}', True, moneyColour, backgroundColour)
-    
-    surface.blit(textRender, (x, y + font.get_height() * 1.1))
+    if money != 0:
+        if money < 0:
+            textRender = font.render(f'-${abs(money)}', True, moneyColour, backgroundColour)
+        else:
+            textRender = font.render(f'+${money}', True, moneyColour, backgroundColour)
+        
+        surface.blit(textRender, (x, y + font.get_height() * 1.1))

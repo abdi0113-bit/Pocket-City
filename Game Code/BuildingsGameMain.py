@@ -67,20 +67,6 @@ def DoBeforeRound(currentPlayer, gridSize):
     #[print(i) for i in multipliers] # Debug tool
     return multipliers, addends, coinMultipliers, chargeIncrease
 
-def Median(sortedPlayerList):
-    length = len(sortedPlayerList)
-    middleIndex = length // 2
-
-    if length % 2 == 0:
-        # If the list length is even, average the two middle elements
-        medianScore = (sortedPlayerList[middleIndex - 1].score + sortedPlayerList[middleIndex].score) / 2
-    else:
-        # If the list length is odd, the median is the middle element
-        medianScore = sortedPlayerList[middleIndex].score
-
-    return medianScore
-
-
 # Main funtion
 def Main():
     # Clock is set to pygame's clock object
@@ -435,7 +421,7 @@ def Main():
                             
                             [print(f'{i.name}: {i.score}') for i in players]
 
-                            medianScore = Median(players)
+                            medianScore = UserInterface.Median(players)
                             for index, player in enumerate(players):
                                 if player.score < medianScore:
                                     players[index].lives -= 1

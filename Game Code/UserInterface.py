@@ -128,6 +128,20 @@ def StampImage(screen, imageAssets, imageToLoad, pos, tileSize, lighten=0):
     screen.blit(currentImage, (pos[0] * tileSize, pos[1] * tileSize))
 
 
+def Median(sortedPlayerList):
+    length = len(sortedPlayerList)
+    middleIndex = length // 2
+
+    if length % 2 == 0:
+        # If the list length is even, average the two middle elements
+        medianScore = (sortedPlayerList[middleIndex - 1].score + sortedPlayerList[middleIndex].score) / 2
+    else:
+        # If the list length is odd, the median is the middle element
+        medianScore = sortedPlayerList[middleIndex].score
+
+    return medianScore
+
+
 def DrawButtons(surface, buttons, gameState, sellAvailable):
     # sellAvailable = (true/false, amount to sell for)
     for button in buttons:
@@ -277,18 +291,25 @@ def displayScores(surface, imageAssets, screenSettings, players):
     tileSize = screenSettings[2]
     gridOffsetY = screenSettings[3]
 
+    medianScore = Median(players)
+
     for index, player in enumerate(players):
         font = pygame.font.SysFont('amertype', int(48))
         
+        # Display name
         textRender = font.render(f'{player.name}:', True, (0,0,0))
-
         surface.blit(textRender, (20, screenHeight/2 + (index*2 - len(players)) * font.get_height() * 1.5))
         
+        # Display lives
         surface.blit(imageAssets['Lives'], (170, screenHeight/2 + (index*2 - len(players)) * font.get_height() * 1.5))
-        textRender = font.render(f'{player.lives}', True, (0,0,0))
+        #Show (-1) if it was just decreased
+        if player.score < medianScore:
+            textRender = font.render(f'{player.lives} (-1)', True, (0,0,0))
+        else:
+            textRender = font.render(f'{player.lives}', True, (0,0,0))
         surface.blit(textRender, (210, screenHeight/2 + (index*2 - len(players)) * font.get_height() * 1.5))
 
-
+        # Display scores
         textRender = font.render(f'Score: {player.score}', True, (0,0,0))
         surface.blit(textRender, (20, screenHeight/2 + (index*2 - len(players) + 1) * font.get_height() * 1.5))
 

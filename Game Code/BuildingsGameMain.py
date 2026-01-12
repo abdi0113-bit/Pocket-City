@@ -472,8 +472,11 @@ def Main():
                 UserInterface.MouseoverText(screen, mousePos, players[currentTurn].shop[mouseShopItem].message)
 
             if not (mouseTileX >= gridWidth or mouseTileY >= gridHeight or mouseTileX < 0 or mouseTileY < 0): # If in bounds
-                if players[currentTurn].board[mouseTileY][mouseTileX]: # If building exists
-                    UserInterface.MouseoverText(screen, mousePos, players[currentTurn].board[mouseTileY][mouseTileX].message)
+                try:
+                    if players[currentTurn].board[mouseTileY][mouseTileX]: # If building exists
+                        UserInterface.MouseoverText(screen, mousePos, players[currentTurn].board[mouseTileY][mouseTileX].message)
+                except:
+                    [print(i) for i in players[currentTurn].board]
         
         
         pygame.display.flip() # This updates the entire screen

@@ -199,8 +199,14 @@ def DrawHud(surface, imageAssets, screenSettings, gridSize, currentPlayer, gameS
 
     # If action phase, show score
     if gameState == 'Action':
-        surface.blit(imageAssets['Star Score'], (300, 5))
+        surface.blit(imageAssets['Star Score'], (350, 5))
         textRender = font.render(str(currentPlayer.score), True, (0,0,0))
+        surface.blit(textRender, (400, 17))
+
+        # Show charge
+
+        surface.blit(imageAssets['Charge Icon'], (300, 5))
+        textRender = font.render(str(currentPlayer.charge), True, (0,0,0))
         surface.blit(textRender, (350, 17))
 
 

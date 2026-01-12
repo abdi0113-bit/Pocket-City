@@ -59,15 +59,13 @@ def DoBeforeRound(currentPlayer, gridSize):
 
     for row in range(gridHeight):
         for column in range(gridWidth):
-            try:
-                if currentPlayer.board[row][column]:
-                    multipliers, addends, coinMultipliers, chargeIncrease = currentPlayer.board[row][column].beforeRound(currentPlayer, multipliers, addends, coinMultipliers, column, row)
-                    totalCharge += chargeIncrease
-            except:
-                [print(i) for i in currentPlayer.board]
-
+            if currentPlayer.board[row][column]:
+                multipliers, addends, coinMultipliers, chargeIncrease, livesIncrease = currentPlayer.board[row][column].beforeRound(currentPlayer, multipliers, addends, coinMultipliers, column, row)
+                
+                totalCharge += chargeIncrease
+            
     #[print(i) for i in multipliers] # Debug tool
-    return multipliers, addends, coinMultipliers, totalCharge
+    return multipliers, addends, coinMultipliers, totalCharge, livesIncrease
 
 # Main funtion
 def Main():
@@ -288,8 +286,9 @@ def Main():
 
                                 if gameState == 'Action':
                                     # Do before round
-                                    multipliers, addends, coinMultipliers, chargeIncrease = DoBeforeRound(players[currentTurn], (gridWidth, gridHeight))
+                                    multipliers, addends, coinMultipliers, chargeIncrease, livesIncrease = DoBeforeRound(players[currentTurn], (gridWidth, gridHeight))
                                     players[currentTurn].charge += chargeIncrease
+                                    players[currentTurn].lives += livesIncrease
 
 
                                 for button in buttons:
@@ -478,8 +477,9 @@ def Main():
                             gridHeight = len(players[currentTurn].board)
                             gridWidth = len(players[currentTurn].board[0])
 
-                            multipliers, addends, coinMultipliers, chargeIncrease = DoBeforeRound(players[currentTurn], (gridWidth, gridHeight))
-                            players[currentTurn].charge += chargeIncrease    
+                            multipliers, addends, coinMultipliers, chargeIncrease, livesIncrease = DoBeforeRound(players[currentTurn], (gridWidth, gridHeight))
+                            players[currentTurn].charge += chargeIncrease
+                            players[currentTurn].lives += livesIncrease 
 
                         gridHeight = len(players[currentTurn].board)
                         gridWidth = len(players[currentTurn].board[0])
@@ -517,11 +517,8 @@ def Main():
                 UserInterface.MouseoverText(screen, mousePos, players[currentTurn].shop[mouseShopItem].message)
 
             if not (mouseTileX >= gridWidth or mouseTileY >= gridHeight or mouseTileX < 0 or mouseTileY < 0): # If in bounds
-                try:
-                    if players[currentTurn].board[mouseTileY][mouseTileX]: # If building exists
+                if players[currentTurn].board[mouseTileY][mouseTileX]: # If building exists
                         UserInterface.MouseoverText(screen, mousePos, players[currentTurn].board[mouseTileY][mouseTileX].message)
-                except:
-                    [print(i) for i in players[currentTurn].board]
         
         
         pygame.display.flip() # This updates the entire screen

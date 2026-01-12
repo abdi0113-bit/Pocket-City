@@ -129,6 +129,7 @@ class Building():
         newMultipliers, newAddends, newCoinMultipliers = multipliers, addends, coinMultipliers
 
         chargeIncrease = 0
+        livesIncrease = 0
 
         # Here go abilities which modify other buildings around them
         if self.name == 'School':
@@ -216,8 +217,11 @@ class Building():
         elif self.name == 'Power Plant':
             chargeIncrease += 50
 
+        elif self.name == 'Hospital':
+            if random.random() < 0.1: # 10% chance
+                livesIncrease = 1
 
-        return newMultipliers, newAddends, newCoinMultipliers, chargeIncrease
+        return newMultipliers, newAddends, newCoinMultipliers, chargeIncrease, livesIncrease
 
 
     def whenActivated(self, currentPlayer, x, y, multipliers, addends, coinMultipliers):
@@ -331,7 +335,7 @@ uncommonBuildings = {'Condo' : Building('Condo', 3, 2,  'Condo', 'Uncommon', (10
 rareBuildings = {'Power Plant': Building('Power Plant', 5, 4,  'Power Plant', 'Rare', (30,0), (0,0), 'Power Plant\n--------------\n+ 30 Score\nwhen activated.\n+ 50 Charge before round'),
                 'Mansion' : Building('Mansion', 5, 4,  'Mansion', 'Rare', (100,0), (0,0), 'Mansion\n--------------\n+ 100 Score\nwhen activated.\n- 20 Score for each\nnearby building.'),
                 'Church' : Building('Church', 4, 3, 'Church', 'Rare', (20,0), (0,0), 'Church\n--------------\n+ 20 Score\nwhen activated.\nMultiply by 1.1 per\nnearby Church.\nMultiply by 2.5 per\nnearby Giant Statue.'),
-                'Hospital' : Building('Hospital', 5, 4, 'Hospital', 'Rare', (20,0), (0,0), 'Hospital\n--------------\n+ 20 Score\nwhen activated.'),
+                'Hospital' : Building('Hospital', 5, 4, 'Hospital', 'Rare', (20,0), (0,0), 'Hospital\n--------------\n+ 20 Score\nwhen activated.\nHas a 10% chance\nof restoring 1\nlife before round.'),
                 'Fire Station' : Building('Fire Station', 5, 4, 'Fire Station', 'Rare', (20,0), (0,0), 'Fire Station\n--------------\n+ 20 Score\nwhen activated.'),
                 'Ferris Wheel' : Building('Ferris Wheel', 4, 3, 'Ferris Wheel', 'Rare', (15,0), (0,0), 'Ferris Wheel\n--------------\n+ 20 Score\nwhen activated\nMultiplies nearby Businesses by 1.5.')}
 

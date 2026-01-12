@@ -50,6 +50,7 @@ def PostResizeEvent(screenSize):
 
 def DoBeforeRound(currentPlayer, gridSize):
     gridWidth, gridHeight = gridSize
+    chargeIncrease = 0
     
     # Create blank multiplier and addend tables
     multipliers = [[1 for i in range(gridWidth)] for j in range(gridHeight)]

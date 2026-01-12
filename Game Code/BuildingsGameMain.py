@@ -254,7 +254,7 @@ def Main():
                                 buttons = []
                                 buttons.append(UserInterface.Button('NextTurn', (128,128,128), (gridWidth + 2.5) * tileSize - 60, 25, 100, 30, 'Next Turn'))
                                 buttons.append(UserInterface.Button('Sell', (128,128,128), (gridWidth + 2.5) * tileSize - 180, 25, 100, 30, 'Sell ($)'))
-                                buttons.append(UserInterface.Button('Reroll', (128,128,128), (gridWidth + 2.25) * tileSize, 75, 100, 30, image=imageAssets['Reload Icon']))
+                                buttons.append(UserInterface.Button('Reroll', (128,128,128), (gridWidth + 2.25) * tileSize, gridOffsetY + tileSize * 0.25, 100, 30, image=imageAssets['Reload Icon']))
                                 buttons.append(UserInterface.Button('Expand', (128,128,128), (gridWidth + 2.5) * tileSize - 230, 25, 200, 30, f'Expand Grid (${players[currentTurn].expandCost})'))
                                 buttons.append(UserInterface.Button('NextRound', (128,128,128), screenWidth - 100, screenHeight - 50, 100, 30, 'Next Round'))
 
@@ -523,6 +523,7 @@ def Main():
 if __name__ == "__main__":
 
     Main()
+
 
 
 

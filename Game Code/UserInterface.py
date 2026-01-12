@@ -199,9 +199,9 @@ def DrawHud(surface, imageAssets, screenSettings, gridSize, currentPlayer, gameS
 
     # If action phase, show score
     if gameState == 'Action':
-        surface.blit(imageAssets['Star Score'], (350, 5))
+        surface.blit(imageAssets['Star Score'], (400, 5))
         textRender = font.render(str(currentPlayer.score), True, (0,0,0))
-        surface.blit(textRender, (400, 17))
+        surface.blit(textRender, (450, 17))
 
         # Show charge
 
@@ -322,11 +322,12 @@ def DisplayScores(surface, imageAssets, screenSettings, players):
         textRender = font.render(f'Score: {player.score}', True, (0,0,0))
         surface.blit(textRender, (20, screenHeight/2 + (index*2 - len(players) + 1) * font.get_height() * 1.5))
 
-def Popup(surface, tileSize, score, money, x, y, opacity):
+def Popup(surface, tileSize, score, money, charge, x, y, opacity):
     # I use pygame.ftfont here since it supports opacity
     font = pygame.ftfont.SysFont('amertype', tileSize//3)
-    scoreColour = (37, 99, 232, int(opacity))
+    scoreColour = (135, 206, 235, int(opacity))
     moneyColour = (232, 220, 37, int(opacity))
+    chargeColour = (255, 213, 128, int(opacity))
     backgroundColour = (0, 0, 0, int(opacity))
 
     if score != 0:
@@ -342,5 +343,13 @@ def Popup(surface, tileSize, score, money, x, y, opacity):
             textRender = font.render(f'-${abs(money)}', True, moneyColour, backgroundColour)
         else:
             textRender = font.render(f'+${money}', True, moneyColour, backgroundColour)
+        
+        surface.blit(textRender, (x, y + font.get_height() * 1.1))
+
+    if charge != 0:
+        if charge < 0:
+            textRender = font.render(f'-{abs(charge)}', True, chargeColour, backgroundColour)
+        else:
+            textRender = font.render(f'+{charge}', True, chargeColour, backgroundColour)
         
         surface.blit(textRender, (x, y + font.get_height() * 1.1))

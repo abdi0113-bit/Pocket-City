@@ -390,12 +390,13 @@ def Main():
                     # Activate the current tile
                     if players[currentTurn].board[selectedTile[1]][selectedTile[0]]:
                         scoreIncrease, moneyIncrease = players[currentTurn].board[selectedTile[1]][selectedTile[0]].whenActivated(players[currentTurn], selectedTile[0], selectedTile[1], multipliers, addends, coinMultipliers)
-                        
-                        # Apply bonuses
-                        scoreIncrease += addends[selectedTile[1]][selectedTile[0]]
-                        scoreIncrease *= multipliers[selectedTile[1]][selectedTile[0]]
-                        scoreIncrease *= (players[currentTurn].charge/100) + 1
-                        moneyIncrease *= coinMultipliers[selectedTile[1]][selectedTile[0]]
+
+                        if players[currentTurn].board[selectedTile[1]][selectedTile[0]] not in ['Space Station', 'Airport', 'Bus Stop']:
+                            # Apply bonuses
+                            scoreIncrease += addends[selectedTile[1]][selectedTile[0]]
+                            scoreIncrease *= multipliers[selectedTile[1]][selectedTile[0]]
+                            scoreIncrease *= (players[currentTurn].charge/100) + 1
+                            moneyIncrease *= coinMultipliers[selectedTile[1]][selectedTile[0]]
 
                         # Change score
                         players[currentTurn].score += round(scoreIncrease)
@@ -522,6 +523,7 @@ def Main():
 if __name__ == "__main__":
 
     Main()
+
 
 
 

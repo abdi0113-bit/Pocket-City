@@ -199,8 +199,9 @@ def DrawHud(surface, imageAssets, screenSettings, gridSize, currentPlayer, gameS
 
     # If action phase, show score
     if gameState == 'Action':
-        textRender = font.render(f'SCORE: {currentPlayer.score}', True, (0,0,0))
-        surface.blit(textRender, (300, 17))
+        surface.blit(imageAssets['Star Score'], (300, 5))
+        textRender = font.render(str(currentPlayer.money), True, (0,0,0))
+        surface.blit(textRender, (330, 17))
 
 
 def MouseoverText(screen, mousePos, text):

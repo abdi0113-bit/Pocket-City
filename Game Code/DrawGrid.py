@@ -29,6 +29,8 @@ def LoadImagesFromFolder(path, scale):
                     hardCodedScale = 2
                 if name == 'Lives':
                     hardCodedScale = 1.8
+                if name == 'Star Score':
+                    hardCodedScale = 2
                 
                 scaledImage = pygame.transform.smoothscale(rawImage, (imageW * hardCodedScale, imageH * hardCodedScale))
                 images[name] = scaledImage

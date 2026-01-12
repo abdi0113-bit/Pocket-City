@@ -50,7 +50,7 @@ def PostResizeEvent(screenSize):
 
 def DoBeforeRound(currentPlayer, gridSize):
     gridWidth, gridHeight = gridSize
-    chargeIncrease = 0
+    totalCharge = 0
     
     # Create blank multiplier and addend tables
     multipliers = [[1 for i in range(gridWidth)] for j in range(gridHeight)]
@@ -62,11 +62,12 @@ def DoBeforeRound(currentPlayer, gridSize):
             try:
                 if currentPlayer.board[row][column]:
                     multipliers, addends, coinMultipliers, chargeIncrease = currentPlayer.board[row][column].beforeRound(currentPlayer, multipliers, addends, coinMultipliers, column, row)
+                    totalCharge += chargeIncrease
             except:
                 [print(i) for i in currentPlayer.board]
 
     #[print(i) for i in multipliers] # Debug tool
-    return multipliers, addends, coinMultipliers, chargeIncrease
+    return multipliers, addends, coinMultipliers, totalCharge
 
 # Main funtion
 def Main():
@@ -330,6 +331,8 @@ def Main():
                             
                             elif button.name == 'NextRound':
                                 players.sort(key = lambda p: p.turn) # Sorts players list back into turn order
+                                # Deletes players with 0 lives
+                                players = [player for player in players if player.lives > 0]
 
                                 gameState = 'Active'
                                     
@@ -530,6 +533,8 @@ def Main():
 if __name__ == "__main__":
 
     Main()
+
+
 
 
 

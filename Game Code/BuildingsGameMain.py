@@ -294,7 +294,7 @@ def Main():
 
                                 for button in buttons:
                                     if button.name == 'Expand':
-                                        button.updateMessage(players[currentTurn].expandCost)
+                                        button.updateMessage(f'${players[currentTurn].expandCost}')
 
                                 # Post a resize event to the event queue
                                 PostResizeEvent((screenWidth, screenHeight))

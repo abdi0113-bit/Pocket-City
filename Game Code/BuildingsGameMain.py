@@ -64,6 +64,10 @@ def DoBeforeRound(currentPlayer, gridSize):
                 
                 totalCharge += chargeIncrease
             
+            policeStations = 0
+            if currentPlayer.board[row][column] == 'Police Station':
+                policeStations += 1
+                
     #[print(i) for i in multipliers] # Debug tool
     return multipliers, addends, coinMultipliers, totalCharge, livesIncrease
 
@@ -179,7 +183,6 @@ def Main():
                     elif button.name == 'Expand':
                         button.x = min(event.w - 230, (gridWidth + 2.5) * tileSize - 230)
                     elif button.name == 'NextRound':
-                        button.x = screenWidth - 100
                         button.y = screenHeight - 50
 
                     # Only some buttons should be resized
@@ -255,7 +258,7 @@ def Main():
                                 buttons.append(UserInterface.Button('Sell', (128,128,128), (gridWidth + 2.5) * tileSize - 180, 25, 100, 30, 'Sell ($)'))
                                 buttons.append(UserInterface.Button('Reroll', (128,128,128), (gridWidth + 2.25) * tileSize, gridOffsetY + tileSize * 0.25, 100, 30, image=imageAssets['Reload Icon']))
                                 buttons.append(UserInterface.Button('Expand', (128,128,128), (gridWidth + 2.5) * tileSize - 230, 25, 200, 30, f'Expand Grid (${players[currentTurn].expandCost})'))
-                                buttons.append(UserInterface.Button('NextRound', (128,128,128), screenWidth - 100, screenHeight - 50, 100, 30, 'Next Round'))
+                                buttons.append(UserInterface.Button('NextRound', (128,128,128), 80, screenHeight - 50, 100, 30, 'Next Round'))
 
                             elif button.name == 'PlayerSelector':
                                 numberOfPlayers = result
@@ -330,8 +333,21 @@ def Main():
                             
                             elif button.name == 'NextRound':
                                 players.sort(key = lambda p: p.turn) # Sorts players list back into turn order
+                                
                                 # Deletes players with 0 lives
                                 players = [player for player in players if player.lives > 0]
+                                numberOfPlayers = len(players)
+                                
+                                for index, player in enumerate(players):
+                                    # This will make the players's turn number change
+                                    player.turn = index + 1
+
+                                gridHeight = len(players[currentTurn].board)
+                                gridWidth = len(players[currentTurn].board[0])
+                                players[currentTurn].rerollShop(currentRound, shopLength)
+
+                                # Post a resize event to the event queue
+                                PostResizeEvent((screenWidth, screenHeight))
 
                                 gameState = 'Active'
                                     

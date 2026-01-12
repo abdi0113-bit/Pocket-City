@@ -184,7 +184,7 @@ def DrawHud(surface, imageAssets, screenSettings, gridSize, currentPlayer, gameS
 
     # Show player number
     font = pygame.font.SysFont('amertype', 32)
-    textRender = font.render(f'Player {currentPlayer.turn}', True, (0,0,0))
+    textRender = font.render(f'{currentPlayer.name}', True, (0,0,0))
     surface.blit(textRender, (5, 17))
 
     # Show lives

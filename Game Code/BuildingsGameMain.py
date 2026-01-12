@@ -375,7 +375,7 @@ def Main():
 
             # Show popups
             for popup in popups:
-                UserInterface.Popup(screen, tileSize, popup['Score'], popup['Money'], popup['X'], popup['Y'], popup['Opacity'])
+                UserInterface.Popup(screen, tileSize, popup['Score'], popup['Money'], popup['Charge'], popup['X'], popup['Y'], popup['Opacity'])
                 popup['Y'] -= 60 * dt
                 popup['Opacity'] -= 128 * dt
 
@@ -403,9 +403,15 @@ def Main():
                         players[currentTurn].money += round(moneyIncrease)
 
                         # Create a popup
+                        chargeIncrease = 0
+                        if players[currentTurn].board[selectedTile[1]][selectedTile[0]] == 'Power Plant':
+                            chargeIncrease = 50
+                        if players[currentTurn].board[selectedTile[1]][selectedTile[0]] == 'Wind Turbine':
+                            chargeIncrease = 10
                         popups.append({'Time': time.time(),
                                        'Score': round(scoreIncrease), 
                                        'Money': round(moneyIncrease),
+                                       'Charge': round(chargeIncrease),
                                        'X': scorePopupX,
                                        'Y': scorePopupY,
                                        'Opacity': 255})
@@ -470,7 +476,8 @@ def Main():
                             gridWidth = len(players[currentTurn].board[0])
 
                             multipliers, addends, coinMultipliers, chargeIncrease = DoBeforeRound(players[currentTurn], (gridWidth, gridHeight))
-                        
+                            players[currentTurn].charge += chargeIncrease    
+
                         gridHeight = len(players[currentTurn].board)
                         gridWidth = len(players[currentTurn].board[0])
 

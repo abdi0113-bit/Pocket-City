@@ -323,12 +323,12 @@ commonBuildings =  {'Brick House' : Building('Brick House', 1, 1,  'Brick House'
 uncommonBuildings = {'Condo' : Building('Condo', 3, 2,  'Condo', 'Uncommon', (10,0), (0,0), 'Condo\n--------------\n+ 10 Score\nwhen activated.\nPlaces a random\nhouse nearby\nwhen placed.'),
                     'Tall House' : Building('Tall House', 2, 1,  'Tall House', 'Uncommon', (10,0), (0,0), 'Tall House\n--------------\n+ 10 Score\nwhen activated.'),
                     'Pool' : Building('Pool', 3, 2, 'Pool', 'Uncommon', (50,0), (0,0), 'Pool\n--------------\n+ 50 Score\nwhen activated\nIf nearby any electric buildings\nDivide score by 2.'),
-                    'Wind Turbine' : Building('Wind Turbine', 2, 1,  'Wind Turbine', 'Uncommon', (10,0), (0,0), 'Wind Turbine\n--------------\n+ 10 Score\nwhen activated.'),
+                    'Wind Turbine' : Building('Wind Turbine', 2, 1,  'Wind Turbine', 'Uncommon', (10,0), (0,0), 'Wind Turbine\n--------------\n+ 10 Score\nwhen activated.\n+ 10 Charge before round'),
                     'Bridge' : Building('Bridge', 3, 2,  'Bridge', 'Uncommon', (0,0), (0,0), 'Bridge\n--------------\nRepeats the ability\nof the Building\nto the left\nwhen activated.'),
-                    'Restaurant' : Building('Restaurant', 4, 3, 'Restaurant', 'Uncommon', (15,0), (0,0), 'Restaurant\n--------------\n+ 15 Score\nwhen activated.'),
+                    'Restaurant' : Building('Restaurant', 4, 3, 'Restaurant', 'Uncommon', (15,0), (0,0), 'Restaurant\n--------------\n+ 15 Score\nwhen activated.\nMultiplies all money-making\nbuildings by 1.5.'),
                     'Mine Quarry' : Building('Mine Quarry', 4, 3, 'Mine Quarry', 'Uncommon', (15,0), (1-5,0), 'Mine Quarry\n--------------\n+ 15 Score\nand + $1-5\nwhen activated.')}
 
-rareBuildings = {'Power Plant': Building('Power Plant', 5, 4,  'Power Plant', 'Rare', (30,0), (0,0), 'Power Plant\n--------------\n+ 30 Score\nwhen activated.'),
+rareBuildings = {'Power Plant': Building('Power Plant', 5, 4,  'Power Plant', 'Rare', (30,0), (0,0), 'Power Plant\n--------------\n+ 30 Score\nwhen activated.\n+ 50 Charge before round'),
                 'Mansion' : Building('Mansion', 5, 4,  'Mansion', 'Rare', (100,0), (0,0), 'Mansion\n--------------\n+ 100 Score\nwhen activated.\n- 20 Score for each\nnearby building.'),
                 'Church' : Building('Church', 4, 3, 'Church', 'Rare', (20,0), (0,0), 'Church\n--------------\n+ 20 Score\nwhen activated.\nMultiply by 1.1 per\nnearby Church.\nMultiply by 2.5 per\nnearby Giant Statue.'),
                 'Hospital' : Building('Hospital', 5, 4, 'Hospital', 'Rare', (20,0), (0,0), 'Hospital\n--------------\n+ 20 Score\nwhen activated.'),
@@ -351,6 +351,7 @@ legendaryBuildings = {'Pyramid' : Building('Pyramid', 9, 7,  'Pyramid', 'Legenda
                      'Giant Statue' : Building('Giant Statue', 10, 8, 'Giant Statue', 'Legendary', (0,0), (0,0), 'Giant Statue\n--------------\nPlaces a Church nearby\nwhen placed.\nMultiplies nearby buildings\nby 5 when activated.')}
 
 allBuildings = (commonBuildings, uncommonBuildings, rareBuildings, epicBuildings, legendaryBuildings)
+
 
 
 

@@ -446,7 +446,8 @@ def Main():
                             # Reverse = True means sort from high to low
                             players.sort(key = lambda p: p.score, reverse=True)
                             
-                            [print(f'{i.name}: {i.score}') for i in players]
+                            # Prints the score of each player
+                            #[print(f'{i.name}: {i.score}') for i in players]
 
                             medianScore = UserInterface.Median(players)
                             for index, player in enumerate(players):

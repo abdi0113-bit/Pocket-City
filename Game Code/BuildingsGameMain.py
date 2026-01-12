@@ -79,7 +79,7 @@ def Main():
     # Start at 3x3
     gridWidth, gridHeight = 3, 3
     gridSizeLimit = 10
-    # Tile size in pixels
+    # Tile size in pixelsButton
     tileSize = 50
     # screen variable will store the screen
     screen = pygame.display.set_mode((screenWidth, screenHeight), pygame.RESIZABLE)
@@ -322,7 +322,10 @@ def Main():
 
                                     # Increase expand cost
                                     players[currentTurn].expandCost *= 2
-                                    button.updateMessage(players[currentTurn].expandCost)
+                                    if gridHeight == gridSizeLimit or gridWidth == gridSizeLimit:
+                                        button.updateMessage('MAX')
+                                    else:
+                                        button.updateMessage(f'${players[currentTurn].expandCost}')
                             
                             elif button.name == 'NextRound':
                                 players.sort(key = lambda p: p.turn) # Sorts players list back into turn order

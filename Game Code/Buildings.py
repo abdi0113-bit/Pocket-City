@@ -289,13 +289,7 @@ class Building():
                             repeatActivationMoney *= coinMultipliers[row][column]
 
                             scoreIncrease += repeatActivationScore
-                            moneyIncrease += repeatActivationMoney
-
-        elif self.name == 'Bank':  
-            moneyIncrease += random.randint(-1,-3)
-                 
-                
-                
+                            moneyIncrease += repeatActivationMoney            
 
         # This will automatically deal with increasing score and money
         return scoreIncrease, moneyIncrease    
@@ -323,31 +317,31 @@ easterEgg = Building('Easter Egg', 0, 0,  'Easter Egg', 'Legendary', (1000000,0)
 commonBuildings =  {'Brick House' : Building('Brick House', 1, 1,  'Brick House', 'Common', (5,0), (0,0), 'Brick House\n--------------\n+ 5 Score\nwhen activated.'),
                     'Log House' : Building('Log House', 1, 1,  'Log House', 'Common', (5,0), (0,0), 'Log House\n--------------\n+ 5 Score\nwhen activated.'),
                     'Modern House' : Building('Modern House', 1, 1, 'Modern House', 'Common', (5,0), (0,0), 'Modern House\n--------------\n+ 5 Score\nwhen activated.'),
-                    'Farm' : Building('Farm', 2, 1,  'Barn', 'Common', (10,0), (0,0), 'Farm\n--------------\n+ 10 Score\nwhen activated.\nPlaces a Crop Field\nin an adjacent empty space.'),
+                    'Farm' : Building('Farm', 2, 1,  'Barn', 'Common', (10,0), (0,0), 'Farm\n--------------\n+ 10 Score\nwhen activated.\nPlaces a Crop Field\nin an adjacent empty space\nwhen placed.'),
                     'Crop Field' : Building('Crop Field', 1, 1,  'Crop Field', 'Common', (0,0), (1,0), 'Crop Field\n--------------\n+ $1\nwhen activated.'),
-                    'School' : Building('School', 2, 1, 'School', 'Common', (10,0), (0,0), 'School\n--------------\n+ 10 Score\nwhen activated.\n+ 10 score to\nadjacent House Buildings.'),
-                    'Food Stand' : Building('Food Stand', 2, 1,  'Food Stand', 'Common', (5,0), (0,0), 'Food Stand\n--------------\n+ 5 Score\nwhen activated.\n+5 Score for every adjacent\nCrop Field.')}
+                    'School' : Building('School', 2, 1, 'School', 'Common', (10,0), (0,0), 'School\n--------------\n+ 10 Score\nwhen activated.\n+ 10 score to\nadjacent House Buildings\nbefore round.'),
+                    'Food Stand' : Building('Food Stand', 2, 1,  'Food Stand', 'Common', (5,0), (0,0), 'Food Stand\n--------------\n+ 5 Score\nwhen activated.\n+5 Score for every adjacent\nCrop Field\nbefore round.')}
 
 
 uncommonBuildings = {'Condo' : Building('Condo', 3, 2,  'Condo', 'Uncommon', (10,0), (0,0), 'Condo\n--------------\n+ 10 Score\nwhen activated.\nPlaces a random\nhouse nearby\nwhen placed.'),
                     'Tall House' : Building('Tall House', 2, 1,  'Tall House', 'Uncommon', (10,0), (0,0), 'Tall House\n--------------\n+ 10 Score\nwhen activated.'),
-                    'Pool' : Building('Pool', 3, 2, 'Pool', 'Uncommon', (50,0), (0,0), 'Pool\n--------------\n+ 50 Score\nwhen activated\nIf nearby any electric buildings\nDivide score by 2.'),
+                    'Pool' : Building('Pool', 3, 2, 'Pool', 'Uncommon', (50,0), (0,0), 'Pool\n--------------\n+ 50 Score\nwhen activated\nDivide score by 2\n for each nearby\nelectrical building.'),
                     'Wind Turbine' : Building('Wind Turbine', 2, 1,  'Wind Turbine', 'Uncommon', (10,0), (0,0), 'Wind Turbine\n--------------\n+ 10 Score\nwhen activated.\n+ 10 Charge before round'),
                     'Bridge' : Building('Bridge', 3, 2,  'Bridge', 'Uncommon', (0,0), (0,0), 'Bridge\n--------------\nRepeats the ability\nof the Building\nto the left\nwhen activated.'),
-                    'Restaurant' : Building('Restaurant', 4, 3, 'Restaurant', 'Uncommon', (15,0), (0,0), 'Restaurant\n--------------\n+ 15 Score\nwhen activated.\nMultiplies all money-making\nbuildings by 1.5.'),
+                    'Restaurant' : Building('Restaurant', 4, 3, 'Restaurant', 'Uncommon', (15,0), (0,0), 'Restaurant\n--------------\n+ 15 Score\nwhen activated.\nMultiplies all money-making\nbuildings by 1.5.\nbefore round'),
                     'Mine Quarry' : Building('Mine Quarry', 4, 3, 'Mine Quarry', 'Uncommon', (15,0), (1-5,0), 'Mine Quarry\n--------------\n+ 15 Score\nand + $1-5\nwhen activated.')}
 
 rareBuildings = {'Power Plant': Building('Power Plant', 5, 4,  'Power Plant', 'Rare', (30,0), (0,0), 'Power Plant\n--------------\n+ 30 Score\nwhen activated.\n+ 50 Charge before round'),
-                'Mansion' : Building('Mansion', 5, 4,  'Mansion', 'Rare', (100,0), (0,0), 'Mansion\n--------------\n+ 100 Score\nwhen activated.\n- 20 Score for each\nnearby building.'),
+                'Mansion' : Building('Mansion', 5, 4,  'Mansion', 'Rare', (100,0), (0,0), 'Mansion\n--------------\n+ 100 Score\nwhen activated.\n- 20 Score for each\nnearby building\nbefore round.'),
                 'Church' : Building('Church', 4, 3, 'Church', 'Rare', (20,0), (0,0), 'Church\n--------------\n+ 20 Score\nwhen activated.\nMultiply by 1.1 per\nnearby Church.\nMultiply by 2.5 per\nnearby Giant Statue.'),
                 'Hospital' : Building('Hospital', 5, 4, 'Hospital', 'Rare', (20,0), (0,0), 'Hospital\n--------------\n+ 20 Score\nwhen activated.\nHas a 10% chance\nof restoring 1\nlife before round.'),
                 'Fire Station' : Building('Fire Station', 5, 4, 'Fire Station', 'Rare', (20,0), (0,0), 'Fire Station\n--------------\n+ 20 Score\nwhen activated.'),
-                'Ferris Wheel' : Building('Ferris Wheel', 4, 3, 'Ferris Wheel', 'Rare', (15,0), (0,0), 'Ferris Wheel\n--------------\n+ 20 Score\nwhen activated\nMultiplies nearby Businesses by 1.5.')}
+                'Ferris Wheel' : Building('Ferris Wheel', 4, 3, 'Ferris Wheel', 'Rare', (15,0), (0,0), 'Ferris Wheel\n--------------\n+ 20 Score\nwhen activated\nMultiplies nearby Businesses\nby 1.5 before round.')}
 
-epicBuildings = {'Skyscraper' : Building('Skyscraper', 7, 5,  'Skyscraper', 'Epic', (50,0), (0,0), 'Skyscaper\n--------------\n+ 50 Score\nwhen activated\n+ 30 Score for every\nnearby Tall House or Condo.'),
+epicBuildings = {'Skyscraper' : Building('Skyscraper', 7, 5,  'Skyscraper', 'Epic', (50,0), (0,0), 'Skyscaper\n--------------\n+ 50 Score\nwhen activated\n+ 30 Score for every\nnearby Tall House or Condo\nbefore round.'),
                 'Castle' : Building('Castle', 7, 5, 'Castle', 'Epic', (75,0), (0,0), 'Castle\n--------------\n+ 75 Score\nwhen activated\nTriples score of 3\nrandom buildings on the board.'),
                 'Casino' : Building('Casino', 8, 6, 'Casino', 'Epic', (0,0), (0,0), 'Casino\n--------------\nGives random score and money\nwhen activated.'),
-                'Bank' : Building('Bank', 6, 4,  'Bank', 'Epic', (30,0), (0,6), 'Bank\n--------------\n+ 30 Score\nand takes away $1 - $3\nwhen activated\n+ $6 when bought.'),
+                'Bank' : Building('Bank', 6, 4,  'Bank', 'Epic', (30,0), (10,-6), 'Bank\n--------------\n+ 30 Score and\n+ $10 when activated\n- $6 when bought.'),
                 'Police Station' : Building('Police Station', 6, 5,  'Police Station', 'Epic', (30,0), (0,0), 'Police Station\n--------------\n+ 30 Score\nwhen activated.'),
                 'Airport' : Building('Airport', 6, 4,  'Airport', 'Epic', (0,0), (0,0), 'Airport\n--------------\nRepeats all\n Buildings to the left\nwhen activated.'),
                 'Bus Stop' : Building('Bus Stop', 6, 4, 'Bus Stop', 'Epic', (0,0), (0,0), 'Bus Stop\n--------------\nRepeats all\nBuildings above\nwhen activated.')}

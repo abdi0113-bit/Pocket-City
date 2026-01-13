@@ -302,6 +302,9 @@ def Main():
                                     multipliers, addends, coinMultipliers, chargeIncrease, livesIncrease = DoBeforeRound(players[currentTurn], (gridWidth, gridHeight))
                                     players[currentTurn].charge += chargeIncrease
                                     players[currentTurn].lives += livesIncrease
+                                    # Lives cap at 15
+                                    if players[currentTurn].lives > 15:
+                                        players[currentTurn].lives = 15
 
 
                                 for button in buttons:

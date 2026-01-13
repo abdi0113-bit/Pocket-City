@@ -58,6 +58,7 @@ def StampImage(screen, imageAssets, imageToLoad, pos, tileSize):
 
 
 def DrawMouse(screen, imageAssets, tilemap, selectedTile, screenSettings, gridSize):
+    # Unpack settings
     gridWidth = gridSize[0]
     gridHeight = gridSize[1]
 
@@ -80,10 +81,12 @@ def DrawMouse(screen, imageAssets, tilemap, selectedTile, screenSettings, gridSi
         StampImage(screen, imageAssets, 'Selected Tile', (selectedTile[0], selectedTile[1] + gridOffsetY/tileSize), tileSize)
 
 def TileExists(tileMap, pos):
+    # Checks whether a tile exists
+    # Returns 0 if a tile doesn't exist at that position or that tile is empty
+    # Otherwise, returns 1
     if len(tileMap) <= pos[1] or len(tileMap[pos[1]]) <= pos[0] or pos[1] < 0 or pos[0] < 0: # If the tile is out of bounds
         return 0
     else:
-        #Use this once Vishwa makes the 1 connection
         currentTile = tileMap[pos[1]][pos[0]]
         return int(currentTile not in [0, '', None])
         #return 1
@@ -144,4 +147,5 @@ def CalculateTileSize(screenSettings, gridSize, shopLength):
 
     maxTileSize = 200
 
+    # Returns the smallest of the 4 options
     return(min(tryTileHeight, tryTileWidth, tryInventory, maxTileSize))

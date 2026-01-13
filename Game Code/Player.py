@@ -10,7 +10,7 @@ class Player():
         self.name = name
         self.turn = turn
 
-        #
+        # Initialise currencies
         self.score = 0
         self.money = 0
         self.lives = 10
@@ -73,10 +73,12 @@ class Player():
                 if random.random() < 0.1:
                     randomBuilding = Buildings.easterEgg
             
+            # Add new items to the shop if the shop isn't long enough
             if i >= len(self.shop):
                 self.shop.append(randomBuilding) # This is how to get a random item from a dictionary
             
             else:
+                # Otherwise, relace existing items if not frozen
                 if not self.shop[i].frozen:
                     self.shop[i] = randomBuilding
                 else:

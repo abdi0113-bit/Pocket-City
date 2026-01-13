@@ -1,6 +1,7 @@
 import pygame
 import random
 import copy
+import datetime
 
 import Buildings
 
@@ -65,13 +66,19 @@ class Player():
                     break
 
             buildingsDict = Buildings.allBuildings[rarityToUse]
+            randomBuilding = copy.copy(random.choice(list(buildingsDict.values())))
+
+            # Nothing to see here! You don't understand this code! Moving right along!
+            if datetime.date.today().month == 4 and datetime.date.today().day == 1:
+                if random.random() < 0.1:
+                    randomBuilding = Buildings.easterEgg
             
             if i >= len(self.shop):
-                self.shop.append(copy.copy(random.choice(list(buildingsDict.values())))) # This is how to get a random item from a dictionary
+                self.shop.append(randomBuilding) # This is how to get a random item from a dictionary
             
             else:
                 if not self.shop[i].frozen:
-                    self.shop[i] = copy.copy(random.choice(list(buildingsDict.values())))
+                    self.shop[i] = randomBuilding
                 else:
                     pass
                     #debugItem = Buildings.legendaryBuildings['Giant Statue']

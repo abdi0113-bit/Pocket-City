@@ -217,6 +217,9 @@ class Building():
         elif self.name == 'Power Plant':
             chargeIncrease += 50
 
+        elif self.name == 'Easter Egg':
+            chargeIncrease += 1000000
+
         elif self.name == 'Hospital':
             if random.random() < 0.1: # 10% chance
                 livesIncrease = 1
@@ -313,7 +316,9 @@ Building('Brick House', 5,   3,      'Brick House',   'Common',        (5, 0),  
 #                           cost   file (without .png)           (activated, placed)  (activated, placed)         (use \n for multiple lines)
          
 
-starterTent = Building('Starter Tent', 1, 1,  'Starter Tent', '', (1,0), (0,0), 'Starter Tent\n--------------\n+ 1 Score\nwhen activated.')
+starterTent = Building('Starter Tent', 0, 0,  'Starter Tent', '', (1,0), (0,0), 'Starter Tent\n--------------\n+ 1 Score\nwhen activated.')
+
+easterEgg = Building('Easter Egg', 0, 0,  'Easter Egg', 'Legendary', (1000000,0), (1000000,0), 'Easter Egg\n--------------\n+ 1 Million\nScore, Charge, & Money\nWhen Activated')
 
 commonBuildings =  {'Brick House' : Building('Brick House', 1, 1,  'Brick House', 'Common', (5,0), (0,0), 'Brick House\n--------------\n+ 5 Score\nwhen activated.'),
                     'Log House' : Building('Log House', 1, 1,  'Log House', 'Common', (5,0), (0,0), 'Log House\n--------------\n+ 5 Score\nwhen activated.'),

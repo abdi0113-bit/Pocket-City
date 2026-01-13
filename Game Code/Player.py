@@ -74,5 +74,5 @@ class Player():
                     self.shop[i] = copy.copy(random.choice(list(buildingsDict.values())))
                 else:
                     pass
-                    #debugItem = Buildings.uncommonBuildings['Restaurant']
+                    #debugItem = Buildings.legendaryBuildings['Giant Statue']
                     #self.shop[i] = copy.copy(debugItem)

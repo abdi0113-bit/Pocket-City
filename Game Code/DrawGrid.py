@@ -34,6 +34,7 @@ def LoadImagesFromFolder(path, scale):
                 elif name == 'Charge Icon':
                     hardCodedScale = 2
                 elif name == 'Giant Statue':
+                    # Giant Statue has a 2x bigger (200x100) image
                     hardCodedScale /= 2
                 scaledImage = pygame.transform.smoothscale(rawImage, (imageW * hardCodedScale, imageH * hardCodedScale))
                 images[name] = scaledImage

@@ -46,11 +46,14 @@ def LoadImagesFromFolder(path, scale):
     return images
 
 def StampImage(screen, imageAssets, imageToLoad, pos, tileSize):
+    # This loads the red question mark when an image asset isn't found
     try:
         currentTileImage = imageAssets[imageToLoad]
     except:
         #print(f'ERROR: Failed to load tile {imageToLoad}')
         currentTileImage = imageAssets['Failed to Load']
+
+    # Places the image at the position, scaled by tile size
     screen.blit(currentTileImage, (pos[0] * tileSize, pos[1] * tileSize))
 
 
@@ -69,7 +72,7 @@ def DrawMouse(screen, imageAssets, tilemap, selectedTile, screenSettings, gridSi
     
     #print(selectedTile[0], selectedTile[1])
     # Stamp mouse overlay
-    if selectedTile == (-1, -1): # If unselected
+    if selectedTile == (-1, -1): # If unselected and in bounds
         if not (mouseTileX >= gridWidth or mouseTileY >= gridHeight or mouseTileX < 0 or mouseTileY < 0):
             StampImage(screen, imageAssets, 'Hover Tile', (mouseTileX, mouseTileY + gridOffsetY/tileSize), tileSize)
             
@@ -89,7 +92,7 @@ def TileExists(tileMap, pos):
 def DrawGrid(screen, imageAssets, screenSettings, tileMap, gridSize):
     
     # tilemap is a 2d array
-    # screenSettings contains the height and width of the screen, as well as tile size
+    # screenSettings contains the height and width of the screen, as well as tile size and HUD offset
     screenWidth = screenSettings[0]
     screenHeight = screenSettings[1]
     tileSize = screenSettings[2]
@@ -111,18 +114,23 @@ def DrawGrid(screen, imageAssets, screenSettings, tileMap, gridSize):
                 connections += str(TileExists(tileMap, (column, row + 1))) # Tile below
                 connections += str(TileExists(tileMap, (column - 1, row))) # Tile to left
 
-            #print(f'Stone Tile {connections}')
+            # Stone Tile 0101 would have the left and right connections, since the digits go in clockwise order from top
+
+            # Stamps the stone tile with connections, defaults to no connections if it can't find
             if f'Stone Tile {connections}' in imageAssets:
                 StampImage(screen, imageAssets, f'Stone Tile {connections}', (column, row + gridOffsetY/tileSize), tileSize)
             else:
                 StampImage(screen, imageAssets, f'Stone Tile', (column, row + gridOffsetY/tileSize), tileSize)
 
-            if len(tileMap) > row and len(tileMap[row]) > column:
-                if not tileMap[row][column] in [0, '', None]:
-                    StampImage(screen, imageAssets, tileMap[row][column].image + ' Top', (column, row + gridOffsetY/tileSize), tileSize)        
+            # If the current tile exists and is in bounds, stamp its top view
+            if len(tileMap) > row:
+                if len(tileMap[row]) > column:
+                    if tileMap[row][column]:
+                        StampImage(screen, imageAssets, tileMap[row][column].image + ' Top', (column, row + gridOffsetY/tileSize), tileSize)        
 
 
 def CalculateTileSize(screenSettings, gridSize, shopLength):
+    # This function tries a bunch of calculations for the tile size and chooses the smallest one
     screenWidth = screenSettings[0]
     screenHeight = screenSettings[1]
     gridOffsetY = screenSettings[2]

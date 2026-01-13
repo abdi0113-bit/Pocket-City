@@ -46,6 +46,7 @@ def PostResizeEvent(screenSize):
     screenWidth, screenHeight = screenSize
     resizeEvent = pygame.event.Event(pygame.VIDEORESIZE, {'size': (screenWidth, screenHeight), 'w': screenWidth, 'h': screenHeight})
     # This adds the event to the built-in Pygame event queue
+    # It will automatically run all code needed to resize the screen based on tile size, etc
     pygame.event.post(resizeEvent)
 
 def DoBeforeRound(currentPlayer, gridSize):
@@ -99,6 +100,14 @@ def Main():
 
     selectedTile = (-1,-1) # -1, -1 means unselected
 
+    '''
+    Game states:
+    Start: this is the starting state with player selection
+    Active: buying phase, this is where you get the illusion of choice
+    Action: auto phase, this is where you watch the numbers go up
+    Results: end of round, this is when you see how badly you lost the round
+    Win: end of game, this is when you admit defeat to your opponent
+    '''
     gameState = 'Start'
 
     buttons = []
@@ -111,6 +120,7 @@ def Main():
     currentTurn = 0
     currentRound = 0
 
+    # Some other costs and stuff
     rerollCost = 2
     moneyPerRound = 5
     shopLength = 3
@@ -370,6 +380,7 @@ def Main():
             # Draw a blue background
             pygame.draw.rect(screen, (115, 197, 245), (0,0,(gridWidth + 2.5) * tileSize, max(gridOffsetY + gridHeight * tileSize, ((len(players[currentTurn].shop)) + 0.5) * tileSize + gridOffsetY)), 0)
 
+            # Draw the grid, mouse, HUD, and shop
             DrawGrid.DrawGrid(screen, imageAssets, screenSettings, players[currentTurn].board, (gridWidth, gridHeight))
             DrawGrid.DrawMouse(screen, imageAssets, players[currentTurn].board, selectedTile, screenSettings, (gridWidth, gridHeight))
             UserInterface.DrawHud(screen, imageAssets, screenSettings, (gridWidth, gridHeight), players[currentTurn], gameState)
@@ -378,12 +389,13 @@ def Main():
         if gameState == 'Action':
             pygame.draw.rect(screen, (115, 197, 245), (0,0,(gridWidth + 2.5) * tileSize, max(gridOffsetY + gridHeight * tileSize, ((len(players[currentTurn].shop)) + 0.5) * tileSize + gridOffsetY)), 0)
 
+            # Draw the grid, mouse, and HUD (no shop during action phase)
             DrawGrid.DrawGrid(screen, imageAssets, screenSettings, players[currentTurn].board, (gridWidth, gridHeight))
             DrawGrid.DrawMouse(screen, imageAssets, players[currentTurn].board, selectedTile, screenSettings, (gridWidth, gridHeight))
             UserInterface.DrawHud(screen, imageAssets, screenSettings, (gridWidth, gridHeight), players[currentTurn], gameState)
 
             # This wait time assumes all tiles are occupied - empty board will take half the time
-            waitSeconds = 1
+            waitSeconds = 10
             waitTime = waitSeconds/(gridWidth*gridHeight)
 
             # Delete popups older than 1 second
@@ -426,6 +438,7 @@ def Main():
                             chargeIncrease = 50
                         if players[currentTurn].board[selectedTile[1]][selectedTile[0]] == 'Wind Turbine':
                             chargeIncrease = 10
+                        # Each entry in the popups list is a dictionary with all the information on that popup
                         popups.append({'Time': time.time(),
                                        'Score': round(scoreIncrease), 
                                        'Money': round(moneyIncrease),
@@ -441,10 +454,12 @@ def Main():
             # If elapsed time has reached the threshhold
             if time.time() - startTime > waitTime:
                 
+                # Moves one tile to the right
                 x, y = selectedTile
                 x += 1
 
                 if x == gridWidth:
+                    # If it's reached the end of a row, move down 1 and to the start of the next row 
                     x = 0
                     y += 1
 
@@ -483,6 +498,7 @@ def Main():
                                 if player.score < medianScore:
                                     players[index].lives -= 1
 
+                            # If only one player is left with more than one life, 
                             if len([player for player in players if player.lives > 0]) <= 1:
                                 gameState = 'Win'
                             else:

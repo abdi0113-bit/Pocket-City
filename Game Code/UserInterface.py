@@ -161,7 +161,7 @@ def DrawButtons(surface, buttons, gameState, sellAvailable):
                 button.shown = False
             
         elif button.name == 'Expand':
-            if sellAvailable[0] or gameState == 'Results':
+            if sellAvailable[0] or gameState != 'Active':
                 button.shown = False
 
         elif button.name == 'NextTurn' or button.name == 'Reroll':
@@ -299,7 +299,7 @@ def DrawShop(surface, imageAssets, rarities, screenSettings, gridSize, currentPl
 
     return mouseShopItem
 
-def DisplayScores(surface, imageAssets, screenSettings, players):
+def DisplayScores(surface, imageAssets, screenSettings, players, gameState):
     screenWidth = screenSettings[0]
     screenHeight = screenSettings[1]
     tileSize = screenSettings[2]
@@ -318,16 +318,30 @@ def DisplayScores(surface, imageAssets, screenSettings, players):
         
         # Display lives
         surface.blit(imageAssets['Lives'], (170, screenHeight/2 + (index*2 - len(players)) * font.get_height() * 1.5))
-        #Show (-1) if it was just decreased
+        #Show (-1) if it was just decreased, or "Eliminated" if lives are 0
         if player.score < medianScore:
-            textRender = font.render(f'{player.lives} (-1)', True, textColour)
+            if player.lives == 0:
+                textRender = font.render(f'{player.lives} (Eliminated)', True, textColour)
+            else:
+                textRender = font.render(f'{player.lives} (-1)', True, textColour)
         else:
             textRender = font.render(f'{player.lives}', True, textColour)
+
         surface.blit(textRender, (210, screenHeight/2 + (index*2 - len(players)) * font.get_height() * 1.5))
 
         # Display scores
         textRender = font.render(f'Score: {player.score}', True, textColour)
         surface.blit(textRender, (20, screenHeight/2 + (index*2 - len(players) + 1) * font.get_height() * 1.5))
+    
+    if gameState == 'Win':
+        # Not sure how no players would have lives but oh well I'm making a check for it
+        if len([player for player in players if player.lives > 0]) > 0:
+            winningPlayer = [player for player in players if player.lives > 0][0].name
+            
+            # Bigger font
+            font = pygame.font.SysFont('amertype', int(64))
+            textRender = font.render(f'{winningPlayer} wins!', True, textColour)
+            surface.blit(textRender, (20, screenHeight/2 + (-2 - len(players)) * font.get_height() * 1.5))
 
 def Popup(surface, tileSize, score, money, charge, x, y, opacity):
     # I use pygame.ftfont here since it supports opacity

@@ -383,7 +383,7 @@ def Main():
             UserInterface.DrawHud(screen, imageAssets, screenSettings, (gridWidth, gridHeight), players[currentTurn], gameState)
 
             # This wait time assumes all tiles are occupied - empty board will take half the time
-            waitSeconds = 10
+            waitSeconds = 1
             waitTime = waitSeconds/(gridWidth*gridHeight)
 
             # Delete popups older than 1 second
@@ -395,7 +395,7 @@ def Main():
             for popup in popups:
                 UserInterface.Popup(screen, tileSize, popup['Score'], popup['Money'], popup['Charge'], popup['X'], popup['Y'], popup['Opacity'])
                 popup['Y'] -= 60 * dt
-                popup['Opacity'] -= 128 * dt
+                popup['Opacity'] -= 96 * dt
 
 
             # Activate when the time is halfway up
@@ -454,7 +454,7 @@ def Main():
                         popups = []
                         
                         if currentTurn == numberOfPlayers:                            
-                            # End of action phase, next round
+                            # End of action phase, results phase
                             currentRound += 1
                             currentTurn = 0
                             selectedTile = (-1, -1)
@@ -463,7 +463,7 @@ def Main():
                             if currentRound % 5 == 0:
                                 shopLength += 1
 
-                            #print(currentRound, moneyPerRound)
+                            # Increase money per round
                             if currentRound % 2 == 0:
                                 moneyPerRound += 1
                             
@@ -483,7 +483,10 @@ def Main():
                                 if player.score < medianScore:
                                     players[index].lives -= 1
 
-                            gameState = 'Results'
+                            if len([player for player in players if player.lives > 0]) <= 1:
+                                gameState = 'Win'
+                            else:
+                                gameState = 'Results'
 
                         else:
                             selectedTile = (0, 0)
@@ -512,13 +515,13 @@ def Main():
                 startTime = time.time()
                 activatedYet = False
         
-        if gameState == 'Results':
+        if gameState == 'Results' or gameState == 'Win':
             # Draw a blue background
             pygame.draw.rect(screen, (51, 87, 109), (0,0,screenWidth, screenHeight), 0)
             # Display a darkened city background
             screen.blit(UserInterface.ChangeImageBrightness(imageAssets['Pocket City Background'], -128), (0,0))
             # Display scores (and other stats)
-            UserInterface.DisplayScores(screen, imageAssets, screenSettings, players)
+            UserInterface.DisplayScores(screen, imageAssets, screenSettings, players, gameState)
 
         sellAvailable = (False, None)
         if gameState != 'Action':

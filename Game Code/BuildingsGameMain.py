@@ -514,7 +514,10 @@ def Main():
         
         if gameState == 'Results':
             # Draw a blue background
-            pygame.draw.rect(screen, (115, 197, 245), (0,0,screenWidth, screenHeight), 0)
+            pygame.draw.rect(screen, (51, 87, 109), (0,0,screenWidth, screenHeight), 0)
+            # Display a darkened city background
+            screen.blit(UserInterface.ChangeImageBrightness(imageAssets['Pocket City Background'], -128), (0,0))
+            # Display scores (and other stats)
             UserInterface.DisplayScores(screen, imageAssets, screenSettings, players)
 
         sellAvailable = (False, None)

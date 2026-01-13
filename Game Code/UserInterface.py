@@ -2,19 +2,24 @@ import pygame
 # Supports opacity for fonts, needs to be imported separately
 import pygame.ftfont
 
-def LightenImage(image, brightnessLevel):
-    # Creates a lighter copy of the given image
+def ChangeImageBrightness(image, brightnessLevel):
+    # Creates a lighter or darker copy of the given image
 
     # Create a copy of the original image to avoid destructive modifications
     lighter_image = image.copy()
     
     # Define the fill color (gray value for even brightening across all channels)
     # A higher value means more brightness added, 0 to 255
-    fillColour = (brightnessLevel, brightnessLevel, brightnessLevel)
+    newBrightnessLevel = abs(brightnessLevel)
+    fillColour = (newBrightnessLevel, newBrightnessLevel, newBrightnessLevel)
     
-    # Apply the fill color with the BLEND_RGB_ADD flag
+    # Apply the fill color with the BLEND_RGB_ADD/SUB flag
+    # Add for brighter, subtract for dimmer
     # This adds the fill color values to the pixel values of the image
-    lighter_image.fill(fillColour, special_flags=pygame.BLEND_RGB_ADD)
+    if brightnessLevel < 0:
+        lighter_image.fill(fillColour, special_flags=pygame.BLEND_RGB_SUB)
+    else:
+        lighter_image.fill(fillColour, special_flags=pygame.BLEND_RGB_ADD)
     
     return lighter_image
 
@@ -53,7 +58,7 @@ class Button():
             # Draw the button brighter if it's being hovered over
             currentImage = self.image
             if self.isOver(mousePos):
-                currentImage = LightenImage(self.image, 64)
+                currentImage = ChangeImageBrightness(self.image, 64)
 
             surface.blit(currentImage, (self.x - self.width/2, self.y - self.height/2))
             
@@ -125,7 +130,7 @@ def StampImage(screen, imageAssets, imageToLoad, pos, tileSize, lighten=0):
         currentImage = imageAssets['Failed to Load']
 
     if lighten > 0:
-        currentImage = LightenImage(currentImage, lighten)
+        currentImage = ChangeImageBrightness(currentImage, lighten)
     
     screen.blit(currentImage, (pos[0] * tileSize, pos[1] * tileSize))
 
@@ -301,25 +306,27 @@ def DisplayScores(surface, imageAssets, screenSettings, players):
     gridOffsetY = screenSettings[3]
 
     medianScore = Median(players)
+    # White text since the background is dark
+    textColour = (255,255,255)
 
     for index, player in enumerate(players):
         font = pygame.font.SysFont('amertype', int(48))
         
         # Display name
-        textRender = font.render(f'{player.name}:', True, (0,0,0))
+        textRender = font.render(f'{player.name}:', True, textColour)
         surface.blit(textRender, (20, screenHeight/2 + (index*2 - len(players)) * font.get_height() * 1.5))
         
         # Display lives
         surface.blit(imageAssets['Lives'], (170, screenHeight/2 + (index*2 - len(players)) * font.get_height() * 1.5))
         #Show (-1) if it was just decreased
         if player.score < medianScore:
-            textRender = font.render(f'{player.lives} (-1)', True, (0,0,0))
+            textRender = font.render(f'{player.lives} (-1)', True, textColour)
         else:
-            textRender = font.render(f'{player.lives}', True, (0,0,0))
+            textRender = font.render(f'{player.lives}', True, textColour)
         surface.blit(textRender, (210, screenHeight/2 + (index*2 - len(players)) * font.get_height() * 1.5))
 
         # Display scores
-        textRender = font.render(f'Score: {player.score}', True, (0,0,0))
+        textRender = font.render(f'Score: {player.score}', True, textColour)
         surface.blit(textRender, (20, screenHeight/2 + (index*2 - len(players) + 1) * font.get_height() * 1.5))
 
 def Popup(surface, tileSize, score, money, charge, x, y, opacity):

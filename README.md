@@ -10,13 +10,13 @@ This repository contains our grade 11 computer science culminating where we wher
  Reroll the shop options
  Expand the number of spaces on the grid
 
-*If you want to buy a specific building, but you do not have enough money you can right-click to freeze. Freezing allows a building to appear in the next round's shop.
+* If you want to buy a specific building, but you do not have enough money you can right-click to freeze. Freezing allows a building to appear in the next round's shop.
 
-*The abilities of buildings can either come into effect when placed on the grid, before the active phase, or during the active phase.
+* The abilities of buildings can either come into effect when placed on the grid, before the active phase, or during the active phase.
 
-*Each player starts off with 10 lives. During the active phase, the score of each player is compared with the median of all player scores. Any player whose score is below the median will lose a life. 
+* Each player starts off with 10 lives. During the active phase, the score of each player is compared with the median of all player scores. Any player whose score is below the median will lose a life. 
 
-*Last player standing wins
+* Last player standing wins
 
 
 

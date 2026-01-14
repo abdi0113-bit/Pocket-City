@@ -221,8 +221,12 @@ class Building():
             chargeIncrease += 1000000
 
         elif self.name == 'Hospital':
-            if random.random() < 0.2: # 20% chance
+            if random.random() < 0.3: # 30% chance
                 livesIncrease = 1
+
+        elif self.name == 'Police Station':
+            # Halve score of casinos in 5x5
+            newMultipliers, count = self.multiplyNearby(currentPlayer.board, newMultipliers, x, y, 0.5, whitelist=['Casino'], size=5)
 
         return newMultipliers, newAddends, newCoinMultipliers, chargeIncrease, livesIncrease
 
@@ -329,12 +333,12 @@ uncommonBuildings = {'Condo' : Building('Condo', 3, 2,  'Condo', 'Uncommon', (10
                     'Wind Turbine' : Building('Wind Turbine', 2, 1,  'Wind Turbine', 'Uncommon', (10,0), (0,0), 'Wind Turbine\n--------------\n+ 10 Score\nwhen activated.\n+ 10 Charge before round'),
                     'Bridge' : Building('Bridge', 3, 2,  'Bridge', 'Uncommon', (0,0), (0,0), 'Bridge\n--------------\nRepeats the ability\nof the Building\nto the left\nwhen activated.'),
                     'Restaurant' : Building('Restaurant', 4, 3, 'Restaurant', 'Uncommon', (15,0), (0,0), 'Restaurant\n--------------\n+ 15 Score\nwhen activated.\nMultiplies all money-making\nbuildings by 1.5.\nbefore round'),
-                    'Mine Quarry' : Building('Mine Quarry', 4, 3, 'Mine Quarry', 'Uncommon', (15,0), (1-5,0), 'Mine Quarry\n--------------\n+ 15 Score\nand + $1-5\nwhen activated.')}
+                    'Mine Quarry' : Building('Mine Quarry', 4, 3, 'Mine Quarry', 'Uncommon', (15,0), (0,0), 'Mine Quarry\n--------------\n+ 15 Score\nand + $1-5\nwhen activated.')}
 
 rareBuildings = {'Power Plant': Building('Power Plant', 5, 4,  'Power Plant', 'Rare', (30,0), (0,0), 'Power Plant\n--------------\n+ 30 Score\nwhen activated.\n+ 50 Charge before round'),
                 'Mansion' : Building('Mansion', 5, 4,  'Mansion', 'Rare', (100,0), (0,0), 'Mansion\n--------------\n+ 100 Score\nwhen activated.\n- 20 Score for each\nnearby building\nbefore round.'),
                 'Church' : Building('Church', 4, 3, 'Church', 'Rare', (20,0), (0,0), 'Church\n--------------\n+ 20 Score\nwhen activated.\nMultiply by 1.1 per\nnearby Church.\nMultiply by 2.5 per\nnearby Giant Statue.'),
-                'Hospital' : Building('Hospital', 5, 4, 'Hospital', 'Rare', (20,0), (0,0), 'Hospital\n--------------\n+ 20 Score\nwhen activated.\nHas a 20% chance\nof restoring 1\nlife before round.'),
+                'Hospital' : Building('Hospital', 5, 4, 'Hospital', 'Rare', (20,0), (0,0), 'Hospital\n--------------\n+ 20 Score\nwhen activated.\nHas a 30% chance\nof restoring 1\nlife before round.'),
                 'Fire Station' : Building('Fire Station', 5, 4, 'Fire Station', 'Rare', (20,0), (0,0), 'Fire Station\n--------------\n+ 20 Score\nwhen activated.'),
                 'Ferris Wheel' : Building('Ferris Wheel', 4, 3, 'Ferris Wheel', 'Rare', (15,0), (0,0), 'Ferris Wheel\n--------------\n+ 20 Score\nwhen activated\nMultiplies nearby Businesses\nby 1.5 before round.')}
 
@@ -342,13 +346,13 @@ epicBuildings = {'Skyscraper' : Building('Skyscraper', 7, 5,  'Skyscraper', 'Epi
                 'Castle' : Building('Castle', 7, 5, 'Castle', 'Epic', (75,0), (0,0), 'Castle\n--------------\n+ 75 Score\nwhen activated\nTriples score of 3\nrandom buildings on the board.'),
                 'Casino' : Building('Casino', 8, 6, 'Casino', 'Epic', (0,0), (0,0), 'Casino\n--------------\nGives random score and money\nwhen activated.'),
                 'Bank' : Building('Bank', 6, 4,  'Bank', 'Epic', (30,0), (10,-6), 'Bank\n--------------\n+ 30 Score and\n+ $10 when activated\n- $6 when bought.'),
-                'Police Station' : Building('Police Station', 6, 5,  'Police Station', 'Epic', (30,0), (0,0), 'Police Station\n--------------\n+ 30 Score\nwhen activated.'),
+                'Police Station' : Building('Police Station', 6, 5,  'Police Station', 'Epic', (150,0), (0,0), 'Police Station\n--------------\n+ 150 Score\nwhen activated.\nHalves score of\ncasinos in a 5x5\narea before round.'),
                 'Airport' : Building('Airport', 6, 4,  'Airport', 'Epic', (0,0), (0,0), 'Airport\n--------------\nRepeats all\n Buildings to the left\nwhen activated.'),
                 'Bus Stop' : Building('Bus Stop', 6, 4, 'Bus Stop', 'Epic', (0,0), (0,0), 'Bus Stop\n--------------\nRepeats all\nBuildings above\nwhen activated.')}
 
 
-legendaryBuildings = {'Pyramid' : Building('Pyramid', 9, 7,  'Pyramid', 'Legendary', (500,0), (0,0), 'Pyramid\n--------------\n+ 500 Score\nwhen activated\nMultiplies nearby buildings\nby 3.2 in a 5x5 area.'),
-                     'Colloseum' : Building('Colloseum', 8, 6,  'Colloseum', 'Legendary', (400,0), (0,0), 'Colloseum\n--------------\n+ 400 Score\nwhen activated.\nx5 score to all\ncommon buildings.'),
+legendaryBuildings = {'Pyramid' : Building('Pyramid', 9, 7,  'Pyramid', 'Legendary', (300,0), (0,0), 'Pyramid\n--------------\n+ 300 Score\nwhen activated\nMultiplies nearby buildings\nby 3.2 in a 5x5 area.'),
+                     'Colloseum' : Building('Colloseum', 8, 6,  'Colloseum', 'Legendary', (500,0), (0,0), 'Colloseum\n--------------\n+ 500 Score\nwhen activated.\nx5 score to all\ncommon buildings.'),
                      'Space Station' : Building('Space Station', 10, 8, 'Space Station', 'Legendary', (200,0), (0,0), 'Space Station\n--------------\n+ 200 Score\nwhen activated\nRepeats all\nBuildings above and to the left.'),
                      'Volcano' : Building('Volcano', 9, 7, 'Volcano', 'Legendary', (1000,0), (0,0), 'Volcano\n--------------\n+ 1000 Score\nwhen activated.\nDeletes all nearby\nbuildings when placed.\nHalves a random\nbuilding\'s score\nbefore round.'),
                      'Giant Statue' : Building('Giant Statue', 10, 8, 'Giant Statue', 'Legendary', (0,0), (0,0), 'Giant Statue\n--------------\nPlaces a Church nearby\nwhen placed.\nMultiplies nearby buildings\nby 5 when activated.')}

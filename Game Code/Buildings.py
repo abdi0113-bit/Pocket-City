@@ -101,17 +101,24 @@ class Building():
                     # Otherwise pick a random common house
                     board[emptySpace[1]][emptySpace[0]] = commonBuildings[random.choice(['Log House', 'Brick House', 'Modern House'])]
 
-        elif self.name == 'Fire Station':
-            pass
         elif self.name == 'Volcano':
+            fireStationNearby = False
+            # Find fire stations
+            for row in [y-1, y, y+1]:
+                for column in [x-1, x, x+1]:
+                    # If not the starting space and not out of bounds
+                    if (column, row) != (x,y) and not (column < 0 or row < 0 or row >= len(board)):
+                        if column < len(board[row]) == 'Fire Station':
+                            fireStationNearby = True
+
             for row in [y-1, y, y+1]:
                 for column in [x-1, x, x+1]:
                     # If not the starting space and not out of bounds
                     if (column, row) != (x,y) and not (column < 0 or row < 0 or row >= len(board)):
                         if column < len(board[row]):
-                            
-                            # If tile is occupied, delete it
-                            if board[row][column]:
+
+                            # If tile is occupied and no fire stations are nearby, or the tile is a fire station, delete it
+                            if (board[row][column] and not fireStationNearby) or (board[row][column] == 'Fire Station'):
                                 board[row][column] = None
 
         
@@ -339,8 +346,8 @@ rareBuildings = {'Power Plant': Building('Power Plant', 5, 4,  'Power Plant', 'R
                 'Mansion' : Building('Mansion', 5, 4,  'Mansion', 'Rare', (100,0), (0,0), 'Mansion\n--------------\n+ 100 Score\nwhen activated.\n- 20 Score for each\nnearby building\nbefore round.'),
                 'Church' : Building('Church', 4, 3, 'Church', 'Rare', (20,0), (0,0), 'Church\n--------------\n+ 20 Score\nwhen activated.\nMultiply by 1.1 per\nnearby Church.\nMultiply by 2.5 per\nnearby Giant Statue.'),
                 'Hospital' : Building('Hospital', 5, 4, 'Hospital', 'Rare', (20,0), (0,0), 'Hospital\n--------------\n+ 20 Score\nwhen activated.\nHas a 30% chance\nof restoring 1\nlife before round.'),
-                'Fire Station' : Building('Fire Station', 5, 4, 'Fire Station', 'Rare', (20,0), (0,0), 'Fire Station\n--------------\n+ 20 Score\nwhen activated.'),
-                'Ferris Wheel' : Building('Ferris Wheel', 4, 3, 'Ferris Wheel', 'Rare', (15,0), (0,0), 'Ferris Wheel\n--------------\n+ 20 Score\nwhen activated\nMultiplies nearby Businesses\nby 1.5 before round.')}
+                'Fire Station' : Building('Fire Station', 5, 4, 'Fire Station', 'Rare', (50,0), (0,0), 'Fire Station\n--------------\n+ 50 Score\nwhen activated.\nIf a Volcano is\nplaced nearby, it\nwill destroy the\nFire Station and\nothing else.'),
+                'Ferris Wheel' : Building('Ferris Wheel', 4, 3, 'Ferris Wheel', 'Rare', (20,0), (0,0), 'Ferris Wheel\n--------------\n+ 20 Score\nwhen activated\nMultiplies nearby Businesses\nby 1.5 before round.')}
 
 epicBuildings = {'Skyscraper' : Building('Skyscraper', 7, 5,  'Skyscraper', 'Epic', (50,0), (0,0), 'Skyscaper\n--------------\n+ 50 Score\nwhen activated\n+ 30 Score for every\nnearby Tall House or Condo\nbefore round.'),
                 'Castle' : Building('Castle', 7, 5, 'Castle', 'Epic', (75,0), (0,0), 'Castle\n--------------\n+ 75 Score\nwhen activated\nTriples score of 3\nrandom buildings on the board.'),

@@ -273,7 +273,7 @@ def Main():
                             elif button.name == 'PlayerSelector':
                                 numberOfPlayers = result
 
-                            elif button.name == 'NextTurn':
+                            elif button.name == 'NextTurn' and gameState == 'Active':
                                 # Next turn
                                 players[currentTurn].money = 0 # Get rid of unspent money
 

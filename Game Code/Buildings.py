@@ -108,8 +108,10 @@ class Building():
                 for column in [x-1, x, x+1]:
                     # If not the starting space and not out of bounds
                     if (column, row) != (x,y) and not (column < 0 or row < 0 or row >= len(board)):
-                        if column < len(board[row]) == 'Fire Station':
-                            fireStationNearby = True
+                        if column < len(board[row]):
+                            if board[row][column]:
+                                if board[row][column].name == 'Fire Station':
+                                    fireStationNearby = True
 
             for row in [y-1, y, y+1]:
                 for column in [x-1, x, x+1]:
@@ -118,8 +120,9 @@ class Building():
                         if column < len(board[row]):
 
                             # If tile is occupied and no fire stations are nearby, or the tile is a fire station, delete it
-                            if (board[row][column] and not fireStationNearby) or (board[row][column] == 'Fire Station'):
-                                board[row][column] = None
+                            if board[row][column]:
+                                if not fireStationNearby or (board[row][column].name == 'Fire Station'):
+                                    board[row][column] = None
 
         
         elif self.name == 'Giant Statue':
@@ -228,7 +231,9 @@ class Building():
             chargeIncrease += 1000000
 
         elif self.name == 'Hospital':
-            if random.random() < 0.2: # 20% chance
+            lifeChance = 0.2
+
+            if random.random() < lifeChance:
                 livesIncrease = 1
 
         elif self.name == 'Police Station':
@@ -246,7 +251,7 @@ class Building():
             moneyIncrease = random.randint(1,5)
 
         elif self.name == 'Casino':
-            modifierFunc = lambda x: (x - 0.5) / (x - x**2) # This creates the probability distribution
+            modifierFunc = lambda roll: (roll - 0.5) / (roll - roll**2) # This creates the probability distribution
             moneyIncrease = math.ceil(modifierFunc(random.random())) # Apply modifier function
             scoreIncrease = 10 * math.ceil(modifierFunc(random.random())) # Score uses the same function but is multiplied by 10
             
@@ -345,7 +350,7 @@ uncommonBuildings = {'Condo' : Building('Condo', 3, 2,  'Condo', 'Uncommon', (10
 rareBuildings = {'Power Plant': Building('Power Plant', 5, 4,  'Power Plant', 'Rare', (30,0), (0,0), 'Power Plant\n--------------\n+ 30 Score\nwhen activated.\n+ 50 Charge before round'),
                 'Mansion' : Building('Mansion', 5, 4,  'Mansion', 'Rare', (100,0), (0,0), 'Mansion\n--------------\n+ 100 Score\nwhen activated.\n- 20 Score for each\nnearby building\nbefore round.'),
                 'Church' : Building('Church', 4, 3, 'Church', 'Rare', (20,0), (0,0), 'Church\n--------------\n+ 20 Score\nwhen activated.\nMultiply by 1.1 per\nnearby Church.\nMultiply by 2.5 per\nnearby Giant Statue.'),
-                'Hospital' : Building('Hospital', 5, 4, 'Hospital', 'Rare', (20,0), (0,0), 'Hospital\n--------------\n+ 20 Score\nwhen activated.\nHas a 20% chance\nof restoring 1\nlife before round.'),
+                'Hospital' : Building('Hospital', 5, 4, 'Hospital', 'Rare', (20,0), (0,0), 'Hospital\n--------------\n+ 20 Score\nwhen activated.\nHas a 20% chance\nof restoring 1\nlife before round,\nup to the number of\nlives of the lead player.'),
                 'Fire Station' : Building('Fire Station', 5, 4, 'Fire Station', 'Rare', (50,0), (0,0), 'Fire Station\n--------------\n+ 50 Score\nwhen activated.\nIf a Volcano is\nplaced nearby, it\nwill destroy the\nFire Station and\nothing else.'),
                 'Ferris Wheel' : Building('Ferris Wheel', 4, 3, 'Ferris Wheel', 'Rare', (20,0), (0,0), 'Ferris Wheel\n--------------\n+ 20 Score\nwhen activated\nMultiplies nearby Businesses\nby 1.5 before round.')}
 

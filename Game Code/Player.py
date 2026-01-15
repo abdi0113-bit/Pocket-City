@@ -83,5 +83,5 @@ class Player():
                     self.shop[i] = randomBuilding
                 else:
                     pass
-                    debugItem = Buildings.rareBuildings['Hospital']
-                    self.shop[i] = copy.copy(debugItem)
+                    #debugItem = Buildings.legendaryBuildings['Volcano']
+                    #self.shop[i] = copy.copy(debugItem)

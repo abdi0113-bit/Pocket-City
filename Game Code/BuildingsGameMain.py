@@ -304,9 +304,10 @@ def Main():
                                     multipliers, addends, coinMultipliers, chargeIncrease, livesIncrease = DoBeforeRound(players[currentTurn], (gridWidth, gridHeight))
                                     players[currentTurn].charge += chargeIncrease
                                     players[currentTurn].lives += livesIncrease
-                                    # Lives cap at 15
-                                    if players[currentTurn].lives > 15:
-                                        players[currentTurn].lives = 15
+                                    # Can't go above the highest amount of any player
+                                    maxLives = max(players, key=lambda player: player.lives)
+                                    if players[currentTurn].lives > maxLives:
+                                        players[currentTurn].lives = maxLives
 
 
                                 for button in buttons:
@@ -347,7 +348,7 @@ def Main():
                                         button.updateMessage(f'${players[currentTurn].expandCost}')
                             
                             elif button.name == 'NextRound':
-                                players.sort(key = lambda p: p.turn) # Sorts players list back into turn order
+                                players.sort(key = lambda player: player.turn) # Sorts players list back into turn order
                                 
                                 # Deletes players with 0 lives
                                 players = [player for player in players if player.lives > 0]
@@ -400,7 +401,7 @@ def Main():
             UserInterface.DrawHud(screen, imageAssets, screenSettings, (gridWidth, gridHeight), players[currentTurn], gameState)
 
             # This wait time assumes all tiles are occupied - empty board will take half the time
-            waitSeconds = 1
+            waitSeconds = 100
             waitTime = waitSeconds/(gridWidth*gridHeight)
 
             # Delete popups older than 1 second
@@ -493,7 +494,7 @@ def Main():
                             
                             # The lambda function returns the score of the input, and is used as a sorting key
                             # Reverse = True means sort from high to low
-                            players.sort(key = lambda p: p.score, reverse=True)
+                            players.sort(key = lambda player: player.score, reverse=True)
                             
                             # Prints the score of each player
                             #[print(f'{i.name}: {i.score}') for i in players]

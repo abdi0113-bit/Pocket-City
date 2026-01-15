@@ -52,6 +52,7 @@ def PostResizeEvent(screenSize):
 def DoBeforeRound(currentPlayer, gridSize):
     gridWidth, gridHeight = gridSize
     totalCharge = 0
+    totalLives = 0
     
     # Create blank multiplier and addend tables
     multipliers = [[1 for i in range(gridWidth)] for j in range(gridHeight)]
@@ -64,13 +65,14 @@ def DoBeforeRound(currentPlayer, gridSize):
                 multipliers, addends, coinMultipliers, chargeIncrease, livesIncrease = currentPlayer.board[row][column].beforeRound(currentPlayer, multipliers, addends, coinMultipliers, column, row)
                 
                 totalCharge += chargeIncrease
+                totalLives += livesIncrease
             
             policeStations = 0
             if currentPlayer.board[row][column] == 'Police Station':
                 policeStations += 1
                 
     #[print(i) for i in multipliers] # Debug tool
-    return multipliers, addends, coinMultipliers, totalCharge, livesIncrease
+    return multipliers, addends, coinMultipliers, totalCharge, totalLives
 
 # Main funtion
 def Main():
@@ -398,7 +400,7 @@ def Main():
             UserInterface.DrawHud(screen, imageAssets, screenSettings, (gridWidth, gridHeight), players[currentTurn], gameState)
 
             # This wait time assumes all tiles are occupied - empty board will take half the time
-            waitSeconds = 10
+            waitSeconds = 1
             waitTime = waitSeconds/(gridWidth*gridHeight)
 
             # Delete popups older than 1 second
@@ -518,6 +520,9 @@ def Main():
                             multipliers, addends, coinMultipliers, chargeIncrease, livesIncrease = DoBeforeRound(players[currentTurn], (gridWidth, gridHeight))
                             players[currentTurn].charge += chargeIncrease
                             players[currentTurn].lives += livesIncrease 
+                            # Lives cap at 15
+                            if players[currentTurn].lives > 15:
+                                players[currentTurn].lives = 15
 
                         gridHeight = len(players[currentTurn].board)
                         gridWidth = len(players[currentTurn].board[0])

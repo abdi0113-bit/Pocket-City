@@ -305,7 +305,7 @@ def Main():
                                     players[currentTurn].charge += chargeIncrease
                                     players[currentTurn].lives += livesIncrease
                                     # Can't go above the highest amount of any player
-                                    maxLives = max(players, key=lambda player: player.lives)
+                                    maxLives = max(players, key=lambda player: player.lives).lives
                                     if players[currentTurn].lives > maxLives:
                                         players[currentTurn].lives = maxLives
 
@@ -401,7 +401,7 @@ def Main():
             UserInterface.DrawHud(screen, imageAssets, screenSettings, (gridWidth, gridHeight), players[currentTurn], gameState)
 
             # This wait time assumes all tiles are occupied - empty board will take half the time
-            waitSeconds = 100
+            waitSeconds = 5
             waitTime = waitSeconds/(gridWidth*gridHeight)
 
             # Delete popups older than 1 second

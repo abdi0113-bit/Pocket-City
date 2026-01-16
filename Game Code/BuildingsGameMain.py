@@ -313,9 +313,9 @@ def Main():
                                 for button in buttons:
                                     if button.name == 'Expand':
                                         if gridHeight == gridSizeLimit or gridWidth == gridSizeLimit:
-                                        button.updateMessage('MAX')
-                                    else:
-                                        button.updateMessage(f'${players[currentTurn].expandCost}')
+                                            button.updateMessage('MAX')
+                                        else:
+                                            button.updateMessage(f'${players[currentTurn].expandCost}')
 
                                 # Post a resize event to the event queue
                                 PostResizeEvent((screenWidth, screenHeight))
